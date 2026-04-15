@@ -27,6 +27,14 @@ const tabsData = [
     text: "I prompted my way into a full portfolio in 48 hours... and I will do it again. :)",
   },
   {
+    name: "Engineering",
+    text: "I speak Git, React, and Design System. I build bridges between the Figma canvas and the final PR.",
+  },
+  {
+    name: "Managers",
+    text: "I build products, not just features. I care about the business roadmap as much as the individual pixels.",
+  },
+  {
     name: "Artists",
     text: "Eight years of digital art before product design. The craft never left, it just found new problems to solve.",
   },
@@ -41,31 +49,47 @@ export default function TabsSection() {
 
   return (
     <div className="self-stretch flex flex-col justify-start items-start gap-8">
-      <div className="min-h-[100px] md:min-h-[140px] flex items-center justify-start w-full relative">
-        <h1
-          className="self-stretch justify-start text-foreground text-[1.5rem] md:text-[2.6rem] font-normal font-sans leading-[1.05] tracking-tight text-left"
-        >
-          {tabsData[active].name === "Vibe Cooders" ? (
-            <span
-              style={{ display: "flex", flexWrap: "wrap", justifyContent: "flex-start" }}
-              className="inline-flex flex-wrap"
-            >
-              {tabsData[active].text.split(" ").map((word, index) => (
-                <span
-                  key={index}
-                  className="inline-block"
-                  style={{ marginRight: "0.3em" }}
-                >
-                  <SpecialText className="!h-auto !leading-[1.1] text-inherit">
-                    {word}
-                  </SpecialText>
-                </span>
-              ))}
-            </span>
-          ) : (
-            <SplitText text={tabsData[active].text} splitBy="words" stagger={0} />
-          )}
-        </h1>
+      <div className="min-h-[140px] md:min-h-[160px] flex items-center justify-start w-full relative">
+        <AnimatePresence mode="wait">
+          <motion.h1
+            key={active}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="self-stretch justify-start text-foreground text-[1.5rem] md:text-[2.6rem] font-normal font-sans leading-[1.05] tracking-tight text-left"
+          >
+            {tabsData[active].name === "Vibe Cooders" ? (
+              <span
+                style={{ display: "flex", flexWrap: "wrap", justifyContent: "flex-start" }}
+                className="inline-flex flex-wrap"
+              >
+                {tabsData[active].text.split(" ").map((word, index) => (
+                  <motion.span
+                    key={index}
+                    initial={{ opacity: 0, scale: 0.8, rotate: -2 }}
+                    animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                    transition={{
+                      duration: 0.4,
+                      delay: index * 0.03,
+                      type: "spring",
+                      stiffness: 200,
+                      damping: 12
+                    }}
+                    className="inline-block"
+                    style={{ marginRight: "0.3em" }}
+                  >
+                    <SpecialText className="!h-auto !leading-[1.1] text-primary font-medium italic">
+                      {word}
+                    </SpecialText>
+                  </motion.span>
+                ))}
+              </span>
+            ) : (
+              <SplitText text={tabsData[active].text} splitBy="words" stagger={0.02} />
+            )}
+          </motion.h1>
+        </AnimatePresence>
       </div>
 
       <div className="flex justify-between items-center w-full">

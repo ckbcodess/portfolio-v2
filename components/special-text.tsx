@@ -10,7 +10,7 @@ export function SpecialText({
   className = "",
 }: SpecialTextProps) {
   return (
-    <span className={`inline-flex ${className}`}>
+    <span className={`inline-flex font-medium tracking-tight ${className}`}>
       {children}
     </span>
   );

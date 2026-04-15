@@ -12,6 +12,8 @@ import { Volume2 } from "lucide-react";
 import ThemeControls from "@/components/ThemeControls";
 
 
+import { caseStudies } from "@/content/case-studies";
+
 export default function Home() {
   const pageRef = useRef<HTMLDivElement>(null);
 
@@ -56,11 +58,11 @@ export default function Home() {
 
               {/* Action Buttons */}
               <div className="inline-flex justify-start items-start gap-4">
-                <button className="px-4 py-2 bg-foreground rounded-[248px] flex justify-center items-center gap-1 transition-transform hover:scale-105 active:scale-95 group">
-                  <div className="text-center justify-start text-background text-sm font-medium font-sans">Connect with me</div>
+                <button className="px-5 py-2.5 bg-foreground rounded-full flex justify-center items-center gap-1 transition-all hover:scale-[1.02] active:scale-[0.98] group cursor-pointer">
+                  <div className="text-center justify-start text-background text-[14px] font-medium font-sans">Connect with me</div>
                 </button>
-                <button className="px-4 py-2 bg-foreground/10 hover:bg-foreground/15 rounded-[248px] flex justify-center items-center gap-1 border border-foreground/10 transition-transform hover:scale-105 active:scale-95">
-                  <div className="text-center justify-start text-foreground text-sm font-medium font-sans">Ransford Gyasi</div>
+                <button className="px-5 py-2.5 bg-foreground/5 dark:bg-foreground/10 hover:bg-foreground/10 dark:hover:bg-foreground/15 rounded-full flex justify-center items-center gap-1 border border-foreground/5 transition-all hover:scale-[1.02] active:scale-[0.98] cursor-pointer">
+                  <div className="text-center justify-start text-foreground text-[14px] font-medium font-sans">Read Resume</div>
                 </button>
               </div>
 
@@ -91,31 +93,38 @@ export default function Home() {
               {/* Case Studies */}
               <div className="self-stretch flex flex-col justify-start items-start gap-8">
                 <div className="inline-flex justify-start items-center gap-3">
-                  <div className="justify-center text-zinc-400 text-sm font-medium font-sans leading-4">Case Studies</div>
+                  <div className="justify-center text-muted-foreground text-sm font-medium font-sans leading-4 tracking-tight">Case Studies</div>
                 </div>
-                <div className="flex flex-col justify-start items-start gap-6">
-                  <ProjectItem title="Allex" subtitle="App Design" />
-                  <ProjectItem title="Allex" subtitle="App Design" />
+                <div className="flex flex-col justify-start items-start gap-6 md:gap-7 w-full">
+                  {caseStudies.map((study) => (
+                    <ProjectItem 
+                      key={study.slug}
+                      title={study.logoText || study.title} 
+                      subtitle={study.sections[0].heading} 
+                      slug={study.slug}
+                      color={study.logoClassName?.includes('#') ? study.logoClassName.split('[')[1].split(']')[0] : undefined}
+                    />
+                  ))}
                 </div>
               </div>
 
               {/* Stack */}
               <div className="self-stretch flex flex-col justify-start items-start gap-8">
-                <div className="justify-center text-zinc-400 text-sm font-medium font-sans leading-4">Stack</div>
+                <div className="justify-center text-muted-foreground text-sm font-medium font-sans leading-4 tracking-tight">Stack</div>
                 <div className="flex flex-col justify-start items-start gap-6">
-                  <ProjectItem title="Allex" subtitle="App Design" />
-                  <ProjectItem title="Allex" subtitle="App Design" />
-                  <ProjectItem title="Allex" subtitle="App Design" />
+                  <ProjectItem title="Figma" subtitle="UI/UX Design" slug="" isStack />
+                  <ProjectItem title="Next.js" subtitle="Frontend" slug="" isStack />
+                  <ProjectItem title="GSAP" subtitle="Motion" slug="" isStack />
                 </div>
               </div>
 
               {/* Connect */}
               <div className="self-stretch flex flex-col justify-start items-start gap-8">
-                <div className="justify-center text-zinc-400 text-sm font-medium font-sans leading-4">Connect</div>
+                <div className="justify-center text-muted-foreground text-sm font-medium font-sans leading-4 tracking-tight">Connect</div>
                 <div className="flex flex-col justify-start items-start gap-6">
-                  <div className="opacity-30 text-center justify-start text-foreground text-sm font-normal font-sans cursor-pointer hover:opacity-100 transition-opacity">Recruiters</div>
-                  <div className="opacity-30 text-center justify-start text-foreground text-sm font-normal font-sans cursor-pointer hover:opacity-100 transition-opacity">Recruiters</div>
-                  <div className="opacity-30 text-center justify-start text-foreground text-sm font-normal font-sans cursor-pointer hover:opacity-100 transition-opacity">Recruiters</div>
+                  <a href="https://linkedin.com" target="_blank" className="opacity-40 text-foreground text-sm font-normal font-sans hover:opacity-100 transition-opacity">LinkedIn</a>
+                  <a href="https://twitter.com" target="_blank" className="opacity-40 text-foreground text-sm font-normal font-sans hover:opacity-100 transition-opacity">Twitter / X</a>
+                  <a href="mailto:ransfordgyasi98@gmail.com" className="opacity-40 text-foreground text-sm font-normal font-sans hover:opacity-100 transition-opacity">Email</a>
                 </div>
               </div>
 
@@ -127,17 +136,40 @@ export default function Home() {
   );
 }
 
-function ProjectItem({ title, subtitle }: { title: string; subtitle: string }) {
-  return (
-    <div className="inline-flex justify-end items-center gap-5 group cursor-pointer">
-      <div className="w-10 h-10 bg-[#ff4d4d] rounded-lg flex items-center justify-center shrink-0 transition-transform group-hover:scale-105">
-        <span className="text-white text-[10px] font-medium opacity-80">allex</span>
+function ProjectItem({ 
+  title, 
+  subtitle, 
+  slug, 
+  color = "#ff4d4d", 
+  isStack = false 
+}: { 
+  title: string; 
+  subtitle: string; 
+  slug: string; 
+  color?: string;
+  isStack?: boolean;
+}) {
+  const content = (
+    <div className="group flex items-center gap-5 cursor-pointer w-full">
+      <div 
+        className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-500 group-hover:scale-105 group-hover:rotate-3 shadow-sm"
+        style={{ backgroundColor: color }}
+      >
+        <span className="text-white text-[10px] font-bold uppercase tracking-widest opacity-90">{title.slice(0, 5)}</span>
       </div>
-      <div className="inline-flex flex-col justify-center items-start">
-        <div className="text-center justify-start text-foreground text-xl font-normal font-sans group-hover:text-foreground/80 transition-colors">{title}</div>
-        <div className="opacity-60 text-center justify-start text-foreground text-sm font-normal font-sans">{subtitle}</div>
+      <div className="flex flex-col justify-center items-start">
+        <div className="text-foreground text-[17px] font-normal font-sans group-hover:translate-x-1 transition-transform duration-300">{title}</div>
+        <div className="text-muted-foreground text-[14px] font-normal font-sans leading-tight mt-0.5 line-clamp-1">{subtitle}</div>
       </div>
     </div>
+  );
+
+  if (isStack || !slug) return content;
+
+  return (
+    <TransitionLink href={`/work/${slug}`} label={title} color={color} className="w-full">
+      {content}
+    </TransitionLink>
   );
 }
 
