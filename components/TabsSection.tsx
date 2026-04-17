@@ -1,38 +1,30 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { SplitText } from "@/components/split-text";
 import { SpecialText } from "@/components/special-text";
 
 const tabsData = [
   {
     name: "For all",
-    text: "I'm a designer who cares about two things: grids, aesthetics, and helping people.",
+    text: "I'm a designer who actually cares about three things: perfect grids, bold aesthetics, and helping people win.",
   },
   {
     name: "Recruiters",
-    text: "I've spent 3 years proving you don't have to choose between speed and craft.",
+    text: "I've spent three years proving that you don't ever have to choose between high-speed and high-craft.",
   },
   {
     name: "Product Designers",
-    text: "I'm the person on the team who actually reads the design system AND breaks it when the work calls for it.",
+    text: "I'm the person on the team who reads the entire design system AND knows exactly when to break the rules.",
   },
   {
-    name: "UX Research",
-    text: "I ask 'why' before I open Figma. Research isn't a phase, it's the foundation.",
+    name: "UX Researchers",
+    text: "I always ask why before I ever open Figma. Research isn't a phase, it's the foundation of every pixel.",
   },
   {
-    name: "Vibe Cooders",
-    text: "I prompted my way into a full portfolio in 48 hours... and I will do it again. :)",
-  },
-  {
-    name: "Engineering",
-    text: "I speak Git, React, and Design System. I build bridges between the Figma canvas and the final PR.",
-  },
-  {
-    name: "Managers",
-    text: "I build products, not just features. I care about the business roadmap as much as the individual pixels.",
+    name: "Vibe Coders",
+    text: "I prompted my way into a full portfolio in 48 hours... and I'll do it again. Speed is my strongest vibe.",
   },
   {
     name: "Artists",
@@ -49,7 +41,7 @@ export default function TabsSection() {
 
   return (
     <div className="self-stretch flex flex-col justify-start items-start gap-8">
-      <div className="min-h-[140px] md:min-h-[160px] flex items-center justify-start w-full relative">
+      <div className="min-h-[150px] md:min-h-[130px] flex items-start justify-start w-full relative">
         <AnimatePresence mode="wait">
           <motion.h1
             key={active}
@@ -57,33 +49,36 @@ export default function TabsSection() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="self-stretch justify-start text-foreground text-[1.5rem] md:text-[2.6rem] font-normal font-sans leading-[1.05] tracking-tight text-left"
+            className="self-stretch justify-start text-foreground text-[1.55rem] md:text-[36px] font-normal font-sans leading-[1.1] tracking-tight text-left [text-wrap:balance]"
           >
-            {tabsData[active].name === "Vibe Cooders" ? (
+            {tabsData[active].name === "Vibe Coders" ? (
               <span
-                style={{ display: "flex", flexWrap: "wrap", justifyContent: "flex-start" }}
-                className="inline-flex flex-wrap"
+                className="inline-flex flex-wrap whitespace-pre-wrap"
               >
-                {tabsData[active].text.split(" ").map((word, index) => (
-                  <motion.span
-                    key={index}
-                    initial={{ opacity: 0, scale: 0.8, rotate: -2 }}
-                    animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                    transition={{
-                      duration: 0.4,
-                      delay: index * 0.03,
-                      type: "spring",
-                      stiffness: 200,
-                      damping: 12
-                    }}
-                    className="inline-block"
-                    style={{ marginRight: "0.3em" }}
-                  >
-                    <SpecialText className="!h-auto !leading-[1.1] text-primary font-medium italic">
-                      {word}
-                    </SpecialText>
-                  </motion.span>
-                ))}
+                {tabsData[active].text.split(/(\s+)/).map((item, index) => {
+                  if (/\s+/.test(item)) {
+                    return <span key={index}>{item}</span>;
+                  }
+                  return (
+                    <motion.span
+                      key={index}
+                      initial={{ opacity: 0, scale: 0.8, rotate: -2 }}
+                      animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                      transition={{
+                        duration: 0.4,
+                        delay: index * 0.03,
+                        type: "spring",
+                        stiffness: 200,
+                        damping: 12
+                      }}
+                      className="inline-block"
+                    >
+                      <SpecialText className="!h-auto !leading-[1.1] text-primary font-medium italic">
+                        {item}
+                      </SpecialText>
+                    </motion.span>
+                  );
+                })}
               </span>
             ) : (
               <SplitText text={tabsData[active].text} splitBy="words" stagger={0.02} />
@@ -92,13 +87,13 @@ export default function TabsSection() {
         </AnimatePresence>
       </div>
 
-      <div className="flex justify-between items-center w-full">
+      <div className="flex flex-row items-center w-full overflow-x-auto gap-6 md:gap-0 md:justify-between pb-2 md:pb-0 scrollbar-hide [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {tabsData.map((tab, i) => (
           <button
             key={tab.name}
             onClick={() => handleTabClick(i)}
             data-cursor="pointer"
-            className={`text-center justify-start text-foreground text-[1.05rem] font-normal font-sans leading-5 transition-all duration-300 ${active === i
+            className={`text-center shrink-0 whitespace-nowrap justify-start text-foreground text-[1.05rem] font-normal font-sans leading-5 transition-all duration-300 ${active === i
               ? "opacity-100"
               : "opacity-30 hover:opacity-100"
               }`}

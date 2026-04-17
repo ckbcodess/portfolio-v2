@@ -8,7 +8,6 @@ import dynamic from "next/dynamic";
 const SmoothScroll = dynamic(() => import("./SmoothScroll"), { ssr: false });
 const CustomCursor = dynamic(() => import("./CustomCursor"), { ssr: false });
 const LoadingScreen = dynamic(() => import("./LoadingScreen"), { ssr: false });
-const FloatingNav = dynamic(() => import("./FloatingNav"), { ssr: false });
 
 interface TransitionContextType {
     navigate: (href: string, label: string, color?: string) => void;
@@ -139,7 +138,7 @@ export default function TransitionProvider({ children }: { children: ReactNode }
             <div 
                 id="smooth-wrapper"
                 ref={contentRef} 
-                className="w-full min-h-screen origin-center transition-all duration-700 ease-out"
+                className="w-full origin-center"
             >
                 <div id="smooth-content" className="w-full flex flex-col items-center">
                     {children}
@@ -177,7 +176,6 @@ export default function TransitionProvider({ children }: { children: ReactNode }
             <LoadingScreen />
             <SmoothScroll />
             <CustomCursor />
-            <FloatingNav />
         </TransitionContext.Provider>
     );
 }

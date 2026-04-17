@@ -41,6 +41,11 @@
       "sourceType": "github",
       "computedHash": "f9f924e76e6bfd4afd800c90f5072e34822ff455487a65fa94843624df53d383"
     },
+    "copywriting": {
+      "source": "borghei/claude-skills",
+      "sourceType": "github",
+      "computedHash": "b482ffd20032d3cb0ce3017185b1eb83dfd2398f37e29f9dad0748300f6dc13a"
+    },
     "critique": {
       "source": "pbakaus/impeccable",
       "sourceType": "github",
