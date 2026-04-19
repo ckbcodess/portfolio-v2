@@ -72,7 +72,7 @@ interface Text3DFlipProps {
   triggerOnMount?: boolean
 }
 
-import { motion } from "motion/react"
+import { motion, Variants } from "motion/react"
 
 const Text3DFlip = ({
   children,
@@ -110,7 +110,7 @@ const Text3DFlip = ({
   // Framer Motion variants for the entrance and exit of EACH character
   // Since we want them to enter/exit at the exact same time, we don't use stagger in the variants,
   // we just let them all animate concurrently based on the parent's AnimatePresence.
-  const charVariants = {
+  const charVariants: Variants = {
     initial: { 
       rotateX: -90, 
       opacity: 0

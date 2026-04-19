@@ -1,5 +1,5 @@
 "use client"
-import { AnimatePresence, motion } from "motion/react"
+import { AnimatePresence, motion, Variants } from "motion/react"
 import type React from "react"
 
 export interface BlurRevealProps {
@@ -38,7 +38,7 @@ export function BlurReveal({
   const stagger = 0.03 / speedReveal
   const baseDuration = 0.3 / speedSegment
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -55,7 +55,7 @@ export function BlurReveal({
     },
   }
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, filter: "blur(12px)", y: 10 },
     visible: {
       opacity: 1,
