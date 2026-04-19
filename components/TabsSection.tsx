@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { SplitText } from "@/components/split-text";
-import { SpecialText } from "@/components/special-text";
 
 const tabsData = [
   {
@@ -40,49 +39,18 @@ export default function TabsSection() {
   };
 
   return (
-    <div className="self-stretch flex flex-col justify-start items-start gap-8">
-      <div className="min-h-[150px] md:min-h-[130px] flex items-start justify-start w-full relative">
-        <AnimatePresence mode="wait">
+    <div className="self-stretch flex flex-col justify-start items-start gap-16">
+      <div className="min-h-[180px] md:min-h-[140px] flex items-start justify-start w-full relative">
+        <AnimatePresence>
           <motion.h1
             key={active}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
-            className="self-stretch justify-start text-foreground text-[1.55rem] md:text-[36px] font-normal font-sans leading-[1.1] tracking-tight text-left [text-wrap:balance]"
+            className="absolute top-0 left-0 self-stretch justify-start text-foreground text-[1.55rem] md:text-[36px] font-normal font-sans leading-[1.1] tracking-tight text-left [text-wrap:balance] w-full"
           >
-            {tabsData[active].name === "Vibe Coders" ? (
-              <span
-                className="inline-flex flex-wrap whitespace-pre-wrap"
-              >
-                {tabsData[active].text.split(/(\s+)/).map((item, index) => {
-                  if (/\s+/.test(item)) {
-                    return <span key={index}>{item}</span>;
-                  }
-                  return (
-                    <motion.span
-                      key={index}
-                      initial={{ opacity: 0, scale: 0.8, rotate: -2 }}
-                      animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                      transition={{
-                        duration: 0.4,
-                        delay: index * 0.03,
-                        type: "spring",
-                        stiffness: 200,
-                        damping: 12
-                      }}
-                      className="inline-block"
-                    >
-                      <SpecialText className="!h-auto !leading-[1.1] text-primary font-medium italic">
-                        {item}
-                      </SpecialText>
-                    </motion.span>
-                  );
-                })}
-              </span>
-            ) : (
-              <SplitText text={tabsData[active].text} splitBy="words" stagger={0.02} />
-            )}
+            <SplitText text={tabsData[active].text} splitBy="words" stagger={0.02} />
           </motion.h1>
         </AnimatePresence>
       </div>

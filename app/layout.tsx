@@ -30,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={googleSans.variable}>
       <body className="font-sans antialiased text-foreground bg-background">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <ThemeColorProvider>
             <SoundProvider>
               <TooltipProvider delay={300}>

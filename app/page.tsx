@@ -1,57 +1,43 @@
 "use client";
 
-
 import Image from "next/image";
 import TransitionLink from "@/components/TransitionLink";
 import TabsSection from "@/components/TabsSection";
 import { useRef, useState, useEffect } from "react";
-import dynamic from "next/dynamic";
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
 import { motion, AnimatePresence } from "motion/react";
-import { createPortal } from "react-dom";
 import { useSound } from "@/components/SoundProvider";
-import { Volume2, VolumeX } from "lucide-react";
 import ThemeControls from "@/components/ThemeControls";
-
-
+import FixedPreview from "@/components/FixedPreview";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import BalloonGame from "@/components/BalloonGame";
+import { Volume2, VolumeX, Gamepad2 } from "lucide-react";
 import { caseStudies } from "@/content/case-studies";
 
 export default function Home() {
   const { isSoundEnabled, toggleSound } = useSound();
   const pageRef = useRef<HTMLDivElement>(null);
   const [activeImage, setActiveImage] = useState<string>(caseStudies[0].heroSrc);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const showreelImages = [
-    "/allex-card.png",
-    "/allex-hero.webp",
-    "/img-61.webp",
-    "/gcb-card.webp"
-  ];
+  const [isPlayMode, setIsPlayMode] = useState(false);
+  const [surprises, setSurprises] = useState<number[]>([]);
 
   const container = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
+        staggerChildren: 0.08,
+        delayChildren: 0,
       }
     }
   };
 
   const item = {
-    hidden: { opacity: 0, y: 20 },
+    hidden: { opacity: 0, y: 15 },
     show: { 
       opacity: 1, 
       y: 0, 
       transition: { 
-        duration: 0.8, 
+        duration: 0.6, 
         ease: [0.16, 1, 0.3, 1] 
       } 
     }
@@ -59,6 +45,7 @@ export default function Home() {
 
   return (
     <div ref={pageRef} className="bg-background min-h-screen pt-8 md:pt-16 pb-12 px-6 md:px-12 lg:px-[120px] xl:px-[160px] w-full selection:bg-primary selection:text-primary-foreground">
+      <BalloonGame isActive={isPlayMode} onClose={() => setIsPlayMode(false)} />
       
       {/* Status Bar - Refined alignment */}
       <motion.header 
@@ -70,15 +57,60 @@ export default function Home() {
         <div className="flex justify-start items-center gap-4 md:gap-6">
           <ThemeControls />
           <div className="w-[1px] h-3 bg-border/20" />
-          <motion.button 
-            whileTap={{ scale: 0.9 }}
-            onClick={toggleSound}
-            className="text-foreground/40 hover:text-foreground transition-colors flex items-center justify-center gap-2 min-h-[44px] px-2 -mx-2 md:min-h-0 md:px-0 md:-mx-0"
-            aria-label={isSoundEnabled ? "Disable sound" : "Enable sound"}
-          >
-            {isSoundEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
-            <span className="text-[10px] uppercase tracking-wider font-medium">{isSoundEnabled ? "On" : "Off"}</span>
-          </motion.button>
+          
+          <div className="flex items-center gap-4">
+            <Tooltip>
+              <TooltipTrigger>
+                <motion.div 
+                  whileTap={{ scale: 0.9 }}
+                  onClick={toggleSound}
+                  className="text-foreground/40 hover:text-foreground transition-colors flex items-center justify-center gap-2 min-h-[44px] px-2 -mx-2 md:min-h-0 md:px-0 md:-mx-0 cursor-pointer"
+                  aria-label={isSoundEnabled ? "Disable sound" : "Enable sound"}
+                  role="button"
+                  tabIndex={0}
+                >
+                  {isSoundEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
+                  <span className="text-[10px] uppercase tracking-wider font-medium">{isSoundEnabled ? "On" : "Off"}</span>
+                </motion.div>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" sideOffset={8}>
+                {isSoundEnabled ? "Mute" : "Unmute"}
+              </TooltipContent>
+            </Tooltip>
+
+            <div className="w-[1px] h-3 bg-border/20" />
+
+            <Tooltip>
+              <TooltipTrigger>
+                <motion.div 
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => setIsPlayMode(!isPlayMode)}
+                  className={`flex items-center justify-center gap-2 min-h-[44px] px-2 -mx-2 md:min-h-0 md:px-0 md:-mx-0 cursor-pointer transition-colors duration-300 ${isPlayMode ? 'text-foreground' : 'text-foreground/40 hover:text-foreground'}`}
+                  aria-label={isPlayMode ? "Exit Play Mode" : "Enter Play Mode"}
+                  role="button"
+                  tabIndex={0}
+                >
+                  <div className="relative">
+                    <Gamepad2 size={14} />
+                    <AnimatePresence>
+                      {isPlayMode && (
+                        <motion.div
+                          initial={{ scale: 0, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          exit={{ scale: 0, opacity: 0 }}
+                          className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-green-400"
+                        />
+                      )}
+                    </AnimatePresence>
+                  </div>
+                  <span className="text-[10px] uppercase tracking-wider font-medium">{isPlayMode ? "Exit" : "Play"}</span>
+                </motion.div>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" sideOffset={8}>
+                {isPlayMode ? "Back to portfolio" : "Pop some balloons"}
+              </TooltipContent>
+            </Tooltip>
+          </div>
         </div>
         <div className="flex justify-start items-center">
           <span className="text-foreground/40 text-[11px] font-medium font-sans uppercase tracking-[0.1em]">
@@ -95,30 +127,89 @@ export default function Home() {
           variants={container}
           initial="hidden"
           animate="show"
-          className="flex flex-col w-full max-w-[540px] justify-start items-start gap-20"
+          className="flex flex-col w-full max-w-[540px] justify-start items-start gap-[180px]"
         >
 
             {/* Profile, Heading & Tabs Section */}
             <motion.section variants={item} className="self-stretch flex flex-col justify-start items-start gap-10">
-
               {/* Profile */}
-              <div className="inline-flex justify-center items-center gap-3">
-                <Image
-                  className="w-8 h-8 rounded-full"
-                  src="/avatar.webp"
-                  alt="Ransford Gyasi"
-                  width={32}
-                  height={32}
-                  priority
-                />
-                <p className="text-center justify-start text-muted-foreground text-base font-medium font-sans leading-5">Ransford Gyasi</p>
+              <div className="flex flex-col items-center">
+                <motion.div
+                  variants={item}
+                  className="inline-flex justify-center items-center gap-3 group px-3 py-1.5 rounded-full hover:bg-foreground/[0.03] transition-colors cursor-pointer relative"
+                  onClick={() => {
+                    const sounds = ["/sounds/pop-1.wav", "/sounds/pop-2.wav", "/sounds/pop-3.wav"];
+                    const audio = new Audio(sounds[Math.floor(Math.random() * sounds.length)]);
+                    audio.volume = 0.4;
+                    audio.play().catch(() => {});
+                    
+                    const id = Date.now();
+                    setSurprises(prev => [...prev, id]);
+                    setTimeout(() => setSurprises(prev => prev.filter(s => s !== id)), 1000);
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Tooltip>
+                    <TooltipTrigger className="bg-transparent border-none p-0 cursor-pointer">
+                      <motion.div
+                        className="relative"
+                        animate={surprises.length > 0 ? { rotate: 360 } : { rotate: 0 }}
+                        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                      >
+                        <Image
+                          className="w-8 h-8 rounded-full shadow-sm group-hover:shadow-md transition-shadow"
+                          src="/avatar.webp"
+                          alt="Ransford Gyasi"
+                          width={32}
+                          height={32}
+                          priority
+                        />
+                        
+                        {/* Surprise Particles */}
+                        <AnimatePresence>
+                          {surprises.map(id => (
+                            <div key={id} className="absolute inset-0 pointer-events-none">
+                              {[...Array(8)].map((_, i) => (
+                                <motion.div
+                                  key={i}
+                                  initial={{ scale: 0, x: 0, y: 0, opacity: 1 }}
+                                  animate={{ 
+                                    scale: [0, 1.5, 0], 
+                                    x: (Math.random() - 0.5) * 80, 
+                                    y: -40 - Math.random() * 60,
+                                    opacity: 0 
+                                  }}
+                                  transition={{ duration: 0.8, ease: "easeOut" }}
+                                  className="absolute w-2 h-2 rounded-full"
+                                  style={{ 
+                                    backgroundColor: ['#ff4d4d', '#4d79ff', '#4dff88', '#ffcc4d'][i % 4],
+                                    left: '50%',
+                                    top: '50%'
+                                  }}
+                                />
+                              ))}
+                            </div>
+                          ))}
+                        </AnimatePresence>
+                      </motion.div>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" className="text-[10px] font-medium tracking-tight">
+                      {surprises.length > 0 ? "You found me! ✨" : "Hey, I'm Ransford"}
+                    </TooltipContent>
+                  </Tooltip>
+                  <p className="text-center justify-start text-muted-foreground text-base font-medium font-sans leading-5 group-hover:text-foreground transition-colors">
+                    Ransford Gyasi
+                  </p>
+                </motion.div>
               </div>
 
               {/* Headline & Tabs */}
-              <TabsSection />
+              <motion.div variants={item} className="w-full">
+                <TabsSection />
+              </motion.div>
 
               {/* Action Buttons */}
-              <nav className="inline-flex justify-start items-start gap-4">
+              <motion.nav variants={item} className="inline-flex justify-start items-start gap-4">
                 <motion.button 
                   whileTap={{ scale: 0.96 }}
                   aria-label="Connect with Ransford"
@@ -133,15 +224,14 @@ export default function Home() {
                 >
                   <span className="text-center justify-start text-foreground text-[14px] font-medium font-sans">Read Resume</span>
                 </motion.button>
-              </nav>
-
+              </motion.nav>
             </motion.section>
  
             {/* Bottom Content Lists - Significant vertical rhythm increase */}
             <motion.div variants={item} className="self-stretch flex flex-col justify-start items-start gap-16 md:gap-24 pb-20 md:pb-32">
 
               {/* Case Studies */}
-              <section className="self-stretch flex flex-col justify-start items-start gap-8">
+              <motion.section variants={item} className="self-stretch flex flex-col justify-start items-start gap-8">
                 <div className="inline-flex justify-start items-center gap-3">
                   <h2 className="justify-center text-muted-foreground text-sm font-medium font-sans leading-4 tracking-tight uppercase">Case Studies</h2>
                 </div>
@@ -149,7 +239,7 @@ export default function Home() {
                   {caseStudies.map((study) => (
                     <motion.div 
                       key={study.slug} 
-                      variants={item} 
+                      variants={item}
                       className="w-full"
                       onMouseEnter={() => setActiveImage(study.heroSrc)}
                     >
@@ -162,20 +252,20 @@ export default function Home() {
                     </motion.div>
                   ))}
                 </motion.div>
-              </section>
+              </motion.section>
 
               {/* Stack */}
-              <section className="self-stretch flex flex-col justify-start items-start gap-8">
+              <motion.section variants={item} className="self-stretch flex flex-col justify-start items-start gap-8 w-full">
                 <h2 className="justify-center text-muted-foreground text-sm font-medium font-sans leading-4 tracking-tight uppercase">Stack</h2>
                 <motion.div variants={container} className="flex flex-col justify-start items-start gap-6 w-full">
                   <motion.div variants={item} className="w-full"><ProjectItem title="Figma" subtitle="UI/UX Design" slug="" isStack /></motion.div>
                   <motion.div variants={item} className="w-full"><ProjectItem title="Next.js" subtitle="Frontend" slug="" isStack /></motion.div>
                   <motion.div variants={item} className="w-full"><ProjectItem title="GSAP" subtitle="Motion" slug="" isStack /></motion.div>
                 </motion.div>
-              </section>
+              </motion.section>
 
               {/* Connect */}
-              <section className="self-stretch flex flex-col justify-start items-start gap-8">
+              <motion.section variants={item} className="self-stretch flex flex-col justify-start items-start gap-8 w-full">
                 <h2 className="justify-center text-muted-foreground text-sm font-medium font-sans leading-4 tracking-tight uppercase">Connect</h2>
                 <motion.div variants={container} className="flex flex-col justify-start items-start gap-6 w-full">
                   <motion.div variants={item}>
@@ -200,7 +290,7 @@ export default function Home() {
                     >Email</motion.a>
                   </motion.div>
                 </motion.div>
-              </section>
+              </motion.section>
             </motion.div>
 
           </motion.main>
@@ -209,37 +299,8 @@ export default function Home() {
         <div className="hidden lg:block lg:w-[600px]" />
       </div>
 
-      {/* Fixed Preview - Teleported to body to escape SmoothScroll transforms */}
-      {mounted && createPortal(
-        <div className="hidden lg:block pointer-events-none">
-          <div className="fixed top-0 right-[120px] w-[600px] h-screen flex flex-col justify-end pb-12 z-50">
-            <div className="w-[600px] h-[338px] rounded overflow-hidden bg-neutral-900 pointer-events-auto relative shadow-2xl">
-              <AnimatePresence mode="wait">
-                {activeImage && (
-                  <motion.div
-                    key={activeImage}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3, ease: "linear" }}
-                    className="absolute inset-0"
-                  >
-                    <Image
-                      src={activeImage}
-                      alt="Case Study Preview"
-                      fill
-                      sizes="600px"
-                      className="object-cover"
-                    />
-                    <div className="absolute inset-0 bg-black/5" />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          </div>
-        </div>,
-        document.body
-      )}
+      {/* Fixed Preview - Pinned to bottom-right */}
+      <FixedPreview activeImage={activeImage} />
     </div>
   );
 }
