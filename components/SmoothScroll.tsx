@@ -14,7 +14,11 @@ export default function SmoothScroll() {
     const pathname = usePathname();
 
     useEffect(() => {
-        // We delay slightly to let Next.js mount the new page's #smooth-wrapper
+        // Disable browser's native scroll restoration BEFORE ScrollSmoother initializes.
+        // Otherwise the browser jumps to the previous scroll position for one frame,
+        // then ScrollSmoother snaps back — causing the visible bounce on refresh.
+        window.history.scrollRestoration = "manual";
+
         const ctx = gsap.context(() => {
             ScrollSmoother.create({
                 wrapper: "#smooth-wrapper",

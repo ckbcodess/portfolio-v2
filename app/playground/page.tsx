@@ -8,9 +8,7 @@ import Header from "@/components/Header";
 import { SpecialText } from "@/components/special-text";
 import { Marquee } from "@/components/marquee";
 
-const FloatingNav = dynamic(() => import("@/components/FloatingNav"), {
-  ssr: false,
-});
+
 
 const experiments = [
   {
@@ -156,7 +154,7 @@ export default function PlaygroundPage() {
         </div>
       </div>
 
-      <FloatingNav />
+
     </div>
   );
 }

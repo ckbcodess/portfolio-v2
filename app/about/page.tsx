@@ -8,9 +8,7 @@ import { useGSAP } from "@gsap/react";
 import Header from "@/components/Header";
 import { SpecialText } from "@/components/special-text";
 
-const FloatingNav = dynamic(() => import("@/components/FloatingNav"), {
-  ssr: false,
-});
+
 
 export default function AboutPage() {
   const pageRef = useRef<HTMLDivElement>(null);
@@ -138,7 +136,7 @@ export default function AboutPage() {
         </div>
       </div>
 
-      <FloatingNav />
+
     </div>
   );
 }

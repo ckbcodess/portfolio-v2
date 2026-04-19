@@ -8,7 +8,6 @@ import dynamic from "next/dynamic";
 const SmoothScroll = dynamic(() => import("./SmoothScroll"), { ssr: false });
 const CustomCursor = dynamic(() => import("./CustomCursor"), { ssr: false });
 const LoadingScreen = dynamic(() => import("./LoadingScreen"), { ssr: false });
-const FloatingNav = dynamic(() => import("./FloatingNav"), { ssr: false });
 
 interface TransitionContextType {
     navigate: (href: string, label: string, color?: string) => void;
@@ -79,10 +78,10 @@ export default function TransitionProvider({ children }: { children: ReactNode }
             ease: "power2.out"
         }, "-=0.2");
 
-        // 4. Scale down and round the content slightly
+        // 4. Scale down the content slightly — blur and shrink, no layout shift
         gsap.to(contentRef.current, {
-            scale: 0.94,
-            borderRadius: "40px",
+            scale: 0.92,
+            filter: "blur(6px)",
             duration: 0.7,
             ease: "power3.inOut"
         });
@@ -120,26 +119,27 @@ export default function TransitionProvider({ children }: { children: ReactNode }
                 ease: "power4.out",
             });
 
-            // 3. Scale back and flatten the content
+            // 3. Scale back, slide down, and flatten the content
             gsap.fromTo(contentRef.current, {
-                scale: 0.94,
-                borderRadius: "40px",
+                scale: 0.92,
+                filter: "blur(6px)",
             }, {
                 scale: 1,
-                borderRadius: "0px",
-                duration: 0.8,
+                filter: "blur(0px)",
+                duration: 1,
                 ease: "power3.out",
-                clearProps: "all"
+                clearProps: "transform,filter"
             });
         }
     }, [pathname]);
 
     return (
         <TransitionContext.Provider value={{ navigate }}>
-            <div 
+            <div
                 id="smooth-wrapper"
-                ref={contentRef} 
-                className="w-full min-h-screen origin-center transition-all duration-700 ease-out"
+                ref={contentRef}
+                className="w-full origin-top"
+                style={{ willChange: "transform, filter" }}
             >
                 <div id="smooth-content" className="w-full flex flex-col items-center">
                     {children}
@@ -177,7 +177,6 @@ export default function TransitionProvider({ children }: { children: ReactNode }
             <LoadingScreen />
             <SmoothScroll />
             <CustomCursor />
-            <FloatingNav />
         </TransitionContext.Provider>
     );
 }

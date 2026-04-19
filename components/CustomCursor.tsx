@@ -70,9 +70,37 @@ export default function CustomCursor() {
             yTo(e.clientY);
         };
 
-        window.addEventListener("mousemove", handleMouseMove);
+        const handleMouseDown = () => {
+            // Only scale down if we hold for more than 100ms
+            gsap.to(cursorRef.current, { 
+                scale: 0.8, 
+                duration: 0.15, 
+                delay: 0.1, // This mimics the 'extended period' logic
+                ease: "power2.out",
+                overwrite: "auto" 
+            });
+        };
+        
+        const handleMouseUp = () => {
+            // Immediately snap back to 1
+            gsap.to(cursorRef.current, { 
+                scale: 1, 
+                duration: 0.15, 
+                delay: 0, 
+                ease: "power4.out", 
+                overwrite: "auto" 
+            });
+        };
 
-        return () => window.removeEventListener("mousemove", handleMouseMove);
+        window.addEventListener("mousemove", handleMouseMove);
+        window.addEventListener("mousedown", handleMouseDown);
+        window.addEventListener("mouseup", handleMouseUp);
+
+        return () => {
+            window.removeEventListener("mousemove", handleMouseMove);
+            window.removeEventListener("mousedown", handleMouseDown);
+            window.removeEventListener("mouseup", handleMouseUp);
+        };
     }, { scope: cursorRef });
 
     useGSAP(() => {
@@ -102,8 +130,8 @@ export default function CustomCursor() {
             });
         } else if (cursorType === "pointer") {
             gsap.to(cursorRef.current, {
-                width: 12,
-                height: 12,
+                width: 8,
+                height: 8,
                 borderRadius: "100%",
                 backgroundColor: "white",
                 mixBlendMode: "difference",
@@ -112,8 +140,8 @@ export default function CustomCursor() {
             });
         } else {
             gsap.to(cursorRef.current, {
-                width: 24,
-                height: 24,
+                width: 16,
+                height: 16,
                 borderRadius: "100%",
                 backgroundColor: "white",
                 mixBlendMode: "difference",
