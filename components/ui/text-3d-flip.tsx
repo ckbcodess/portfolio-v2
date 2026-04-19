@@ -10,7 +10,6 @@ import React, {
 } from "react"
 import {
   useAnimate,
-  type AnimationOptions,
   type ValueAnimationTransition,
 } from "motion/react"
 
@@ -67,7 +66,7 @@ interface Text3DFlipProps {
   flipTextClassName?: string
   staggerDuration?: number
   staggerFrom?: "first" | "last" | "center" | number | "random"
-  transition?: ValueAnimationTransition | AnimationOptions
+  transition?: ValueAnimationTransition
   rotateDirection?: "top" | "right" | "bottom" | "left"
   triggerOnMount?: boolean
 }
@@ -138,7 +137,7 @@ const Text3DFlip = ({
             <motion.span
               key={charOffsets[wordIndex] + charIndex}
               variants={charVariants}
-              transition={transition}
+              transition={transition as ValueAnimationTransition}
               className="inline-block transform-3d"
               style={{ transformOrigin: "center" }}
             >
