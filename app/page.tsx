@@ -4,7 +4,7 @@ import Image from "next/image";
 import TransitionLink from "@/components/TransitionLink";
 import TabsSection from "@/components/TabsSection";
 import { useRef, useState, useEffect } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, Variants } from "motion/react";
 import { useSound } from "@/components/SoundProvider";
 import ThemeControls from "@/components/ThemeControls";
 import FixedPreview from "@/components/FixedPreview";
@@ -20,7 +20,7 @@ export default function Home() {
   const [isPlayMode, setIsPlayMode] = useState(false);
   const [surprises, setSurprises] = useState<number[]>([]);
 
-  const container = {
+  const container: Variants = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
@@ -31,7 +31,7 @@ export default function Home() {
     }
   };
 
-  const item = {
+  const item: Variants = {
     hidden: { opacity: 0, y: 15 },
     show: { 
       opacity: 1, 
