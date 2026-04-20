@@ -226,23 +226,27 @@ body {
 
   html {
     @apply font-sans;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
   }
+}
 
-  html::-webkit-scrollbar {
-    display: none;
-  }
+/* Aggressive Scrollbar Removal */
+html, body {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+html::-webkit-scrollbar, 
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 /* Hide scrollbar for all elements */
 * {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-*::-webkit-scrollbar {
-  display: none;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
 }
 
 /* Premium View Transitions */
