@@ -206,6 +206,27 @@ html {
   --sidebar-ring: oklch(0.60 0.25 var(--hue));
 }
 
+/* Specific overrides for Green Dark Mode */
+.dark[data-theme="green"],
+[data-theme="green"].dark {
+  --background: #0A2F1B;
+  --foreground: #D3F202;
+  --primary: #D3F202;
+  --primary-foreground: #0A2F1B;
+  --glass-bg: rgba(10, 47, 27, 0.8);
+  --card: #0B351E;
+  --card-foreground: #D3F202;
+  --popover: #0B351E;
+  --popover-foreground: #D3F202;
+  --muted: #124227;
+  --muted-foreground: rgba(211, 242, 2, 0.6);
+  --border: rgba(211, 242, 2, 0.15);
+  --input: rgba(211, 242, 2, 0.1);
+  --ring: #D3F202;
+  --accent: #124227;
+  --accent-foreground: #D3F202;
+}
+
 body {
   background-color: var(--background);
 }
