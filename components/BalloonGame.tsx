@@ -32,7 +32,7 @@ interface Particle {
 const BALLOON_ASSETS = [
   { image: "/images/balloons/red.png", glow: "rgba(255, 107, 107, 0.3)" },
   { image: "/images/balloons/blue.png", glow: "rgba(78, 205, 196, 0.3)" }, // blue/cyan
-  { image: "/images/balloons/green.png", glow: "rgba(100, 220, 140, 0.3)" },
+  { image: "/images/balloons/green.png", glow: "rgba(211, 242, 2, 0.3)" },
   { image: "/images/balloons/purple.png", glow: "rgba(130, 120, 255, 0.3)" },
 ];
 
@@ -221,10 +221,10 @@ export default function BalloonGame({ isActive, onClose }: BalloonGameProps) {
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ delay: 0.1, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             onClick={onClose}
-            className="fixed top-8 right-8 md:top-12 md:right-12 lg:right-[120px] z-[43] w-10 h-10 rounded-full bg-foreground/10 hover:bg-foreground/20 backdrop-blur-md flex items-center justify-center transition-colors cursor-pointer group"
+            className="fixed top-[var(--page-pt)] right-[var(--page-px)] z-[1001] p-2 -mr-2 text-foreground/60 hover:text-foreground transition-colors cursor-pointer group"
             aria-label="Close Play Mode"
           >
-            <X size={16} className="text-foreground/60 group-hover:text-foreground transition-colors" />
+            <X size={20} className="transition-colors" />
           </motion.button>
 
           {/* Score HUD */}

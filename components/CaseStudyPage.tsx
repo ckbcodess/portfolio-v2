@@ -9,12 +9,41 @@ import { CaseStudyContent } from "@/content/case-studies/types";
 import { Badge } from "@/components/badge";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { Lock, ArrowRight, ShieldAlert } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 
 interface CaseStudyPageProps {
   caseStudy: CaseStudyContent;
 }
 
 export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
+  const [mounted, setMounted] = useState(false);
+  const [password, setPassword] = useState("");
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [showError, setShowError] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    // Check session storage to see if they've already unlocked it this session
+    const authorized = sessionStorage.getItem(`authorized-${caseStudy.slug}`);
+    if (authorized === "true") {
+      setIsAuthorized(true);
+    }
+  }, [caseStudy.slug]);
+
+  const handleUnlock = (e: React.FormEvent) => {
+    e.preventDefault();
+    // THE PASSWORD: change this to whatever you want
+    if (password === "gcb2024") {
+      setIsAuthorized(true);
+      setShowError(false);
+      sessionStorage.setItem(`authorized-${caseStudy.slug}`, "true");
+    } else {
+      setShowError(true);
+      setPassword("");
+    }
+  };
+
   const sidebarLinks = caseStudy.sections.reduce((acc, curr) => {
     const existing = acc.find((item) => item.label === curr.label);
 
@@ -30,11 +59,6 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
   sidebarLinks.unshift({ id: "intro", label: "Intro", targetIds: ["intro"] });
 
   const { theme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const getBadgeVariant = () => {
     if (!mounted) return "default";
@@ -52,9 +76,80 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
 
   const badgeVariant = getBadgeVariant();
 
+  if (caseStudy.isLocked && !isAuthorized) {
+    return (
+      <div className="min-h-screen bg-background w-full flex flex-col items-center justify-center p-6 relative overflow-hidden">
+        <Header variant="case-study" title="Protected Content" backLink="/" />
+        
+        {/* Background decorative element */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
+
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-md bg-card/30 backdrop-blur-xl border border-border p-8 rounded-3xl shadow-2xl relative z-10 flex flex-col items-center text-center"
+        >
+          <div className="w-16 h-16 bg-muted/50 rounded-2xl flex items-center justify-center mb-6 border border-white/5">
+            <Lock className="text-foreground/80" size={28} />
+          </div>
+          
+          <h1 className="text-2xl font-semibold text-foreground mb-2">NDA Protected</h1>
+          <p className="text-muted-foreground text-sm mb-8 leading-relaxed">
+            The content of <strong>{caseStudy.title}</strong> is restricted. Please enter the access password provided to you.
+          </p>
+
+          <form onSubmit={handleUnlock} className="w-full">
+            <div className="relative mb-4 group">
+              <input
+                type="password"
+                placeholder="Enter password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (showError) setShowError(false);
+                }}
+                autoFocus
+                className={`w-full h-12 bg-muted/40 hover:bg-muted/60 focus:bg-muted/80 border ${showError ? 'border-destructive' : 'border-border focus:border-primary'} rounded-xl px-4 outline-none transition-all placeholder:text-muted-foreground/50 text-foreground font-sans`}
+              />
+              <motion.button
+                type="submit"
+                whileHover={{ x: 3 }}
+                whileTap={{ scale: 0.95 }}
+                className="absolute right-2 top-2 h-8 w-8 bg-foreground rounded-lg flex items-center justify-center text-background shadow-lg transition-transform"
+              >
+                <ArrowRight size={16} />
+              </motion.button>
+            </div>
+
+            <AnimatePresence>
+              {showError && (
+                <motion.div 
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="flex items-center gap-2 text-destructive text-xs font-medium pl-1 overflow-hidden"
+                >
+                  <ShieldAlert size={12} />
+                  Invalid access password
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </form>
+
+          <div className="mt-10 pt-6 border-t border-border/5 w-full">
+              <TransitionLink href="/" label="Go back to Home" className="text-xs text-muted-foreground hover:text-foreground transition-colors tracking-widest font-medium">
+                Back to home
+              </TransitionLink>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background w-full relative">
       <Header variant="case-study" title={caseStudy.title} backLink="/" />
+
 
       <CaseStudySidebar links={sidebarLinks} />
       <MobileCaseStudyNav links={sidebarLinks} />
@@ -155,7 +250,7 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
               </div>
 
               <div className="border-t border-border py-14">
-                <p className="text-[11px] text-muted-foreground/80 uppercase tracking-widest font-medium mb-5">
+                <p className="text-[11px] text-muted-foreground/80 tracking-widest font-medium mb-5">
                   Next
                 </p>
                 <TransitionLink

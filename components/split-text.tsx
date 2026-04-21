@@ -21,27 +21,27 @@ const SplitTextComponent = ({
 
   return (
     <span
-      className={cn("inline-flex flex-wrap overflow-hidden whitespace-pre-wrap", className)}
+      className={cn("inline leading-tight", className)}
       aria-hidden="true"
     >
       {items.map((item, index) => {
         // If it's just whitespace, render it naturally to maintain proper spacing
         if (/\s+/.test(item)) {
-          return <span key={index}>{item}</span>;
+          return <span key={index} className="inline">{item}</span>;
         }
 
         return (
           <span
             key={index}
-            className="inline-block overflow-hidden"
+            className="inline-block overflow-hidden align-top"
           >
             <motion.span
               initial={{ y: "100%" }}
               animate={{ y: 0 }}
               transition={{
-                duration: 0.5,
+                duration: 0.6,
                 delay: index * stagger,
-                ease: [0.33, 1, 0.68, 1],
+                ease: [0.16, 1, 0.3, 1],
               }}
               className="inline-block"
             >
