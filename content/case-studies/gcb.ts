@@ -2,6 +2,7 @@ import { CaseStudyContent } from "./types";
 
 export const gcbCaseStudy: CaseStudyContent = {
   slug: "gcb",
+  isLocked: true,
   title: "GCB App",
   metadataTitle: "GCB App - Ransford Gyasi",
   description: "Designing a mobile banking experience that feels clear, fast, and trustworthy.",

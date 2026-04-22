@@ -154,7 +154,7 @@ export default function CustomCursor() {
     return (
         <div
             ref={cursorRef}
-            className="fixed top-0 left-0 flex items-center justify-center pointer-events-none z-[9999] overflow-hidden whitespace-nowrap text-[10px] uppercase tracking-wider font-bold text-background"
+            className="hidden lg:flex fixed top-0 left-0 items-center justify-center pointer-events-none z-[9999] overflow-hidden whitespace-nowrap text-[10px] uppercase tracking-wider font-bold text-background opacity-0"
             style={{ willChange: "transform, width, height, border-radius, background-color" }}
         >
             <span className={`transition-opacity duration-300 ${cursorType === "copy" ? "opacity-100" : "opacity-0 invisible"}`}>

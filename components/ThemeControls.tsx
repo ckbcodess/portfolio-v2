@@ -32,7 +32,7 @@ export default function ThemeControls() {
       <Tooltip>
         <TooltipTrigger
           onClick={() => handleThemeChange(theme === "dark" ? "light" : "dark")}
-          className="text-foreground/80 hover:text-foreground transition-colors p-3 -m-3 md:p-1 md:-m-1 flex items-center justify-center min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0 cursor-pointer"
+          className="text-foreground/80 hover:text-foreground transition-colors p-3 -m-3 md:p-1 md:-m-1 flex items-center justify-center min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0 cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-sm"
           aria-label="Toggle dark mode"
         >
           <div className="flex items-center justify-center">
@@ -50,7 +50,7 @@ export default function ThemeControls() {
           <Tooltip key={c}>
             <TooltipTrigger
               onClick={() => handleColorChange(c)}
-              className="group relative flex items-center justify-center p-3 -m-3 md:p-1 md:-m-1 min-w-[32px] min-h-[44px] md:min-w-0 md:min-h-0 cursor-pointer"
+              className="group relative flex items-center justify-center p-3 -m-3 md:p-1 md:-m-1 min-w-[32px] min-h-[44px] md:min-w-0 md:min-h-0 cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-full"
               aria-label={`Switch to ${c} theme`}
             >
               <motion.div

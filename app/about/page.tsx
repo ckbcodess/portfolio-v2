@@ -65,7 +65,7 @@ export default function AboutPage() {
                 
                 <div className="flex flex-col gap-4 md:gap-6">
                   <div className="about-reveal invisible">
-                    <SpecialText className="text-blue-500 mb-2 font-mono font-medium">ABOUT ME</SpecialText>
+                    <SpecialText className="text-blue-500 mb-2 font-mono font-medium">About me</SpecialText>
                     <h1 className="text-3xl md:text-6xl font-semibold tracking-tight text-foreground">
                       I build digital products that feel right.
                     </h1>

@@ -94,7 +94,7 @@ export default function PlaygroundPage() {
           <main className="pt-24 md:pt-32 pb-40">
             <div className="px-6 max-w-[960px] mx-auto mb-16 md:mb-20 text-center">
               <div className="playground-reveal invisible mb-4">
-                <SpecialText className="text-blue-500 font-mono font-medium">PLAYGROUND</SpecialText>
+                <SpecialText className="text-blue-500 font-mono font-medium">Playground</SpecialText>
               </div>
               <h1 className="playground-reveal invisible text-4xl md:text-7xl font-semibold tracking-tight text-foreground mb-6">
                 Experiments & Sketches.

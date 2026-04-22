@@ -34,4 +34,6 @@ export interface CaseStudyContent {
   sections: CaseStudySection[];
   nextProject: CaseStudyNextProject;
   badgeVariant?: string;
+  isLocked?: boolean;
+  password?: string;
 }
