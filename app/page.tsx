@@ -1,4 +1,6 @@
 "use client";
+// Force Vercel rebuild - 2026-04-20
+
 
 import Image from "next/image";
 import TransitionLink from "@/components/TransitionLink";
