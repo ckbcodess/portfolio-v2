@@ -24,6 +24,8 @@ export default function Home() {
   const [surprises, setSurprises] = useState<number[]>([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [canAnimate, setCanAnimate] = useState(false);
+  const [hoveredSlug, setHoveredSlug] = useState<string | null>(null);
+
 
   useEffect(() => {
     // Coordinate with LoadingScreen
@@ -342,10 +344,18 @@ export default function Home() {
                 </div>
                 <div className="flex flex-col justify-start items-start gap-4 w-full">
                   {caseStudies.slice(0, 2).map((study) => (
-                    <div 
+                    <motion.div 
                       key={study.slug} 
                       className="w-full"
-                      onMouseEnter={() => setActiveImage(study.heroSrc)}
+                      onMouseEnter={() => {
+                        setActiveImage(study.heroSrc);
+                        setHoveredSlug(study.slug);
+                      }}
+                      onMouseLeave={() => setHoveredSlug(null)}
+                      animate={{
+                        opacity: hoveredSlug && hoveredSlug !== study.slug ? 0.6 : 1,
+                      }}
+                      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                     >
                       <ProjectItem
                         title={study.logoText || study.title}
@@ -355,7 +365,7 @@ export default function Home() {
                         color={study.logoClassName?.includes('#') ? study.logoClassName.split('[')[1].split(']')[0] : "#333"}
                         year="2025"
                       />
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               </section>
@@ -391,7 +401,10 @@ function ProjectItem({
   isLocked?: boolean;
 }) {
   const content = (
-    <div className="group flex items-center justify-between w-full p-4 -mx-4 rounded-xl hover:bg-foreground/[0.04] transition-all duration-200 cursor-pointer">
+    <div 
+      data-cursor={isLocked ? "confidential" : "case-study"}
+      className="group flex items-center justify-between w-full p-4 -mx-4 rounded-xl hover:bg-foreground/[0.04] transition-all duration-200 cursor-pointer"
+    >
       <div className="flex items-center gap-5">
         <div
           className="w-16 h-16 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:scale-[1.02] shadow-sm relative overflow-hidden"
@@ -411,7 +424,7 @@ function ProjectItem({
       </div>
       <ArrowRight 
         size={20} 
-        className="text-foreground/20 group-hover:text-foreground group-hover:translate-x-1 transition-all duration-200" 
+        className="text-foreground opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200" 
       />
     </div>
   );
