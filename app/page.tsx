@@ -11,8 +11,7 @@ import { useSound } from "@/components/SoundProvider";
 import ThemeControls from "@/components/ThemeControls";
 import FixedPreview from "@/components/FixedPreview";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
-import BalloonGame from "@/components/BalloonGame";
-import { Volume2, VolumeX, Gamepad2, Lock, Menu, X, ArrowRight } from "lucide-react";
+import { Menu, X, ArrowRight, Lock, Volume2, VolumeX } from "lucide-react";
 import PreviewCard from "@/components/PreviewCard";
 import Clock from "@/components/Clock";
 import { caseStudies } from "@/content/case-studies";
@@ -22,10 +21,11 @@ export default function Home() {
   const { isSoundEnabled, toggleSound } = useSound();
   const pageRef = useRef<HTMLDivElement>(null);
   const [activeImage, setActiveImage] = useState<string>(caseStudies[0].heroSrc);
-  const [isPlayMode, setIsPlayMode] = useState(false);
   const [surprises, setSurprises] = useState<number[]>([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [canAnimate, setCanAnimate] = useState(false);
+  const [hoveredSlug, setHoveredSlug] = useState<string | null>(null);
+
 
   useEffect(() => {
     // Coordinate with LoadingScreen
@@ -57,27 +57,13 @@ export default function Home() {
     }
   };
 
-  const item: Variants = {
-    hidden: { opacity: 0, y: 20 },
-    show: { 
-      opacity: 1, 
-      y: 0, 
-      transition: { 
-        duration: 0.8, 
-        ease: [0.16, 1, 0.3, 1] 
-      } 
-    }
-  };
-
   return (
     <div ref={pageRef} className="bg-background min-h-screen lg:h-screen lg:overflow-hidden pt-[var(--page-pt)] pb-[var(--page-pt)] lg:pb-[8vh] px-[var(--page-px)] w-full selection:bg-primary selection:text-primary-foreground flex flex-col">
-      <BalloonGame isActive={isPlayMode} onClose={() => setIsPlayMode(false)} />
-      
       {/* Status Bar - Refined alignment */}
       <motion.header 
-        initial={{ opacity: 0, y: -10 }}
-        animate={canAnimate ? { opacity: 1, y: 0 } : { opacity: 0, y: -10 }}
-        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={canAnimate ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
         className="w-full flex justify-between items-center gap-4 mb-[var(--header-mb)]"
       >
         <div className="flex justify-start items-center gap-6">
@@ -103,27 +89,18 @@ export default function Home() {
                 {isSoundEnabled ? "Mute" : "Unmute"}
               </TooltipContent>
             </Tooltip>
-
-            <div className="w-[1px] h-3 bg-border/20" />
-
-            <Tooltip>
-              <TooltipTrigger
-                onClick={() => setIsPlayMode(!isPlayMode)}
-                className={`flex items-center justify-center gap-2 cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-sm ${isPlayMode ? 'text-foreground' : 'text-foreground/40'}`}
-                aria-label={isPlayMode ? "Exit Play Mode" : "Enter Play Mode"}
-              >
-                <Gamepad2 size={16} />
-              </TooltipTrigger>
-              <TooltipContent side="bottom" sideOffset={8}>
-                {isPlayMode ? "Back to portfolio" : "Pop some balloons"}
-              </TooltipContent>
-            </Tooltip>
           </div>
         </div>
         <nav className="hidden lg:flex items-center gap-6 lg:gap-10">
-          <a href="#" className="text-foreground text-[14px] font-medium tracking-normal transition-colors">Work</a>
-          <a href="#" className="text-foreground/40 hover:text-foreground text-[14px] font-medium tracking-normal transition-colors">Playground</a>
-          <a href="#" className="text-foreground/40 hover:text-foreground text-[14px] font-medium tracking-normal transition-colors">About</a>
+          <TransitionLink href="/" label="Work" className="text-foreground text-[14px] font-medium tracking-normal transition-colors">
+            Work
+          </TransitionLink>
+          <TransitionLink href="/playground" label="Playground" className="text-foreground/40 hover:text-foreground text-[14px] font-medium tracking-normal transition-colors">
+            Playground
+          </TransitionLink>
+          <TransitionLink href="/about" label="About" className="text-foreground/40 hover:text-foreground text-[14px] font-medium tracking-normal transition-colors">
+            About
+          </TransitionLink>
         </nav>
 
         {/* Mobile Menu Toggle */}
@@ -174,9 +151,13 @@ export default function Home() {
               </div>
 
               <nav className="flex flex-col gap-8">
-                {['Work', 'Playground', 'About'].map((item, index) => (
+                {[
+                  { label: 'Work', href: '/' },
+                  { label: 'Playground', href: '/playground' },
+                  { label: 'About', href: '/about' }
+                ].map((item) => (
                   <motion.div
-                    key={item}
+                    key={item.label}
                     variants={{
                       hidden: { opacity: 0, y: 30 },
                       show: { 
@@ -196,13 +177,14 @@ export default function Home() {
                       }
                     }}
                   >
-                    <a 
-                      href="#" 
+                    <TransitionLink 
+                      href={item.href}
+                      label={item.label}
                       onClick={() => setIsMenuOpen(false)} 
-                      className={`text-4xl font-medium tracking-tight hover:opacity-60 transition-opacity block ${item === 'Work' ? 'text-foreground' : 'text-foreground/40'}`}
+                      className={`text-4xl font-medium tracking-tight hover:opacity-60 transition-opacity block ${item.label === 'Work' ? 'text-foreground' : 'text-foreground/40'}`}
                     >
-                      {item}
-                    </a>
+                      {item.label}
+                    </TransitionLink>
                   </motion.div>
                 ))}
               </nav>
@@ -223,7 +205,7 @@ export default function Home() {
         >
 
             {/* Profile, Heading & Tabs Section */}
-            <motion.section variants={item} className="self-stretch flex flex-col justify-start items-start gap-10">
+            <div className="self-stretch flex flex-col justify-start items-start gap-10">
               {/* Profile */}
               <MaskReveal delay={0.3} className="rounded-full">
                 <div className="flex flex-col items-start">
@@ -334,30 +316,41 @@ export default function Home() {
               <div className="lg:hidden w-full my-4">
                 <PreviewCard activeImage={activeImage} />
               </div>
-            </motion.section>
+            </div>
  
             {/* Case Studies Section - Significant vertical rhythm reduction */}
             <div className="self-stretch flex flex-col justify-start items-start gap-10">
               <section className="self-stretch flex flex-col justify-start items-start gap-8">
-                <div className="inline-flex justify-start items-center gap-3">
-                  <h2 className="justify-center text-muted-foreground text-sm font-medium font-sans leading-[0] tracking-tight">Case Studies</h2>
-                </div>
+                <MaskReveal delay={0.7}>
+                  <div className="inline-flex justify-start items-center gap-3">
+                    <h2 className="justify-center text-muted-foreground text-sm font-medium font-sans leading-[0] tracking-tight">Case Studies</h2>
+                  </div>
+                </MaskReveal>
                 <div className="flex flex-col justify-start items-start gap-4 w-full">
-                  {caseStudies.slice(0, 2).map((study) => (
-                    <div 
-                      key={study.slug} 
-                      className="w-full"
-                      onMouseEnter={() => setActiveImage(study.heroSrc)}
-                    >
-                      <ProjectItem
-                        title={study.logoText || study.title}
-                        subtitle={study.sections[0].heading}
-                        slug={study.slug}
-                        isLocked={study.isLocked}
-                        color={study.logoClassName?.includes('#') ? study.logoClassName.split('[')[1].split(']')[0] : "#333"}
-                        year="2025"
-                      />
-                    </div>
+                  {caseStudies.slice(0, 2).map((study, idx) => (
+                    <MaskReveal key={study.slug} delay={0.8 + idx * 0.1} className="w-full">
+                      <motion.div 
+                        className="w-full"
+                        onMouseEnter={() => {
+                          setActiveImage(study.heroSrc);
+                          setHoveredSlug(study.slug);
+                        }}
+                        onMouseLeave={() => setHoveredSlug(null)}
+                        animate={{
+                          opacity: hoveredSlug && hoveredSlug !== study.slug ? 0.6 : 1,
+                        }}
+                        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                      >
+                        <ProjectItem
+                          title={study.logoText || study.title}
+                          subtitle={study.sections[0].heading}
+                          slug={study.slug}
+                          isLocked={study.isLocked}
+                          color={study.logoClassName?.includes('#') ? study.logoClassName.split('[')[1].split(']')[0] : "#333"}
+                          year="2025"
+                        />
+                      </motion.div>
+                    </MaskReveal>
                   ))}
                 </div>
               </section>
@@ -371,10 +364,11 @@ export default function Home() {
       </div>
 
       {/* Fixed Preview - Pinned to bottom-right */}
-      <FixedPreview activeImage={activeImage} />
+      <FixedPreview activeImage={activeImage} isVisible={canAnimate} />
     </div>
   );
 }
+
 function ProjectItem({
   title,
   subtitle,
@@ -393,7 +387,10 @@ function ProjectItem({
   isLocked?: boolean;
 }) {
   const content = (
-    <div className="group flex items-center justify-between w-full p-4 -mx-4 rounded-xl hover:bg-foreground/[0.04] transition-all duration-200 cursor-pointer">
+    <div 
+      data-cursor={isLocked ? "confidential" : "case-study"}
+      className="group flex items-center justify-between w-full p-4 -mx-4 rounded-xl hover:bg-foreground/[0.04] transition-all duration-200 cursor-pointer"
+    >
       <div className="flex items-center gap-5">
         <div
           className="w-16 h-16 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:scale-[1.02] shadow-sm relative overflow-hidden"
@@ -413,7 +410,7 @@ function ProjectItem({
       </div>
       <ArrowRight 
         size={20} 
-        className="text-foreground/20 group-hover:text-foreground group-hover:translate-x-1 transition-all duration-200" 
+        className="text-foreground opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200" 
       />
     </div>
   );

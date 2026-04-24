@@ -8,7 +8,7 @@ export const gcbCaseStudy: CaseStudyContent = {
   description: "Designing a mobile banking experience that feels clear, fast, and trustworthy.",
   logoText: "GCB",
   logoClassName: "text-[#0f3d7a]",
-  heroSrc: "/gcb-card.webp",
+  heroSrc: "/gcb-card-v4.png",
   heroAlt: "GCB App dashboard view",
   meta: [
     { label: "Role", value: "Product Designer" },

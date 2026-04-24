@@ -122,7 +122,7 @@
 }
 
 html {
-  font-size: 14px; /* Reverted to 14px as requested */
+  font-size: 14px;
 }
 
 .dark {
@@ -166,7 +166,6 @@ html {
 [data-theme="neutral"] { --hue: 0; }
 
 [data-theme]:not([data-theme="neutral"]) {
-  /* LIGHT MODE VIBRANT */
   --background: oklch(0.98 0.02 var(--hue));
   --glass-bg: oklch(0.99 0.01 var(--hue));
   --foreground: oklch(0.20 0.06 var(--hue));
@@ -196,7 +195,6 @@ html {
   --sidebar-ring: oklch(0.60 0.25 var(--hue));
 }
 
-/* Red Theme - Refined Editorial Aesthetic */
 html[data-theme="red"]:not(.dark) {
   --background: oklch(0.88 0.08 25);
   --foreground: oklch(0.28 0.05 25);
@@ -216,7 +214,6 @@ html[data-theme="red"]:not(.dark) {
   --popover-foreground: oklch(0.28 0.05 25);
 }
 
-/* Blue Theme - Refined Minimal Aesthetic */
 html[data-theme="blue"]:not(.dark) {
   --background: oklch(0.95 0.03 200);
   --foreground: oklch(0.25 0.04 200);
@@ -236,10 +233,8 @@ html[data-theme="blue"]:not(.dark) {
   --popover-foreground: oklch(0.25 0.04 200);
 }
 
-
 .dark[data-theme]:not([data-theme="neutral"]),
 [data-theme]:not([data-theme="neutral"]).dark {
-  /* DARK MODE VIBRANT - General for other themes */
   --background: oklch(0.18 0.05 var(--hue));
   --glass-bg: oklch(0.12 0.08 var(--hue));
   --foreground: oklch(0.95 0.03 var(--hue));
@@ -269,7 +264,6 @@ html[data-theme="blue"]:not(.dark) {
   --sidebar-ring: oklch(0.60 0.25 var(--hue));
 }
 
-/* Green Dark Theme - High-Contrast Neon Aesthetic */
 html[data-theme="green"].dark {
   --background: oklch(0.08 0.03 150);
   --foreground: oklch(0.86 0.22 105);
@@ -299,12 +293,8 @@ body {
   background-color: var(--background);
 }
 
-
 @media (pointer: fine) {
-
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     cursor: none !important;
   }
 }
@@ -314,18 +304,14 @@ body {
     @apply bg-background text-foreground;
     transition: none !important;
   }
-
-  /* Ensure all components inherit the no-transition state for themes */
   *, *::before, *::after {
     border-color: var(--border);
   }
-
   html {
     @apply font-sans;
   }
 }
 
-/* Premium View Transitions - Disabled for instant switching */
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none !important;
@@ -344,16 +330,12 @@ body {
   }
 }
 
-html,
-body,
-#smooth-wrapper {
+html, body, #smooth-wrapper {
   scrollbar-width: none !important;
   -ms-overflow-style: none !important;
 }
 
-html::-webkit-scrollbar,
-body::-webkit-scrollbar,
-#smooth-wrapper::-webkit-scrollbar {
+html::-webkit-scrollbar, body::-webkit-scrollbar, #smooth-wrapper::-webkit-scrollbar {
   display: none !important;
 }
 
@@ -364,4 +346,34 @@ body::-webkit-scrollbar,
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+@keyframes shimmer {
+  0% { background-position: -150% 0; }
+  100% { background-position: 150% 0; }
+}
+
+@utility shimmer-text {
+  background: linear-gradient(
+    90deg,
+    var(--foreground) 0%,
+    var(--foreground) 40%,
+    var(--shimmer-color, oklch(0.4 0 0)) 50%,
+    var(--foreground) 60%,
+    var(--foreground) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  display: inline-block;
+  color: transparent !important;
+  animation: shimmer 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+:root {
+  --shimmer-color: oklch(1 0 0);
+}
+
+.dark {
+  --shimmer-color: oklch(0.2 0 0);
 }

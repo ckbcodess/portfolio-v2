@@ -2,7 +2,7 @@ import CaseStudyPage from "@/components/CaseStudyPage";
 import { theAllexCaseStudy } from "@/content/case-studies/the-allex";
 
 export const metadata = {
-  title: theAllexCaseStudy.metadataTitle,
+  title: "Ransford Gyasi",
 };
 
 export default function TheAllexCaseStudyPage() {

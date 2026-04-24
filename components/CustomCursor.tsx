@@ -6,7 +6,7 @@ import { useGSAP } from "@gsap/react";
 
 export default function CustomCursor() {
     const cursorRef = useRef<HTMLDivElement>(null);
-    const [cursorType, setCursorType] = useState<"default" | "copy" | "copied" | "pointer">("default");
+    const [cursorType, setCursorType] = useState<"default" | "copy" | "copied" | "pointer" | "case-study" | "confidential">("default");
     const isMobile = useRef(false);
 
     const resetTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -107,19 +107,21 @@ export default function CustomCursor() {
         if (!cursorRef.current) return;
 
         if (cursorType === "copy") {
-            gsap.set(cursorRef.current, { mixBlendMode: "normal" });
             gsap.to(cursorRef.current, {
+                mixBlendMode: "normal",
                 width: 100,
                 height: 40,
                 borderRadius: "20px",
-                backgroundColor: "var(--foreground)",
+                backgroundColor: "#ffffff",
+                color: "#000000",
                 duration: 0.4,
                 ease: "elastic.out(1, 0.82)"
             });
         } else if (cursorType === "copied") {
-            gsap.set(cursorRef.current, { mixBlendMode: "normal" });
             gsap.to(cursorRef.current, {
+                mixBlendMode: "normal",
                 backgroundColor: "#22c55e",
+                color: "#ffffff",
                 duration: 0.2,
             });
             gsap.to(cursorRef.current, {
@@ -128,6 +130,17 @@ export default function CustomCursor() {
                 yoyo: true,
                 repeat: 1
             });
+        } else if (cursorType === "case-study" || cursorType === "confidential") {
+            gsap.to(cursorRef.current, {
+                mixBlendMode: "normal",
+                width: cursorType === "case-study" ? 160 : 120,
+                height: 40,
+                borderRadius: "20px",
+                backgroundColor: "#ffffff",
+                color: "#000000",
+                duration: 0.4,
+                ease: "elastic.out(1, 0.82)"
+            });
         } else if (cursorType === "pointer") {
             gsap.to(cursorRef.current, {
                 width: 8,
@@ -135,6 +148,7 @@ export default function CustomCursor() {
                 borderRadius: "100%",
                 backgroundColor: "white",
                 mixBlendMode: "difference",
+                color: "#ffffff",
                 duration: 0.3,
                 ease: "power2.out"
             });
@@ -145,6 +159,7 @@ export default function CustomCursor() {
                 borderRadius: "100%",
                 backgroundColor: "white",
                 mixBlendMode: "difference",
+                color: "#ffffff",
                 duration: 0.4,
                 ease: "power3.out"
             });
@@ -154,14 +169,20 @@ export default function CustomCursor() {
     return (
         <div
             ref={cursorRef}
-            className="hidden lg:flex fixed top-0 left-0 items-center justify-center pointer-events-none z-[9999] overflow-hidden whitespace-nowrap text-[10px] uppercase tracking-wider font-bold text-background opacity-0"
+            className="hidden lg:flex fixed top-0 left-0 items-center justify-center pointer-events-none z-[9999] overflow-hidden whitespace-nowrap tracking-tight font-medium opacity-0"
             style={{ willChange: "transform, width, height, border-radius, background-color" }}
         >
-            <span className={`transition-opacity duration-300 ${cursorType === "copy" ? "opacity-100" : "opacity-0 invisible"}`}>
+            <span className={`transition-opacity duration-300 uppercase text-[10px] font-bold tracking-wider ${cursorType === "copy" ? "opacity-100" : "opacity-0 invisible"}`}>
                 Copy Email
             </span>
-            <span className={`absolute transition-opacity duration-300 ${cursorType === "copied" ? "opacity-100" : "opacity-0 invisible"}`}>
+            <span className={`absolute transition-opacity duration-300 uppercase text-[10px] font-bold tracking-wider ${cursorType === "copied" ? "opacity-100" : "opacity-0 invisible"}`}>
                 Copied!
+            </span>
+            <span className={`absolute transition-opacity duration-300 text-[14px] ${cursorType === "case-study" ? "opacity-100" : "opacity-0 invisible"}`}>
+                View Case Study
+            </span>
+            <span className={`absolute transition-opacity duration-300 text-[14px] ${cursorType === "confidential" ? "opacity-100" : "opacity-0 invisible"}`}>
+                Confidential
             </span>
             <div className={`transition-opacity duration-300 ${cursorType === "pointer" ? "opacity-100" : "opacity-0 invisible"}`}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-white mix-blend-difference">
