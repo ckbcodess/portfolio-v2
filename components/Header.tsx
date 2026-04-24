@@ -2,7 +2,6 @@
 
 import TransitionLink from "./TransitionLink";
 import { useEffect, useState } from "react";
-import MusicWidget from "./MusicWidget";
 import ThemeControls from "./ThemeControls";
 
 interface HeaderProps {
@@ -35,15 +34,12 @@ export default function Header({ variant = "default", title, backLink = "/" }: H
     return (
         <header className="fixed top-0 left-0 w-full z-50 flex justify-center mix-blend-normal pointer-events-none">
             <div
-                className={`w-full px-6 relative flex items-center h-[36px] pointer-events-none transition-all duration-700 ease-out ${variant === "case-study" && scrolled ? "mt-6" : "mt-6 md:mt-10"
+                className={`w-full px-6 relative flex items-center h-[36px] pointer-events-none transition-all duration-400 ease-out ${variant === "case-study" && scrolled ? "mt-6" : "mt-6 md:mt-10"
                     } justify-between`}
             >
                 {variant === "default" ? (
                     <>
-                        <div className="flex items-center pointer-events-auto">
-                            <MusicWidget />
-                        </div>
-                        
+
                         <div className="flex items-center gap-4 pointer-events-auto">
                             <ThemeControls />
                             <div className="flex items-center gap-1.5 text-muted-foreground text-[0.7rem] font-medium tracking-wide">
@@ -64,7 +60,7 @@ export default function Header({ variant = "default", title, backLink = "/" }: H
                             <span className="text-[1rem] font-light">Back</span>
                         </TransitionLink>
                         <div className="w-1 h-1 rounded-full bg-[#a3a3a3]" />
-                        <span className="text-white font-light text-[1rem]">{title}</span>
+                        <span className="text-white font-light text-[1rem]">Ransford Gyasi</span>
                     </div>
                 )}
             </div>

@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: WorkCaseStudyPageProps): Prom
   }
 
   return {
-    title: caseStudy.metadataTitle ?? `${caseStudy.title} - Ransford Gyasi`,
+    title: "Ransford Gyasi",
     description: caseStudy.description,
   };
 }

@@ -11,10 +11,12 @@ const LoadingScreen = dynamic(() => import("./LoadingScreen"), { ssr: false });
 
 interface TransitionContextType {
     navigate: (href: string, label: string, color?: string) => void;
+    isTransitioning: boolean;
 }
 
 const TransitionContext = createContext<TransitionContextType>({
     navigate: () => { },
+    isTransitioning: false,
 });
 
 export const useTransition = () => useContext(TransitionContext);
@@ -31,7 +33,7 @@ export default function TransitionProvider({ children }: { children: ReactNode }
         if (pathname === href) return;
         setIsTransitioning(true);
 
-        gsap.to(contentRef.current, {
+        gsap.to([contentRef.current, ".fixed-preview-portal"], {
             opacity: 0,
             duration: 0.3,
             ease: "power2.out",
@@ -44,7 +46,7 @@ export default function TransitionProvider({ children }: { children: ReactNode }
     // When the pathname changes, handle the entrance animation
     useEffect(() => {
         // We always animate in on mount/pathname change for a smooth experience
-        gsap.fromTo(contentRef.current, {
+        gsap.fromTo([contentRef.current, ".fixed-preview-portal"], {
             opacity: 0
         }, {
             opacity: 1,
@@ -57,7 +59,7 @@ export default function TransitionProvider({ children }: { children: ReactNode }
     }, [pathname]);
 
     return (
-        <TransitionContext.Provider value={{ navigate }}>
+        <TransitionContext.Provider value={{ navigate, isTransitioning }}>
             {/* 
                 These IDs are required by ScrollSmoother in components/SmoothScroll.tsx. 
                 Do not rename or remove them without updating that file.

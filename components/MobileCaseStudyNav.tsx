@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { motion, useReducedMotion } from "motion/react";
 import { Button } from "@/components/ui/button";
 
@@ -15,11 +16,13 @@ export default function MobileCaseStudyNav({ links }: { links: SectionLink[] }) 
   const [isVisible, setIsVisible] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const visibleSections = useRef(new Map<string, number>());
   const navRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
+    setMounted(true);
     const handleScroll = () => {
       if (window.scrollY > 80) {
         setIsVisible(true);
@@ -130,10 +133,12 @@ export default function MobileCaseStudyNav({ links }: { links: SectionLink[] }) 
     ? { duration: 0.01 }
     : { duration: 0.34, ease: [0.25, 1, 0.5, 1] as const };
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <div
       ref={navRef}
-      className={`fixed bottom-8 left-1/2 z-[80] flex -translate-x-1/2 items-end md:hidden transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] ${
+      className={`fixed bottom-8 left-1/2 z-[80] flex -translate-x-1/2 items-end md:hidden transition-all duration-400 ease-[cubic-bezier(0.23,1,0.32,1)] fixed-preview-portal ${
         isVisible ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none translate-y-12 opacity-0"
       }`}
     >
@@ -229,6 +234,7 @@ export default function MobileCaseStudyNav({ links }: { links: SectionLink[] }) 
           </div>
         </motion.div>
       </motion.div>
-    </div>
+    </div>,
+    document.body
   );
 }

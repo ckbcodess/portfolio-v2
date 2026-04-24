@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { motion, AnimatePresence } from "motion/react";
 
 interface SectionLink {
   id: string;
@@ -11,9 +13,11 @@ interface SectionLink {
 export default function CaseStudySidebar({ links }: { links: SectionLink[] }) {
   const [activeId, setActiveId] = useState<string>("");
   const [isVisible, setIsVisible] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const visibleSections = useRef(new Map<string, number>());
 
   useEffect(() => {
+    setMounted(true);
     const handleScroll = () => {
       if (window.scrollY > 80) {
         setIsVisible(true);
@@ -86,34 +90,95 @@ export default function CaseStudySidebar({ links }: { links: SectionLink[] }) {
     window.history.replaceState(null, "", `#${id}`);
   };
 
-  return (
-    <aside
-      className={`fixed left-[40px] top-[120px] z-10 hidden w-48 shrink-0 flex-col gap-10 transition-all duration-700 ease-out md:flex ${
-        isVisible ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0"
-      }`}
-    >
-      <nav className="flex flex-col gap-4">
-        {links.map((link) => {
-          const idsToCheck = link.targetIds || [link.id];
-          const isActive = idsToCheck.includes(activeId);
+  if (!mounted) return null;
 
-          return (
-            <a
-              key={link.id}
-              href={`#${link.id}`}
-              onClick={(event) => {
-                event.preventDefault();
-                scrollToSection(link.id);
-              }}
-              className={`text-[17px] transition-all duration-200 ${
-                isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {link.label}
-            </a>
-          );
-        })}
-      </nav>
-    </aside>
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.04,
+        staggerDirection: 1,
+      },
+    },
+    exit: {
+      opacity: 0,
+      transition: {
+        staggerChildren: 0.03,
+        staggerDirection: -1,
+        when: "afterChildren",
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { 
+      opacity: 0, 
+      x: -24, 
+      filter: "blur(4px)" 
+    },
+    visible: { 
+      opacity: 1, 
+      x: 0, 
+      filter: "blur(0px)",
+      transition: {
+        type: "spring",
+        stiffness: 240,
+        damping: 22,
+        mass: 0.8
+      }
+    },
+    exit: { 
+      opacity: 0, 
+      x: -24, 
+      filter: "blur(4px)",
+      transition: {
+        duration: 0.2
+      }
+    },
+  };
+
+  return createPortal(
+    <aside
+      className={`fixed left-[40px] top-[120px] z-[60] hidden w-48 shrink-0 flex-col gap-10 md:flex fixed-preview-portal`}
+    >
+      <AnimatePresence mode="wait">
+        {isVisible && (
+          <motion.nav
+            key="sidebar-nav"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="flex flex-col gap-[12px]"
+          >
+            {links.map((link) => {
+              const idsToCheck = link.targetIds || [link.id];
+              const isActive = idsToCheck.includes(activeId);
+
+              return (
+                <motion.a
+                  key={link.id}
+                  href={`#${link.id}`}
+                  variants={itemVariants}
+                  whileHover={{ x: 4, transition: { type: "spring", stiffness: 400, damping: 20 } }}
+                  onClick={(event) => {
+                    event.preventDefault();
+                    scrollToSection(link.id);
+                  }}
+                  className={`text-[14px] font-normal transition-colors duration-200 block ${
+                    isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {link.label}
+                </motion.a>
+              );
+            })}
+          </motion.nav>
+        )}
+      </AnimatePresence>
+    </aside>,
+    document.body
   );
 }
+
