@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, Variants } from "motion/react";
 
 interface SectionLink {
   id: string;
@@ -92,7 +92,7 @@ export default function CaseStudySidebar({ links }: { links: SectionLink[] }) {
 
   if (!mounted) return null;
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -111,7 +111,7 @@ export default function CaseStudySidebar({ links }: { links: SectionLink[] }) {
     },
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { 
       opacity: 0, 
       x: -24, 
@@ -122,7 +122,7 @@ export default function CaseStudySidebar({ links }: { links: SectionLink[] }) {
       x: 0, 
       filter: "blur(0px)",
       transition: {
-        type: "spring",
+        type: "spring" as const,
         stiffness: 240,
         damping: 22,
         mass: 0.8
@@ -161,7 +161,7 @@ export default function CaseStudySidebar({ links }: { links: SectionLink[] }) {
                   key={link.id}
                   href={`#${link.id}`}
                   variants={itemVariants}
-                  whileHover={{ x: 4, transition: { type: "spring", stiffness: 400, damping: 20 } }}
+                  whileHover={{ x: 4, transition: { type: "spring" as const, stiffness: 400, damping: 20 } }}
                   onClick={(event) => {
                     event.preventDefault();
                     scrollToSection(link.id);
