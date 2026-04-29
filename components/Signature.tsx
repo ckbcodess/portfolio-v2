@@ -27,11 +27,11 @@ export function Signature({ className }: { className?: string }) {
         opacity: { 
           delay: custom, 
           duration: 0.2, 
-          ease: "linear" 
+          ease: [0, 0, 1, 1] as const
         }
       },
     }),
-  };
+  } satisfies import("motion/react").Variants;
 
   return (
     <motion.div 
