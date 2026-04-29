@@ -13,10 +13,9 @@ interface FixedPreviewProps {
 
 export default function FixedPreview({ activeImage, isVisible = true }: FixedPreviewProps) {
   const [mounted, setMounted] = useState(false);
-  const { isTransitioning } = useTransition();
 
   useEffect(() => {
-    setMounted(true);
+    setTimeout(() => setMounted(true), 0);
   }, []);
 
   if (!mounted) return null;

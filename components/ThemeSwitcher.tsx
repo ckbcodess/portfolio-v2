@@ -99,7 +99,7 @@ export default function ThemeSwitcher() {
   };
 
   useEffect(() => {
-    setMounted(true);
+    setTimeout(() => setMounted(true), 0);
   }, []);
 
   useEffect(() => {
@@ -110,7 +110,7 @@ export default function ThemeSwitcher() {
         setIsInteractable(true);
       }, 500);
     } else {
-      setIsInteractable(false);
+      setTimeout(() => setIsInteractable(false), 0);
     }
 
     return () => clearTimeout(timeoutId);
@@ -137,12 +137,12 @@ export default function ThemeSwitcher() {
   }
 
   return (
-    <div className="pointer-events-none fixed bottom-6 right-6 z-[80]">
-      <div ref={trayRef} className="relative z-10 flex flex-col items-end pointer-events-auto">
+    <div className="pointer-events-none fixed bottom-6 left-6 z-[80]">
+      <div ref={trayRef} className="relative z-10 flex flex-col items-start pointer-events-auto">
         <div
           role="dialog"
           aria-label="Theme settings"
-          className={`absolute bottom-full right-0 mb-3 flex flex-col items-center w-[200px] rounded-2xl relative overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-white/10 dark:border-white/5 p-3 origin-bottom-right transition-all duration-[400ms] ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[transform,opacity] backdrop-blur-md backdrop-saturate-150 ${
+          className={`absolute bottom-full left-0 mb-3 flex flex-col items-center w-[200px] rounded-2xl relative overflow-hidden shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-white/10 dark:border-white/5 p-3 origin-bottom-left transition-all duration-[400ms] ease-[cubic-bezier(0.16,1,0.3,1)] will-change-[transform,opacity] backdrop-blur-md backdrop-saturate-150 ${
             isThemeTrayOpen
               ? "scale-100 opacity-100"
               : "scale-50 opacity-0 pointer-events-none"

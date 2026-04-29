@@ -2,10 +2,8 @@
 
 import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
-import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import Header from "@/components/Header";
 import { SpecialText } from "@/components/special-text";
 
 
@@ -15,8 +13,9 @@ export default function AboutPage() {
   const [canAnimate, setCanAnimate] = useState(false);
 
   useEffect(() => {
-    if ((globalThis as any).appLoaded) {
-      setCanAnimate(true);
+    // @ts-expect-error global appLoaded flag
+    if (globalThis.appLoaded) {
+      setTimeout(() => setCanAnimate(true), 0);
     } else {
       const handler = () => setCanAnimate(true);
       window.addEventListener("apps-loaded", handler);
@@ -32,21 +31,19 @@ export default function AboutPage() {
       {
         y: 0,
         autoAlpha: 1,
-        duration: 1.2,
-        stagger: 0.1,
+        duration: 0.6,
+        stagger: 0.05,
         ease: "power4.out",
-        delay: 0.1,
+        delay: 0.05,
       }
     );
   }, { scope: pageRef, dependencies: [canAnimate] });
 
   return (
     <div ref={pageRef} className="min-h-screen bg-background selection:bg-foreground selection:text-background">
-      <Header />
-      
       <div id="smooth-wrapper">
         <div id="smooth-content">
-          <main className="pt-24 md:pt-32 pb-40 px-6 max-w-[960px] mx-auto">
+          <main className="pt-32 md:pt-44 pb-40 px-[var(--page-px)] max-w-[960px]">
             <div className="flex flex-col gap-10 md:gap-12">
               {/* Profile Header */}
               <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-start">
@@ -66,7 +63,7 @@ export default function AboutPage() {
                 <div className="flex flex-col gap-4 md:gap-6">
                   <div className="about-reveal invisible">
                     <SpecialText className="text-blue-500 mb-2 font-mono font-medium">About me</SpecialText>
-                    <h1 className="text-3xl md:text-6xl font-semibold tracking-tight text-foreground">
+                    <h1 className="text-3xl md:text-6xl font-normal tracking-tight text-foreground">
                       I build digital products that feel right.
                     </h1>
                   </div>
@@ -84,7 +81,7 @@ export default function AboutPage() {
 
               <div className="mt-12 md:mt-20">
                 <div className="about-reveal invisible flex justify-between items-center mb-8 md:mb-10 border-b border-border pb-4">
-                  <h2 className="text-foreground font-medium text-lg">Experience</h2>
+                  <h2 className="text-foreground font-normal text-lg">Experience</h2>
                   <span className="text-muted-foreground text-sm">2018 — Present</span>
                 </div>
                 
@@ -99,7 +96,7 @@ export default function AboutPage() {
                         <span className="text-sm text-muted-foreground font-mono">{exp.period}</span>
                       </div>
                       <div className="flex flex-col gap-2">
-                        <h3 className="text-xl font-medium text-foreground">{exp.role} — {exp.company}</h3>
+                        <h3 className="text-xl font-normal text-foreground">{exp.role} — {exp.company}</h3>
                         <p className="text-muted-foreground max-w-xl">{exp.description}</p>
                       </div>
                     </div>
@@ -110,7 +107,7 @@ export default function AboutPage() {
               {/* Skills/Stack */}
               <div className="mt-12 md:mt-20">
                 <div className="about-reveal invisible flex justify-between items-center mb-8 md:mb-10 border-b border-border pb-4">
-                  <h2 className="text-foreground font-medium text-lg">Toolkit</h2>
+                  <h2 className="text-foreground font-normal text-lg">Toolkit</h2>
                 </div>
                 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-10">

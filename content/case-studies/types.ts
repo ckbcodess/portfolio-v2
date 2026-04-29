@@ -10,6 +10,7 @@ export interface CaseStudySection {
   body: string[];
   bullets?: string[];
   labelClassName?: string;
+  imageSrc?: string;
 }
 
 export interface CaseStudyNextProject {

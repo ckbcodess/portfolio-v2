@@ -54,6 +54,8 @@
 }
 
 :root {
+  interpolate-size: allow-keywords;
+  
   /* --- Fluid Spacing Scale (Recalibrated for 14px base) --- */
   --space-3xs: clamp(0.28rem, 0.22vw + 0.22rem, 0.42rem);
   --space-2xs: clamp(0.57rem, 0.44vw + 0.45rem, 0.85rem);
@@ -78,7 +80,7 @@
   --text-4xl: clamp(2.8rem, 2.5vw + 2rem, 4.5rem);
 
   /* --- Layout Tokens (Compact for One-Pager) --- */
-  --page-px: clamp(1.14rem, 5vw, 11.42rem); /* 16px mobile base */
+  --page-px: clamp(1.5rem, 14vw, 200px); /* 200px max, reached at viewports > 1430px */
   --page-pt: clamp(1.5rem, 5vh, 4rem); 
   --header-mb: clamp(2rem, 7.5vh, 6rem);
   --section-gap: clamp(3rem, 11vh, 10rem);

@@ -12,7 +12,7 @@ export default function ThemeControls() {
   const { themeColor, setThemeColor } = useThemeColor();
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => { setTimeout(() => setMounted(true), 0) }, []);
 
   if (!mounted) return null;
 

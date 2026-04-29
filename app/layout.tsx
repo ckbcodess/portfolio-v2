@@ -6,7 +6,6 @@ import { ThemeColorProvider } from "@/components/theme-color-provider";
 import TransitionProvider from "@/components/TransitionProvider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SoundProvider } from "@/components/SoundProvider";
-import { cn } from "@/lib/utils";
 import ClickFeedback from "@/components/ClickFeedback";
 
 

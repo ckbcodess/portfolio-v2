@@ -22,7 +22,7 @@ export default function MobileCaseStudyNav({ links }: { links: SectionLink[] }) 
   const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
-    setMounted(true);
+    setTimeout(() => setMounted(true), 0);
     const handleScroll = () => {
       if (window.scrollY > 80) {
         setIsVisible(true);
@@ -154,7 +154,7 @@ export default function MobileCaseStudyNav({ links }: { links: SectionLink[] }) 
           className="flex w-full items-center justify-between gap-3 px-4 py-3"
         >
           <div className="flex min-w-0 items-center gap-3">
-            <span className="truncate text-[1rem] font-medium leading-tight text-muted-foreground">{activeLink?.label}</span>
+            <span className="truncate text-[1rem] font-normal leading-tight text-muted-foreground">{activeLink?.label}</span>
             <motion.svg
               animate={{ rotate: isOpen ? 180 : 0 }}
               transition={shellTransition}
@@ -223,7 +223,7 @@ export default function MobileCaseStudyNav({ links }: { links: SectionLink[] }) 
                   onClick={() => scrollToSection(link.id)}
                   className={`w-full justify-start rounded-xl px-3 py-5 text-left text-[0.92rem] transition-colors font-normal hover:bg-foreground/8 ${
                     isActive
-                      ? "bg-foreground/10 text-foreground font-medium"
+                      ? "bg-foreground/10 text-foreground"
                       : "text-muted-foreground hover:text-foreground hover:bg-foreground/5"
                   }`}
                 >

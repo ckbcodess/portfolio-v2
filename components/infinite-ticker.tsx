@@ -7,7 +7,6 @@ import {
   useMotionValue, 
   useTransform, 
   useSpring,
-  useVelocity,
   PanInfo,
   useInView
 } from "motion/react";
@@ -119,7 +118,7 @@ export function InfiniteTicker({
     isDragging.current = true;
   };
 
-  const handleDragEnd = (_: any, info: PanInfo) => {
+  const handleDragEnd = (_e: unknown, info: PanInfo) => {
     isDragging.current = false;
     
     // "Flick" logic: add a momentary boost based on swipe velocity
@@ -134,7 +133,7 @@ export function InfiniteTicker({
     }
   };
 
-  const handleDrag = (_: any, info: PanInfo) => {
+  const handleDrag = (_e: unknown, info: PanInfo) => {
     baseX.set(baseX.get() + info.delta.x);
   };
 

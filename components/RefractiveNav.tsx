@@ -1,6 +1,6 @@
 "use client";
 
-import { refractive, convex, concave } from "@hashintel/refractive";
+import { refractive, convex } from "@hashintel/refractive";
 
 export default function RefractiveNav({ children }: { children: React.ReactNode }) {
   return (

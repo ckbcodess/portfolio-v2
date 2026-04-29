@@ -32,7 +32,7 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const saved = localStorage.getItem("sound-enabled");
     const initialValue = saved !== null ? saved === "true" : true;
-    setIsSoundEnabledState(initialValue);
+    setTimeout(() => setIsSoundEnabledState(initialValue), 0);
     isSoundEnabledRef.current = initialValue;
   }, []);
 

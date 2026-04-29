@@ -5,30 +5,26 @@ import TransitionLink from "@/components/TransitionLink";
 import TabsSection from "@/components/TabsSection";
 import { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence, Variants } from "motion/react";
-import { useSound } from "@/components/SoundProvider";
-import ThemeControls from "@/components/ThemeControls";
 import FixedPreview from "@/components/FixedPreview";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
-import { Menu, X, ArrowRight, Lock, Volume2, VolumeX } from "lucide-react";
+import { ArrowRight, Lock } from "lucide-react";
 import PreviewCard from "@/components/PreviewCard";
-import Clock from "@/components/Clock";
 import { caseStudies } from "@/content/case-studies";
 import { MaskReveal } from "@/components/MaskReveal";
 
 export default function Home() {
-  const { isSoundEnabled, toggleSound } = useSound();
   const pageRef = useRef<HTMLDivElement>(null);
   const [activeImage, setActiveImage] = useState<string>(caseStudies[0].heroSrc);
   const [surprises, setSurprises] = useState<number[]>([]);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [canAnimate, setCanAnimate] = useState(false);
   const [hoveredSlug, setHoveredSlug] = useState<string | null>(null);
 
 
   useEffect(() => {
     // Coordinate with LoadingScreen
-    if ((globalThis as any).appLoaded) {
-      setCanAnimate(true);
+    // @ts-expect-error global appLoaded flag
+    if (globalThis.appLoaded) {
+      setTimeout(() => setCanAnimate(true), 0);
     } else {
       const handler = () => setCanAnimate(true);
       window.addEventListener("apps-loaded", handler);
@@ -47,165 +43,31 @@ export default function Home() {
       scale: 1,
       filter: "blur(0px)",
       transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
-        duration: 0.8,
+        staggerChildren: 0.05,
+        delayChildren: 0.1,
+        duration: 0.4,
         ease: [0.16, 1, 0.3, 1]
       }
     }
   };
 
-  return (
-    <div ref={pageRef} className="bg-background min-h-screen lg:h-screen lg:overflow-hidden pt-[var(--page-pt)] pb-[var(--page-pt)] lg:pb-[8vh] px-[var(--page-px)] w-full selection:bg-primary selection:text-primary-foreground flex flex-col">
-      {/* Status Bar - Refined alignment */}
-      <motion.header 
-        initial={{ opacity: 0, y: 20 }}
-        animate={canAnimate ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-        className="w-full flex justify-between items-center gap-4 mb-[var(--header-mb)]"
-      >
-        <div className="flex justify-start items-center gap-6">
-          <div className="flex justify-start items-center">
-            <span className="text-foreground/40 text-[12px] font-medium font-sans uppercase tracking-[0.08em]">
-              <Clock />
-            </span>
-          </div>
-          <div className="w-[1px] h-3 bg-border/20" />
-          <ThemeControls />
-          <div className="w-[1px] h-3 bg-border/20" />
-          
-          <div className="flex items-center gap-4">
-            <Tooltip>
-              <TooltipTrigger
-                onClick={toggleSound}
-                className="text-foreground/40 hover:text-foreground flex items-center justify-center gap-2 cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-sm"
-                aria-label={isSoundEnabled ? "Disable sound" : "Enable sound"}
-              >
-                {isSoundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
-              </TooltipTrigger>
-              <TooltipContent side="bottom" sideOffset={8}>
-                {isSoundEnabled ? "Mute" : "Unmute"}
-              </TooltipContent>
-            </Tooltip>
-          </div>
-        </div>
-        <nav className="hidden lg:flex items-center gap-6 lg:gap-10">
-          <TransitionLink href="/" label="Work" className="text-foreground text-[14px] font-medium tracking-normal transition-colors">
-            Work
-          </TransitionLink>
-          <TransitionLink href="/playground" label="Playground" className="text-foreground/40 hover:text-foreground text-[14px] font-medium tracking-normal transition-colors">
-            Playground
-          </TransitionLink>
-          <TransitionLink href="/about" label="About" className="text-foreground/40 hover:text-foreground text-[14px] font-medium tracking-normal transition-colors">
-            About
-          </TransitionLink>
-        </nav>
-
-        {/* Mobile Menu Toggle */}
-        <div className="lg:hidden">
-          <button 
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="p-2 -mr-2 text-foreground/60 hover:text-foreground transition-colors"
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-
-        {/* Mobile Menu Overlay */}
-        <AnimatePresence>
-          {isMenuOpen && (
-            <motion.div
-              initial="hidden"
-              animate="show"
-              exit="exit"
-              variants={{
-                hidden: { opacity: 0 },
-                show: { 
-                  opacity: 1,
-                  transition: {
-                    staggerChildren: 0.1,
-                    delayChildren: 0.1
-                  }
-                },
-                exit: { 
-                  opacity: 0,
-                  transition: {
-                    staggerChildren: 0.05,
-                    staggerDirection: -1
-                  }
-                }
-              }}
-              className="fixed inset-0 z-[1000] bg-background flex flex-col pt-[var(--page-pt)] px-[var(--page-px)]"
-            >
-              {/* Overlay Top Bar */}
-              <div className="flex justify-end items-center w-full mb-12">
-                 <button 
-                   onClick={() => setIsMenuOpen(false)}
-                   className="p-2 -mr-2 text-foreground/60 hover:text-foreground transition-colors flex items-center gap-2"
-                   aria-label="Close menu"
-                 >
-                   <X size={28} />
-                 </button>
-              </div>
-
-              <nav className="flex flex-col gap-8">
-                {[
-                  { label: 'Work', href: '/' },
-                  { label: 'Playground', href: '/playground' },
-                  { label: 'About', href: '/about' }
-                ].map((item) => (
-                  <motion.div
-                    key={item.label}
-                    variants={{
-                      hidden: { opacity: 0, y: 30 },
-                      show: { 
-                        opacity: 1, 
-                        y: 0, 
-                        transition: {
-                          duration: 0.6,
-                          ease: [0.16, 1, 0.3, 1]
-                        }
-                      },
-                      exit: { 
-                        opacity: 0, 
-                        y: 20, 
-                        transition: {
-                          duration: 0.2
-                        }
-                      }
-                    }}
-                  >
-                    <TransitionLink 
-                      href={item.href}
-                      label={item.label}
-                      onClick={() => setIsMenuOpen(false)} 
-                      className={`text-4xl font-medium tracking-tight hover:opacity-60 transition-opacity block ${item.label === 'Work' ? 'text-foreground' : 'text-foreground/40'}`}
-                    >
-                      {item.label}
-                    </TransitionLink>
-                  </motion.div>
-                ))}
-              </nav>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.header>
-
+   return (
+    <div ref={pageRef} className="bg-background min-h-screen lg:h-screen lg:overflow-hidden pt-32 md:pt-44 pb-[var(--page-pt)] lg:pb-[8vh] w-full selection:bg-primary selection:text-primary-foreground flex flex-col">
       {/* Main Layout - 2-Column Split to keep content on the left */}
-      <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-10 relative items-start">
+      <div className="w-full flex flex-col relative items-start px-[var(--page-px)]">
         
         {/* Left Column (Content) */}
         <motion.main 
           variants={container}
           initial="hidden"
           animate={canAnimate ? "show" : "hidden"}
-          className="flex flex-col w-full max-w-[38.5rem] lg:h-[calc(100vh-var(--page-pt)-8vh-var(--header-mb))] lg:justify-between items-start origin-top"
+          className="flex flex-col w-full max-w-[38.5rem] lg:h-[calc(100vh-var(--page-pt)-8vh-var(--header-mb))] lg:justify-between items-start origin-top-left transition-[height] duration-500 ease-[cubic-bezier(0.175,0.885,0.32,1.15)]"
         >
 
             {/* Profile, Heading & Tabs Section */}
             <div className="self-stretch flex flex-col justify-start items-start gap-10">
               {/* Profile */}
-              <MaskReveal delay={0.3} className="rounded-full">
+              <MaskReveal delay={0.1} className="rounded-full">
                 <div className="flex flex-col items-start">
                   <motion.div
                     className="inline-flex justify-center items-center gap-3 group rounded-full cursor-pointer relative"
@@ -279,30 +141,23 @@ export default function Home() {
               </MaskReveal>
 
               {/* Headline & Tabs */}
-              <MaskReveal delay={0.4} className="w-full">
-                <TabsSection />
-              </MaskReveal>
+              <div className="w-full">
+                <TabsSection canAnimate={canAnimate} />
+              </div>
 
               {/* Hero Action Icons */}
-              <MaskReveal delay={0.6} className="rounded-full">
+              <MaskReveal delay={0.3} className="rounded-full">
                 <nav className="inline-flex justify-start items-start gap-3">
                   <motion.a 
                     whileTap={{ scale: 0.94 }}
-                    href="https://linkedin.com" target="_blank"
+                    href="https://www.linkedin.com/in/ransford-gyasi/" target="_blank"
                     className="w-10 h-10 rounded-full bg-foreground/5 hover:bg-foreground/10 border border-border/50 flex items-center justify-center transition-colors cursor-pointer"
                   >
                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-60"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
                   </motion.a>
                   <motion.a 
                     whileTap={{ scale: 0.94 }}
-                    href="https://dribbble.com" target="_blank"
-                    className="w-10 h-10 rounded-full bg-foreground/5 hover:bg-foreground/10 border border-border/50 flex items-center justify-center transition-colors cursor-pointer"
-                  >
-                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-60"><circle cx="12" cy="12" r="10"/><path d="M8.5 2.5c3.5 20 13 10 13 10"/><path d="M2.5 19c7-3.3 14 3.3 14 3.3"/><path d="M20.5 4.5c-4.5 3.5-11 11-12.5 18.5"/></svg>
-                  </motion.a>
-                  <motion.a 
-                    whileTap={{ scale: 0.94 }}
-                    href="mailto:ransfordgyasi98@gmail.com"
+                    href="mailto:rnsfordgyasi@gmail.com"
                     className="w-10 h-10 rounded-full bg-foreground/5 hover:bg-foreground/10 border border-border/50 flex items-center justify-center transition-colors cursor-pointer"
                   >
                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-60"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
@@ -319,14 +174,14 @@ export default function Home() {
             {/* Case Studies Section - Significant vertical rhythm reduction */}
             <div className="self-stretch flex flex-col justify-start items-start gap-10">
               <section className="self-stretch flex flex-col justify-start items-start gap-8">
-                <MaskReveal delay={0.7}>
+                <MaskReveal delay={0.4}>
                   <div className="inline-flex justify-start items-center gap-3">
-                    <h2 className="justify-center text-muted-foreground text-sm font-medium font-sans leading-[0] tracking-tight">Case Studies</h2>
+                    <h2 className="justify-center text-muted-foreground text-sm font-medium font-sans leading-none tracking-tight">Case Studies</h2>
                   </div>
                 </MaskReveal>
                 <div className="flex flex-col justify-start items-start gap-4 w-full">
                   {caseStudies.slice(0, 2).map((study, idx) => (
-                    <MaskReveal key={study.slug} delay={0.8 + idx * 0.1} className="w-full">
+                    <MaskReveal key={study.slug} delay={0.5 + idx * 0.05} className="w-full -mx-4 px-4">
                       <motion.div 
                         className="w-full"
                         onMouseEnter={() => {
@@ -357,8 +212,7 @@ export default function Home() {
           </motion.main>
 
         
-        {/* Right Column Placeholder - Keeps content on the left */}
-        <div className="hidden lg:block lg:w-[600px]" />
+
       </div>
 
       {/* Fixed Preview - Pinned to bottom-right */}
@@ -400,7 +254,7 @@ function ProjectItem({
         </div>
         <div className="flex flex-col justify-center items-start">
           <div className="flex items-center gap-2">
-            <h3 className="text-foreground text-lg font-medium font-sans">{title}</h3>
+            <h3 className="text-foreground text-lg font-normal font-sans">{title}</h3>
             {isLocked && <Lock size={16} className="text-muted-foreground/60" />}
           </div>
           <p className="text-muted-foreground text-sm font-medium font-sans leading-tight mt-1 opacity-40">{year}</p>

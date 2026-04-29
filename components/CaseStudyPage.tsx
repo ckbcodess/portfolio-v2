@@ -1,12 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import Header from "@/components/Header";
+import { useTransition } from "@/components/TransitionProvider";
 import TransitionLink from "@/components/TransitionLink";
 import CaseStudySidebar from "@/components/CaseStudySidebar";
 import MobileCaseStudyNav from "@/components/MobileCaseStudyNav";
 import { CaseStudyContent } from "@/content/case-studies/types";
-import { Badge } from "@/components/badge";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { Lock, ArrowRight, ShieldAlert } from "lucide-react";
@@ -17,19 +16,31 @@ interface CaseStudyPageProps {
 }
 
 export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
-  const [mounted, setMounted] = useState(false);
+  const { setHeaderProps } = useTransition();
   const [password, setPassword] = useState("");
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [showError, setShowError] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
     // Check session storage to see if they've already unlocked it this session
     const authorized = sessionStorage.getItem(`authorized-${caseStudy.slug}`);
     if (authorized === "true") {
       setIsAuthorized(true);
     }
   }, [caseStudy.slug]);
+
+  // Update persistent header when locked state changes
+  useEffect(() => {
+    if (caseStudy.isLocked && !isAuthorized) {
+      setHeaderProps({ 
+        variant: "case-study", 
+        title: "Protected Content", 
+        backLink: "/" 
+      });
+    } else {
+      setHeaderProps({ variant: "default" });
+    }
+  }, [caseStudy.isLocked, isAuthorized, setHeaderProps]);
 
   const handleUnlock = (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,29 +69,11 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
 
   sidebarLinks.unshift({ id: "intro", label: "Intro", targetIds: ["intro"] });
 
-  const { theme } = useTheme();
 
-  const getBadgeVariant = () => {
-    if (!mounted) return "default";
-
-    // If a theme is explicitly selected, let's favor that "team" color
-    if (theme === "green") return "green";
-    if (theme === "light") return "blue";
-    if (theme === "dark" && !caseStudy.badgeVariant) return "indigo";
-
-    // Otherwise, use the case study's specific brand color if available
-    if (caseStudy.badgeVariant) return caseStudy.badgeVariant as any;
-
-    return "default";
-  };
-
-  const badgeVariant = getBadgeVariant();
 
   if (caseStudy.isLocked && !isAuthorized) {
     return (
       <div className="min-h-screen bg-background w-full flex flex-col items-center justify-center p-6 relative overflow-hidden">
-        <Header variant="case-study" title="Protected Content" backLink="/" />
-        
         {/* Background decorative element */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] pointer-events-none" />
 
@@ -93,7 +86,7 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
             <Lock className="text-foreground/80" size={28} />
           </div>
           
-          <h1 className="text-2xl font-semibold text-foreground mb-2">NDA Protected</h1>
+          <h1 className="text-2xl font-normal text-foreground mb-2">NDA Protected</h1>
           <p className="text-muted-foreground text-sm mb-8 leading-relaxed">
             The content of <strong>{caseStudy.title}</strong> is restricted. Please enter the access password provided to you.
           </p>
@@ -148,8 +141,6 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
 
   return (
     <div className="min-h-screen bg-background w-full relative">
-      <Header variant="case-study" title={caseStudy.title} backLink="/" />
-
 
       <CaseStudySidebar links={sidebarLinks} />
       <MobileCaseStudyNav links={sidebarLinks} />
@@ -159,91 +150,88 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
       <div id="smooth-wrapper">
         <div
           id="smooth-content"
-          className="flex flex-col items-center pt-48 md:pt-64 px-6 pb-40 relative w-full"
+          className="flex flex-col items-center pt-48 md:pt-64 px-[var(--page-px)] pb-40 relative w-full"
         >
           <main className="w-full flex flex-col items-center relative z-10">
-            <header id="intro" className="w-full max-w-[500px] pb-12 pt-16">
-              <div className="relative w-10 h-10 rounded-xl overflow-hidden mb-6 bg-muted/40 border border-border flex items-center justify-center">
-                {caseStudy.logoSrc ? (
-                  <Image
-                    src={caseStudy.logoSrc}
-                    alt={caseStudy.logoAlt ?? `${caseStudy.title} logo`}
-                    fill
-                    className="object-cover"
-                    priority
-                  />
-                ) : (
-                  <span
-                    className={`text-[11px] font-semibold tracking-wide ${
-                      caseStudy.logoClassName ?? "text-foreground"
-                    }`}
-                  >
-                    {caseStudy.logoText ?? caseStudy.title.slice(0, 3).toUpperCase()}
-                  </span>
-                )}
+            <header id="intro" className="w-full max-w-[1000px] pb-16 pt-16 flex flex-col md:flex-row md:justify-between md:items-end gap-10">
+              <div className="max-w-[480px]">
+                <div className="relative w-10 h-10 rounded-xl overflow-hidden mb-6 bg-muted/40 border border-border flex items-center justify-center">
+                  {caseStudy.logoSrc ? (
+                    <Image
+                      src={caseStudy.logoSrc}
+                      alt={caseStudy.logoAlt ?? `${caseStudy.title} logo`}
+                      fill
+                      className="object-cover"
+                      priority
+                    />
+                  ) : (
+                    <span
+                      className={`text-[11px] font-semibold tracking-wide ${
+                        caseStudy.logoClassName ?? "text-foreground"
+                      }`}
+                    >
+                      {caseStudy.logoText ?? caseStudy.title.slice(0, 3).toUpperCase()}
+                    </span>
+                  )}
+                </div>
+
+                <h1 className="text-3xl md:text-[2.5rem] font-normal leading-tight tracking-tight text-foreground mb-3">
+                  {caseStudy.title}
+                </h1>
+                <p className="text-muted-foreground text-base md:text-lg leading-relaxed max-w-lg">
+                  {caseStudy.description}
+                </p>
               </div>
 
-              <h1 className="text-[2rem] font-semibold leading-tight tracking-[-0.02em] text-foreground mb-3">
-                {caseStudy.title}
-              </h1>
-              <p className="text-muted-foreground text-base leading-relaxed max-w-lg">
-                {caseStudy.description}
-              </p>
-
-              <div className="flex flex-wrap gap-x-10 gap-y-4 mt-8">
+              <div className="flex flex-wrap gap-x-12 gap-y-6 md:pb-2">
                 {caseStudy.meta.map(({ label, value }) => (
-                  <div key={label}>
-                    <div className="mb-1.5">
-                      <Badge variant={badgeVariant}>
-                        {label}
-                      </Badge>
-                    </div>
-                    <p className="text-foreground text-sm pl-0.5">{value}</p>
+                  <div key={label} className="flex flex-col gap-1.5">
+                    <p className="text-[11px] font-semibold text-foreground tracking-wider uppercase">{label}</p>
+                    <p className="text-muted-foreground text-[13px]">{value}</p>
                   </div>
                 ))}
               </div>
             </header>
 
-            <div className="w-full max-w-[760px] mb-20">
+            <div className="w-full max-w-[1000px] mb-32">
               <div className="relative rounded-2xl overflow-hidden shadow-sm border border-border aspect-video w-full bg-muted/20">
                 <Image src={caseStudy.heroSrc} alt={caseStudy.heroAlt} fill className="object-cover" priority />
               </div>
             </div>
 
-            <div className="w-full max-w-[500px]">
-              <div className="flex flex-col gap-20 pb-24">
+            <div className="w-full max-w-[600px]">
+              <div className="flex flex-col gap-32 pb-32">
                 {caseStudy.sections.map((section) => (
-                  <section key={section.id} id={section.id}>
-                    <div className="mb-3">
-                      <Badge 
-                        variant={badgeVariant} 
-                      >
-                        {section.label}
-                      </Badge>
-                    </div>
-                    <h2 className="text-xl font-semibold text-foreground leading-snug mb-5">
+                  <section key={section.id} id={section.id} className="flex flex-col items-start w-full">
+                    <h2 className="text-lg md:text-xl font-normal text-foreground leading-snug mb-6 tracking-tight">
                       {section.heading}
                     </h2>
 
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-5 w-full">
                       {section.body.map((paragraph) => (
-                        <p key={paragraph} className="text-muted-foreground text-base leading-relaxed">
+                        <p key={paragraph} className="text-muted-foreground text-[15px] md:text-base leading-relaxed">
                           {paragraph}
                         </p>
                       ))}
                     </div>
 
                     {section.bullets && (
-                      <ul className="mt-4 flex flex-col gap-2 pl-5">
+                      <ul className="mt-6 flex flex-col gap-3 pl-5 w-full">
                         {section.bullets.map((bullet) => (
                           <li
                             key={bullet}
-                            className="text-muted-foreground text-base leading-relaxed list-disc"
+                            className="text-muted-foreground text-[15px] md:text-base leading-relaxed list-disc marker:text-muted-foreground/40"
                           >
                             {bullet}
                           </li>
                         ))}
                       </ul>
+                    )}
+
+                    {section.imageSrc && (
+                      <div className="mt-12 w-full relative rounded-2xl overflow-hidden bg-muted/20 aspect-[4/3] border border-border/50">
+                        <Image src={section.imageSrc} alt={section.heading} fill className="object-cover" />
+                      </div>
                     )}
                   </section>
                 ))}
@@ -261,7 +249,7 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
                   {caseStudy.nextProject.eyebrow && (
                     <p className="text-muted-foreground text-sm mb-1">{caseStudy.nextProject.eyebrow}</p>
                   )}
-                  <h3 className="text-xl font-semibold text-foreground group-hover:text-muted-foreground transition-colors">
+                  <h3 className="text-xl font-normal text-foreground group-hover:text-muted-foreground transition-colors">
                     {caseStudy.nextProject.title}
                   </h3>
                 </TransitionLink>
