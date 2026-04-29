@@ -1,22 +1,31 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import Image from "next/image";
-import dynamic from "next/dynamic";
-import gsap from "gsap";
-import { useGSAP } from "@gsap/react";
-import Header from "@/components/Header";
-import { SpecialText } from "@/components/special-text";
+import { motion, Variants } from "motion/react";
+import { MaskReveal } from "@/components/MaskReveal";
+import PreviewCard from "@/components/PreviewCard";
+import { caseStudies } from "@/content/case-studies";
+import { Signature } from "@/components/Signature";
 
+const TABS = ["Bio", "Side Quests", "Books", "Music", "Inspos", "Random Thoughts"] as const;
+type Tab = (typeof TABS)[number];
 
+const EXPERIENCE = [
+  { company: "The Allex", role: "Designer & Developer", period: "2024 - Present" },
+  { company: "GCB", role: "Product Designer", period: "2023 - 2024" },
+  { company: "Independent", role: "Freelance", period: "2021 - 2023" },
+];
 
 export default function AboutPage() {
   const pageRef = useRef<HTMLDivElement>(null);
   const [canAnimate, setCanAnimate] = useState(false);
+  const [activeTab, setActiveTab] = useState<Tab>("Bio");
+  const previewImage = caseStudies[0].heroSrc;
 
   useEffect(() => {
-    if ((globalThis as any).appLoaded) {
-      setCanAnimate(true);
+    // @ts-expect-error global appLoaded flag
+    if (globalThis.appLoaded) {
+      setTimeout(() => setCanAnimate(true), 0);
     } else {
       const handler = () => setCanAnimate(true);
       window.addEventListener("apps-loaded", handler);
@@ -24,119 +33,109 @@ export default function AboutPage() {
     }
   }, []);
 
-  useGSAP(() => {
-    if (!canAnimate) return;
-    gsap.fromTo(
-      ".about-reveal",
-      { y: 40, autoAlpha: 0 },
-      {
-        y: 0,
-        autoAlpha: 1,
-        duration: 1.2,
-        stagger: 0.1,
-        ease: "power4.out",
-        delay: 0.1,
-      }
-    );
-  }, { scope: pageRef, dependencies: [canAnimate] });
+  const containerVariants: Variants = {
+    hidden: { opacity: 0, scale: 0.98, filter: "blur(4px)" },
+    show: {
+      opacity: 1,
+      scale: 1,
+      filter: "blur(0px)",
+      transition: { staggerChildren: 0.05, delayChildren: 0.1, duration: 0.4, ease: [0.16, 1, 0.3, 1] },
+    },
+  };
 
   return (
-    <div ref={pageRef} className="min-h-screen bg-background selection:bg-foreground selection:text-background">
-      <Header />
-      
-      <div id="smooth-wrapper">
-        <div id="smooth-content">
-          <main className="pt-24 md:pt-32 pb-40 px-6 max-w-[960px] mx-auto">
-            <div className="flex flex-col gap-10 md:gap-12">
-              {/* Profile Header */}
-              <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-start">
-                <div className="about-reveal invisible shrink-0">
-                  <div className="w-24 h-24 md:w-48 md:h-48 rounded-[24px] md:rounded-[32px] overflow-hidden bg-muted border border-border">
-                    <Image 
-                      src="/avatar.webp" 
-                      alt="Ransford Gyasi" 
-                      width={192}
-                      height={192}
-                      priority
-                      className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
-                    />
-                  </div>
-                </div>
-                
-                <div className="flex flex-col gap-4 md:gap-6">
-                  <div className="about-reveal invisible">
-                    <SpecialText className="text-blue-500 mb-2 font-mono font-medium">About me</SpecialText>
-                    <h1 className="text-3xl md:text-6xl font-semibold tracking-tight text-foreground">
-                      I build digital products that feel right.
-                    </h1>
-                  </div>
-                  
-                  <div className="about-reveal invisible max-w-2xl flex flex-col gap-4 md:gap-6">
-                    <p className="text-lg md:text-2xl text-muted-foreground leading-relaxed">
-                      I'm Ransford, a product designer and developer focused on crafting high-fidelity interfaces and interactive experiences. I believe the best products are a perfect blend of logic and emotion.
-                    </p>
-                    <p className="text-[1rem] text-muted-foreground/80 leading-relaxed">
-                      Currently exploring the intersection of creative coding, motion design, and product engineering. I love pushing the boundaries of what's possible on the web, usually with a focus on performance and micro-interactions.
-                    </p>
-                  </div>
-                </div>
-              </div>
+    <div
+      ref={pageRef}
+      className="bg-background min-h-screen lg:h-screen lg:overflow-hidden pt-32 md:pt-44 pb-[var(--page-pt)] lg:pb-[8vh] w-full selection:bg-primary selection:text-primary-foreground flex flex-col"
+    >
+      <div className="w-full flex-1 flex flex-col lg:flex-row lg:items-stretch lg:justify-start gap-12 lg:gap-16 px-[var(--page-px)]">
+        <motion.main
+          variants={containerVariants}
+          initial="hidden"
+          animate={canAnimate ? "show" : "hidden"}
+          className="flex flex-col w-full max-w-[28.5rem] lg:flex-1 lg:justify-between items-start gap-12 lg:gap-0 origin-top-left"
+        >
+          {/* Top: Tabs + Bio Body */}
+          <div className="self-stretch flex flex-col items-start gap-10">
+            {/* Tabs */}
+            <MaskReveal delay={0.1}>
+              <nav className="flex flex-nowrap items-center gap-x-8 overflow-x-auto no-scrollbar py-1 -my-1">
+                {TABS.map((tab) => {
+                  const isActive = tab === activeTab;
+                  return (
+                    <button
+                      key={tab}
+                      type="button"
+                      onClick={() => setActiveTab(tab)}
+                      className={`text-sm font-normal leading-none tracking-tight transition-colors whitespace-nowrap ${
+                        isActive
+                          ? "text-foreground"
+                          : "text-muted-foreground/60 hover:text-foreground"
+                      }`}
+                    >
+                      {tab}
+                    </button>
+                  );
+                })}
+              </nav>
+            </MaskReveal>
 
-              <div className="mt-12 md:mt-20">
-                <div className="about-reveal invisible flex justify-between items-center mb-8 md:mb-10 border-b border-border pb-4">
-                  <h2 className="text-foreground font-medium text-lg">Experience</h2>
-                  <span className="text-muted-foreground text-sm">2018 — Present</span>
-                </div>
-                
-                <div className="flex flex-col gap-10 md:gap-12">
-                  {[
-                    { company: "The Allex", role: "Product Designer", period: "2023 - Present", description: "Leading design and frontend development for an all-in-one productivity suite." },
-                    { company: "Independent", role: "Freelance Designer & Dev", period: "2021 - 2023", description: "Helping startups ship high-quality MVPs and design systems." },
-                    { company: "Creative Agency", role: "UI Designer", period: "2019 - 2021", description: "Crafting digital identities and websites for global brands." },
-                  ].map((exp, i) => (
-                    <div key={i} className="about-reveal invisible flex flex-col md:flex-row gap-2 md:gap-12 md:items-baseline">
-                      <div className="md:w-48 shrink-0">
-                        <span className="text-sm text-muted-foreground font-mono">{exp.period}</span>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <h3 className="text-xl font-medium text-foreground">{exp.role} — {exp.company}</h3>
-                        <p className="text-muted-foreground max-w-xl">{exp.description}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+            {/* Bio Body */}
+            <MaskReveal delay={0.2}>
+              <p className="text-foreground text-base leading-[1.75] max-w-[28.5rem]">
+                I&apos;m Ransford — a product designer who cares about grids,
+                aesthetics, and the small details that make interfaces feel
+                considered. I&apos;ve spent the last few years designing and
+                shipping products end-to-end, from early concept sketches to
+                pixel-pushed frontend code. My work sits at the intersection
+                of clarity and craft: systems that scale, interfaces that
+                breathe, and interactions that respect the people using them.
+                Outside of client work I tinker with motion, type, and the
+                occasional weekend experiment that doesn&apos;t quite know
+                what it wants to be yet.
+              </p>
+            </MaskReveal>
 
-              {/* Skills/Stack */}
-              <div className="mt-12 md:mt-20">
-                <div className="about-reveal invisible flex justify-between items-center mb-8 md:mb-10 border-b border-border pb-4">
-                  <h2 className="text-foreground font-medium text-lg">Toolkit</h2>
-                </div>
-                
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-10">
-                  {[
-                    { category: "Design", items: ["Figma", "Lottie", "After Effects", "Principle"] },
-                    { category: "Frontend", items: ["Next.js", "React", "TypeScript", "Tailwind"] },
-                    { category: "Motion", items: ["GSAP", "Framer Motion", "Three.js", "GLSL"] },
-                    { category: "Backend", items: ["Node.js", "PostgreSQL", "Supabase", "Prisma"] },
-                  ].map((cat, i) => (
-                    <div key={i} className="about-reveal invisible flex flex-col gap-4">
-                      <span className="text-sm font-mono text-blue-500 uppercase tracking-wider">{cat.category}</span>
-                      <ul className="flex flex-col gap-2">
-                        {cat.items.map((item) => (
-                          <li key={item} className="text-foreground/80 hover:text-foreground transition-colors">{item}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </main>
-        </div>
+            {/* Signature */}
+            <MaskReveal delay={0.3}>
+              <Signature className="text-foreground/80 w-16 h-auto" />
+            </MaskReveal>
+          </div>
+
+          {/* Bottom: Experience */}
+          <div className="self-stretch flex flex-col items-start gap-6">
+            <MaskReveal delay={0.4}>
+              <h2 className="text-muted-foreground text-sm font-normal leading-none tracking-tight">
+                Experience
+              </h2>
+            </MaskReveal>
+            <ul className="self-stretch flex flex-col gap-3">
+              {EXPERIENCE.map((item, idx) => (
+                <MaskReveal key={item.company + idx} delay={0.5 + idx * 0.05} className="w-full">
+                  <li className="flex items-baseline justify-between gap-6 text-foreground text-sm">
+                    <span className="truncate">
+                      {item.role} <span className="text-muted-foreground/60">— {item.company}</span>
+                    </span>
+                    <span className="text-muted-foreground/60 tabular-nums shrink-0">{item.period}</span>
+                  </li>
+                </MaskReveal>
+              ))}
+            </ul>
+          </div>
+        </motion.main>
       </div>
 
-
+      {/* Desktop Preview — Fixed Position (mirrors Home) */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={canAnimate ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.8 }}
+        className="hidden lg:block fixed bottom-[calc(8vh+1rem)] right-[80px] w-[clamp(350px,38vw,628px)]"
+        style={{ aspectRatio: "628 / 346" }}
+        aria-label="Preview"
+      >
+        <PreviewCard activeImage={previewImage} className="!h-full" />
+      </motion.div>
     </div>
   );
 }

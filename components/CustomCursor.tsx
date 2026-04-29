@@ -17,9 +17,9 @@ export default function CustomCursor() {
             return;
         }
 
-        const handleCursorChange = (e: any) => {
+        const handleCursorChange = (e: Event) => {
             if (resetTimeoutRef.current) clearTimeout(resetTimeoutRef.current);
-            setCursorType(e.detail);
+            setCursorType((e as CustomEvent).detail);
         };
 
         const handleMouseOver = (e: MouseEvent) => {
@@ -30,7 +30,7 @@ export default function CustomCursor() {
 
             if (cursorAttr) {
                 if (resetTimeoutRef.current) clearTimeout(resetTimeoutRef.current);
-                setCursorType(cursorAttr as any);
+                setCursorType(cursorAttr as "default" | "copy" | "copied" | "pointer" | "case-study" | "confidential");
             } else {
                 if (resetTimeoutRef.current) clearTimeout(resetTimeoutRef.current);
                 resetTimeoutRef.current = setTimeout(() => {
@@ -169,13 +169,13 @@ export default function CustomCursor() {
     return (
         <div
             ref={cursorRef}
-            className="hidden lg:flex fixed top-0 left-0 items-center justify-center pointer-events-none z-[9999] overflow-hidden whitespace-nowrap tracking-tight font-medium opacity-0"
+            className="hidden lg:flex fixed top-0 left-0 items-center justify-center pointer-events-none z-[9999] overflow-hidden whitespace-nowrap tracking-tight font-normal opacity-0"
             style={{ willChange: "transform, width, height, border-radius, background-color" }}
         >
-            <span className={`transition-opacity duration-300 uppercase text-[10px] font-bold tracking-wider ${cursorType === "copy" ? "opacity-100" : "opacity-0 invisible"}`}>
+            <span className={`transition-opacity duration-300 uppercase text-[10px] font-normal tracking-wider ${cursorType === "copy" ? "opacity-100" : "opacity-0 invisible"}`}>
                 Copy Email
             </span>
-            <span className={`absolute transition-opacity duration-300 uppercase text-[10px] font-bold tracking-wider ${cursorType === "copied" ? "opacity-100" : "opacity-0 invisible"}`}>
+            <span className={`absolute transition-opacity duration-300 uppercase text-[10px] font-normal tracking-wider ${cursorType === "copied" ? "opacity-100" : "opacity-0 invisible"}`}>
                 Copied!
             </span>
             <span className={`absolute transition-opacity duration-300 text-[14px] ${cursorType === "case-study" ? "opacity-100" : "opacity-0 invisible"}`}>

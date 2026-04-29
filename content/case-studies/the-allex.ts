@@ -24,6 +24,7 @@ export const theAllexCaseStudy: CaseStudyContent = {
         "My responsibility spanned everything visual and experiential, from the logo to the user flows, from the brand color to the checkout interaction. This is the story of how a product with two very different problems ended up with one very coherent identity.",
       ],
       labelClassName: "text-foreground",
+      imageSrc: "/allex-hero.webp",
     },
     {
       id: "insight-pos",

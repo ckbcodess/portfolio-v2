@@ -27,8 +27,8 @@ export default function LoadingScreen() {
     // If it's not the first visit, instantly hide the overlay before it paints
     if (sessionStorage.getItem(SESSION_KEY)) {
       if (overlayRef.current) overlayRef.current.style.display = "none";
-      // Dispatch an event so the page knows it can animate immediately
-      (globalThis as any).appLoaded = true;
+      // @ts-expect-error global appLoaded flag
+      globalThis.appLoaded = true;
       window.dispatchEvent(new Event("apps-loaded"));
       return;
     }
@@ -50,7 +50,8 @@ export default function LoadingScreen() {
       onComplete: () => {
         gsap.set(overlay, { display: "none", pointerEvents: "none" });
         // Let other components know loading has finished
-        (globalThis as any).appLoaded = true;
+        // @ts-expect-error global appLoaded flag
+        globalThis.appLoaded = true;
         window.dispatchEvent(new Event("apps-loaded"));
       }
     });
@@ -59,7 +60,7 @@ export default function LoadingScreen() {
     tl.to(
       {},
       {
-        duration: 2.0,
+        duration: 0.4,
         ease: "power2.inOut",
         onUpdate() {
           const pct = Math.round(this.progress() * 100);
@@ -69,25 +70,25 @@ export default function LoadingScreen() {
     );
 
     // ─── Phase 2: swap count → greeting ────────────────────────────────────
-    tl.to(counter, { autoAlpha: 0, y: -20, duration: 0.3, ease: "power2.in" });
+    tl.to(counter, { autoAlpha: 0, y: -20, duration: 0.15, ease: "power2.in" });
     tl.fromTo(
       greet,
       { autoAlpha: 0, y: 20 },
-      { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" }
+      { autoAlpha: 1, y: 0, duration: 0.25, ease: "power2.out" }
     );
 
     // ─── Phase 3: hold & exit ───────────────────────────────────────────────
-    tl.to({}, { duration: 0.8 }); 
+    tl.to({}, { duration: 0.2 }); 
 
     // Exit: path sweeps up (same as TransitionProvider exit)
     tl.set(path, { attr: { d: "M 0 0 Q 50 0 100 0 L 100 100 Q 50 100 0 100 Z" } });
     tl.to(path, {
-      duration: 0.4,
+      duration: 0.2,
       attr: { d: PATHS.curveDown },
       ease: "power2.in",
     });
     tl.to(path, {
-      duration: 0.6,
+      duration: 0.3,
       attr: { d: PATHS.end },
       ease: "power4.out",
     });

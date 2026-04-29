@@ -2,14 +2,10 @@
 
 import React, {
   memo,
-  useCallback,
-  useEffect,
   useMemo,
-  useRef,
   type ElementType,
 } from "react"
 import {
-  useAnimate,
   type ValueAnimationTransition,
 } from "motion/react"
 
@@ -45,12 +41,7 @@ const extractTextFromChildren = (children: React.ReactNode): string => {
   return ""
 }
 
-const ROTATION_MAP = {
-  top: "rotateX(90deg)",
-  right: "rotateY(90deg)",
-  bottom: "rotateX(-90deg)",
-  left: "rotateY(-90deg)",
-} as const
+
 
 const DEFAULT_TRANSITION: ValueAnimationTransition = {
   type: "spring",
@@ -192,9 +183,7 @@ const CharBox = memo(
     flipTextClassName,
     rotateDirection,
   }: CharBoxProps) => {
-    // We use a simplified initial transform for the entrance to prevent flickering
-    // It's technically the reverse of the rotation direction
-    const initialTransform = ROTATION_MAP[rotateDirection];
+    // We don't use initialTransform because useAnimate handles it or motion handles it
 
     return (
       <span

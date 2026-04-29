@@ -6,7 +6,6 @@ import { ThemeColorProvider } from "@/components/theme-color-provider";
 import TransitionProvider from "@/components/TransitionProvider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SoundProvider } from "@/components/SoundProvider";
-import { cn } from "@/lib/utils";
 import ClickFeedback from "@/components/ClickFeedback";
 
 
@@ -28,7 +27,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning className={geist.variable}>
-      <body className="font-sans font-medium antialiased text-foreground bg-background">
+      <body className="font-sans font-normal antialiased text-foreground bg-background">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <ThemeColorProvider>
             <SoundProvider>

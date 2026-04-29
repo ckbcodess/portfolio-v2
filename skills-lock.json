@@ -11,6 +11,11 @@
       "sourceType": "github",
       "computedHash": "f9d491683c8ab76acb06f3c0b539bee16900a5a8ec3575b75137780e7378a108"
     },
+    "animate-text": {
+      "source": "pixel-point/animate-text",
+      "sourceType": "github",
+      "computedHash": "81b7719e45013fcf651f1f4c9a1ca2af9618e99667ff5cd3e5d102369235ec5e"
+    },
     "arrange": {
       "source": "pbakaus/impeccable",
       "sourceType": "github",
@@ -35,6 +40,12 @@
       "source": "pbakaus/impeccable",
       "sourceType": "github",
       "computedHash": "0422b8587d3d2aa6e338bdc01a6a55ac198527ed0cc0fb14c72097b14a8b5127"
+    },
+    "clean-code": {
+      "source": "sickn33/antigravity-awesome-skills",
+      "sourceType": "github",
+      "skillPath": "skills/clean-code/SKILL.md",
+      "computedHash": "551e1ac1c416d9df11fce8bc613c3595794f1f5e634d20c5b3e257afded11ed7"
     },
     "colorize": {
       "source": "pbakaus/impeccable",

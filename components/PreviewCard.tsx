@@ -10,8 +10,11 @@ interface PreviewCardProps {
 }
 
 export default function PreviewCard({ activeImage, className, aspectRatio = "aspect-video" }: PreviewCardProps) {
+  const hasHeightClass = className?.includes("h-");
+  const aspectClass = hasHeightClass ? "" : aspectRatio;
+
   return (
-    <div className={`w-full ${aspectRatio} rounded-lg overflow-hidden bg-neutral-900 relative ${className}`}>
+    <div className={`w-full ${aspectClass} rounded-lg overflow-hidden bg-neutral-900 relative ${className}`}>
       <AnimatePresence mode="sync" initial={false}>
         {activeImage && (
           <motion.div

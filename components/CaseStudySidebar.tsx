@@ -17,7 +17,7 @@ export default function CaseStudySidebar({ links }: { links: SectionLink[] }) {
   const visibleSections = useRef(new Map<string, number>());
 
   useEffect(() => {
-    setMounted(true);
+    setTimeout(() => setMounted(true), 0);
     const handleScroll = () => {
       if (window.scrollY > 80) {
         setIsVisible(true);

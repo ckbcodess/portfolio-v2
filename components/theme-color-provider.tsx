@@ -13,13 +13,10 @@ const ThemeColorContext = createContext<ThemeColorContextType | undefined>(undef
 
 export function ThemeColorProvider({ children }: { children: React.ReactNode }) {
   const [themeColor, setThemeColorState] = useState<ThemeColor>("neutral");
-  const [isMounted, setIsMounted] = useState(false);
-
   useEffect(() => {
-    setIsMounted(true);
     const savedColor = localStorage.getItem("app-color-theme") as ThemeColor | null;
     if (savedColor) {
-      setThemeColorState(savedColor);
+      setTimeout(() => setThemeColorState(savedColor), 0);
       document.documentElement.setAttribute("data-theme", savedColor);
     } else {
       document.documentElement.setAttribute("data-theme", "neutral");
