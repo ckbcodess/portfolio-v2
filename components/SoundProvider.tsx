@@ -157,7 +157,7 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
 
       // Optional: slight gain reduction so it's not jarring
       const gain = ctx.createGain();
-      gain.gain.value = 0.8;
+      gain.gain.value = 0.5;
       source.connect(gain);
       gain.connect(ctx.destination);
 
