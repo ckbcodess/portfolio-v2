@@ -5,14 +5,15 @@ import { motion, Variants } from "motion/react";
 import { MaskReveal } from "@/components/MaskReveal";
 import PreviewCard from "@/components/PreviewCard";
 import { caseStudies } from "@/content/case-studies";
+import { Signature } from "@/components/Signature";
 
 const TABS = ["Bio", "Side Quests", "Books", "Music", "Inspos", "Random Thoughts"] as const;
 type Tab = (typeof TABS)[number];
 
 const EXPERIENCE = [
-  { company: "The Allex", role: "Product Designer & Frontend Developer", period: "2024 - Present" },
+  { company: "The Allex", role: "Designer & Developer", period: "2024 - Present" },
   { company: "GCB", role: "Product Designer", period: "2023 - 2024" },
-  { company: "Independent", role: "Freelance Designer", period: "2021 - 2023" },
+  { company: "Independent", role: "Freelance", period: "2021 - 2023" },
 ];
 
 export default function AboutPage() {
@@ -58,7 +59,7 @@ export default function AboutPage() {
           <div className="self-stretch flex flex-col items-start gap-10">
             {/* Tabs */}
             <MaskReveal delay={0.1}>
-              <nav className="flex flex-wrap items-center gap-x-8 gap-y-3">
+              <nav className="flex flex-nowrap items-center gap-x-8 overflow-x-auto no-scrollbar py-1 -my-1">
                 {TABS.map((tab) => {
                   const isActive = tab === activeTab;
                   return (
@@ -66,7 +67,7 @@ export default function AboutPage() {
                       key={tab}
                       type="button"
                       onClick={() => setActiveTab(tab)}
-                      className={`text-sm font-medium leading-none tracking-tight transition-colors ${
+                      className={`text-sm font-normal leading-none tracking-tight transition-colors whitespace-nowrap ${
                         isActive
                           ? "text-foreground"
                           : "text-muted-foreground/60 hover:text-foreground"
@@ -97,16 +98,14 @@ export default function AboutPage() {
 
             {/* Signature */}
             <MaskReveal delay={0.3}>
-              <div className="font-serif italic text-foreground/80 text-2xl leading-none">
-                Ransford
-              </div>
+              <Signature className="text-foreground/80 w-16 h-auto" />
             </MaskReveal>
           </div>
 
           {/* Bottom: Experience */}
           <div className="self-stretch flex flex-col items-start gap-6">
             <MaskReveal delay={0.4}>
-              <h2 className="text-muted-foreground text-sm font-medium leading-none tracking-tight">
+              <h2 className="text-muted-foreground text-sm font-normal leading-none tracking-tight">
                 Experience
               </h2>
             </MaskReveal>

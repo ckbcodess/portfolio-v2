@@ -62,7 +62,7 @@ export default function Home() {
           variants={containerVariants}
           initial="hidden"
           animate={canAnimate ? "show" : "hidden"}
-          className="flex flex-col w-full max-w-[38.5rem] lg:flex-1 lg:justify-between items-start origin-top-left"
+          className="flex flex-col gap-16 w-full max-w-[38.5rem] lg:flex-1 lg:justify-between items-start origin-top-left"
         >
           {/* Hero Section */}
           <div className="self-stretch flex flex-col justify-start items-start gap-10">
@@ -92,12 +92,12 @@ export default function Home() {
                         <SurpriseParticles ids={surprises} />
                       </motion.div>
                     </TooltipTrigger>
-                    <TooltipContent side="bottom" className="text-[10px] font-medium tracking-tight">
+                    <TooltipContent side="bottom" className="text-[10px] font-normal tracking-tight">
                       {surprises.length > 0 ? "You found me! ✨" : "Hey, I'm Ransford"}
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
-                <p className="text-foreground text-base font-medium">Hey, I'm Ransford :)</p>
+                <p className="text-foreground text-base font-normal">Hey, I'm Ransford :)</p>
               </motion.div>
             </MaskReveal>
 
@@ -121,7 +121,7 @@ export default function Home() {
           <div className="self-stretch flex flex-col justify-start items-start gap-10">
             <section className="self-stretch flex flex-col justify-start items-start gap-8">
               <MaskReveal delay={0.4}>
-                <h2 className="text-muted-foreground text-sm font-medium leading-none tracking-tight">Case Studies</h2>
+                <h2 className="text-muted-foreground text-sm font-normal leading-none tracking-tight">Case Studies</h2>
               </MaskReveal>
               <div className="flex flex-col justify-start items-start gap-4 w-full">
                 {caseStudies.slice(0, 2).map((study, idx) => (
@@ -265,7 +265,7 @@ function ProjectItem({
             <h3 className="text-foreground text-lg font-normal">{title}</h3>
             {isLocked && <Lock size={16} className="text-muted-foreground/60" />}
           </div>
-          <p className="text-muted-foreground text-sm font-medium mt-1 opacity-40">2025</p>
+          <p className="text-muted-foreground text-sm font-normal mt-1 opacity-40">2025</p>
         </div>
       </div>
       <ArrowRight size={20} className="text-foreground opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200" />

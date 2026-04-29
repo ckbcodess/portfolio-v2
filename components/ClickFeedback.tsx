@@ -12,18 +12,26 @@ interface Burst {
 
 export default function ClickFeedback() {
   const [bursts, setBursts] = useState<Burst[]>([]);
-  const { playClick } = useSound();
+  const { playClickDown, playClickUp } = useSound();
 
   useEffect(() => {
+    const handleMouseDown = () => {
+      playClickDown();
+    };
+
     const handleMouseUp = (e: MouseEvent) => {
-      playClick();
+      playClickUp();
       const newBurst = { id: Date.now(), x: e.clientX, y: e.clientY };
       setBursts((prev) => [...prev, newBurst].slice(-5));
     };
 
+    window.addEventListener("mousedown", handleMouseDown);
     window.addEventListener("mouseup", handleMouseUp);
-    return () => window.removeEventListener("mouseup", handleMouseUp);
-  }, [playClick]);
+    return () => {
+      window.removeEventListener("mousedown", handleMouseDown);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [playClickDown, playClickUp]);
 
   const removeBurst = (id: number) => {
     setBursts((prev) => prev.filter((b) => b.id !== id));

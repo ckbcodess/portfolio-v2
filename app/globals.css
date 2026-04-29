@@ -80,7 +80,7 @@
   --text-4xl: clamp(2.8rem, 2.5vw + 2rem, 4.5rem);
 
   /* --- Layout Tokens (Compact for One-Pager) --- */
-  --page-px: clamp(1.5rem, 14vw, 200px); /* 200px max, reached at viewports > 1430px */
+  --page-px: clamp(1.5rem, 5vw, 80px); /* 80px max — matches Figma frame padding across all pages */
   --page-pt: clamp(1.5rem, 5vh, 4rem); 
   --header-mb: clamp(2rem, 7.5vh, 6rem);
   --section-gap: clamp(3rem, 11vh, 10rem);

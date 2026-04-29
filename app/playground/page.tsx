@@ -2,8 +2,9 @@
 
 import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
-import { motion, Variants } from "motion/react";
+import { motion, LayoutGroup, Variants } from "motion/react";
 import { MaskReveal } from "@/components/MaskReveal";
+import Lightbox from "@/components/Lightbox";
 
 const experiments = [
   { id: 1, year: "2026" },
@@ -17,6 +18,7 @@ const experiments = [
 export default function PlaygroundPage() {
   const pageRef = useRef<HTMLDivElement>(null);
   const [canAnimate, setCanAnimate] = useState(false);
+  const [activeImage, setActiveImage] = useState<{ src: string; id: string } | null>(null);
 
   useEffect(() => {
     // @ts-expect-error global appLoaded flag
@@ -62,45 +64,62 @@ export default function PlaygroundPage() {
     <div ref={pageRef} className="min-h-screen bg-background selection:bg-foreground selection:text-background">
       <div id="smooth-wrapper">
         <div id="smooth-content">
-          <motion.main 
-            variants={container}
-            initial="hidden"
-            animate={canAnimate ? "show" : "hidden"}
-            className="pt-32 md:pt-44 pb-40 px-[var(--page-px)] w-full origin-top"
-          >
-            <div className="flex flex-col gap-12 w-full max-w-[1284px]">
-              {/* Year Filter */}
-              <MaskReveal delay={0.1}>
-                <div className="flex gap-8 items-center text-[14px] font-normal tracking-[-0.01em] whitespace-nowrap">
-                  <span className="text-foreground cursor-pointer transition-colors">2026</span>
-                  <span className="text-foreground/30 hover:text-foreground/60 transition-colors cursor-pointer">2025</span>
-                  <span className="text-foreground/30 hover:text-foreground/60 transition-colors cursor-pointer">2024</span>
-                </div>
-              </MaskReveal>
+          <LayoutGroup>
+            <motion.main 
+              variants={container}
+              initial="hidden"
+              animate={canAnimate ? "show" : "hidden"}
+              className="pt-32 md:pt-44 pb-40 px-[var(--page-px)] w-full origin-top"
+            >
+              <div className="flex flex-col gap-12 w-full max-w-[1284px]">
+                {/* Year Filter */}
+                <MaskReveal delay={0.1}>
+                  <div className="flex gap-8 items-center text-[14px] font-normal tracking-[-0.01em] whitespace-nowrap">
+                    <span className="text-foreground cursor-pointer transition-colors">2026</span>
+                    <span className="text-foreground/30 hover:text-foreground/60 transition-colors cursor-pointer">2025</span>
+                    <span className="text-foreground/30 hover:text-foreground/60 transition-colors cursor-pointer">2024</span>
+                  </div>
+                </MaskReveal>
 
-              {/* Grid of Items */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full items-start">
-                {experiments.map((exp) => (
-                  <motion.div key={exp.id} variants={item}>
-                    <div 
-                      className="w-full aspect-[411/244] bg-muted/20 overflow-hidden relative rounded-[2px] hover:opacity-95 transition-all duration-500 cursor-pointer group"
-                    >
-                      <Image 
-                        src="/allex-card.png" 
-                        alt="The Allex" 
-                        width={411}
-                        height={244}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                      />
-                    </div>
-                  </motion.div>
-                ))}
+                {/* Grid of Items */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full items-start">
+                  {experiments.map((exp) => {
+                    const layoutId = `playground-img-${exp.id}`;
+                    return (
+                      <motion.div key={exp.id} variants={item}>
+                        <motion.div
+                          layoutId={layoutId}
+                          className="w-full aspect-[411/244] bg-muted/20 overflow-hidden relative rounded-[2px] hover:opacity-95 transition-opacity duration-500 cursor-pointer group"
+                          onClick={() => setActiveImage({ src: "/allex-card.png", id: layoutId })}
+                          whileHover={{ scale: 1.01 }}
+                          whileTap={{ scale: 0.98 }}
+                          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                        >
+                          <Image 
+                            src="/allex-card.png" 
+                            alt="The Allex" 
+                            width={411}
+                            height={244}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                          />
+                        </motion.div>
+                      </motion.div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          </motion.main>
+            </motion.main>
+
+            {/* Lightbox */}
+            <Lightbox
+              src={activeImage?.src ?? null}
+              alt="Playground experiment"
+              layoutId={activeImage?.id}
+              onClose={() => setActiveImage(null)}
+            />
+          </LayoutGroup>
         </div>
       </div>
     </div>
   );
 }
-
