@@ -8,7 +8,7 @@ import { motion } from "motion/react";
  */
 export function Signature({ className }: { className?: string }) {
   // Expo curve recommended by the /animate workflow for decisive, premium motion
-  const easeExpo = [0.16, 1, 0.3, 1];
+  const easeExpo = [0.16, 1, 0.3, 1] as const;
 
   const pathVariants = {
     hidden: { 
@@ -31,7 +31,7 @@ export function Signature({ className }: { className?: string }) {
         }
       },
     }),
-  } satisfies import("motion/react").Variants;
+  };
 
   return (
     <motion.div 
