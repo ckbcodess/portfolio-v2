@@ -43,37 +43,6 @@ export default function ThemeControls() {
           {theme === "dark" ? "Light mode" : "Dark mode"}
         </TooltipContent>
       </Tooltip>
-
-      {/* Theme Color Dots */}
-      <div className="flex items-center gap-1.5">
-        {colors.map((c) => (
-          <Tooltip key={c}>
-            <TooltipTrigger
-              onClick={() => handleColorChange(c)}
-              className="group relative flex items-center justify-center p-3 -m-3 md:p-1 md:-m-1 min-w-[32px] min-h-[44px] md:min-w-0 md:min-h-0 cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-full"
-              aria-label={`Switch to ${c} theme`}
-            >
-              <motion.div
-                whileTap={{ scale: 0.8 }}
-                animate={{ 
-                  scale: themeColor === c ? 1.25 : 1,
-                  opacity: themeColor === c ? 1 : 0.4
-                }}
-                className="flex items-center justify-center"
-              >
-                <Circle
-                  size={8}
-                  fill="currentColor"
-                  className="text-foreground transition-opacity hover:opacity-100"
-                />
-              </motion.div>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" sideOffset={8} className="capitalize">
-              {c}
-            </TooltipContent>
-          </Tooltip>
-        ))}
-      </div>
     </div>
   );
 }
