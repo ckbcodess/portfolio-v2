@@ -80,14 +80,14 @@
   --text-4xl: clamp(2.8rem, 2.5vw + 2rem, 4.5rem);
 
   /* --- Layout Tokens (Compact for One-Pager) --- */
-  --page-px: clamp(1.5rem, 5vw, 80px); /* 80px max — matches Figma frame padding across all pages */
-  --page-pt: clamp(1.5rem, 5vh, 4rem); 
+  --page-px: clamp(1.5rem, 6vw, 80px); /* Hits 80px at 1333px viewport */
+  --page-pt: clamp(1.5rem, 6vh, 80px); /* Hits 80px at ~1333px height */
   --header-mb: clamp(2rem, 7.5vh, 6rem);
   --section-gap: clamp(3rem, 11vh, 10rem);
 
   /* Original Variables */
   --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
+  --muted-foreground: color-mix(in srgb, var(--foreground), transparent 40%);
   --secondary-foreground: oklch(0.205 0 0);
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -128,11 +128,11 @@ html {
 }
 
 .dark {
-  --background: oklch(0.11 0 0);
-  --glass-bg: oklch(0.11 0 0 / 0.8);
+  --background: #111111;
+  --glass-bg: rgba(17, 17, 17, 0.8);
   --foreground: oklch(0.98 0 0);
   --muted: oklch(0.20 0 0);
-  --muted-foreground: oklch(0.65 0 0);
+  --muted-foreground: color-mix(in srgb, var(--foreground), transparent 45%);
   --secondary-foreground: oklch(0.98 0 0);
   --card: oklch(0.15 0 0);
   --card-foreground: oklch(0.98 0 0);
@@ -172,7 +172,7 @@ html {
   --glass-bg: oklch(0.99 0.01 var(--hue));
   --foreground: oklch(0.20 0.06 var(--hue));
   --muted: oklch(0.92 0.06 var(--hue));
-  --muted-foreground: oklch(0.40 0.1 var(--hue));
+  --muted-foreground: color-mix(in srgb, var(--foreground), transparent 40%);
   --secondary-foreground: oklch(0.25 0.06 var(--hue));
   --card: oklch(0.96 0.04 var(--hue));
   --card-foreground: oklch(0.20 0.06 var(--hue));
@@ -203,7 +203,7 @@ html[data-theme="red"]:not(.dark) {
   --primary: oklch(0.28 0.05 25);
   --primary-foreground: oklch(0.88 0.08 25);
   --muted: oklch(0.82 0.08 25);
-  --muted-foreground: oklch(0.45 0.06 25);
+  --muted-foreground: color-mix(in srgb, var(--foreground), transparent 45%);
   --accent: oklch(0.82 0.08 25);
   --accent-foreground: oklch(0.28 0.05 25);
   --border: oklch(0.28 0.05 25 / 0.1);
@@ -222,7 +222,7 @@ html[data-theme="blue"]:not(.dark) {
   --primary: oklch(0.25 0.04 200);
   --primary-foreground: oklch(0.95 0.03 200);
   --muted: oklch(0.88 0.06 200);
-  --muted-foreground: oklch(0.40 0.08 200);
+  --muted-foreground: color-mix(in srgb, var(--foreground), transparent 45%);
   --accent: oklch(0.88 0.06 200);
   --accent-foreground: oklch(0.25 0.04 200);
   --border: oklch(0.25 0.04 200 / 0.1);
@@ -237,11 +237,11 @@ html[data-theme="blue"]:not(.dark) {
 
 .dark[data-theme]:not([data-theme="neutral"]),
 [data-theme]:not([data-theme="neutral"]).dark {
-  --background: oklch(0.18 0.05 var(--hue));
-  --glass-bg: oklch(0.12 0.08 var(--hue));
+  --background: #111111;
+  --glass-bg: rgba(17, 17, 17, 0.8);
   --foreground: oklch(0.95 0.03 var(--hue));
   --muted: oklch(0.26 0.08 var(--hue));
-  --muted-foreground: oklch(0.55 0.1 var(--hue));
+  --muted-foreground: color-mix(in srgb, var(--foreground), transparent 45%);
   --secondary-foreground: oklch(0.95 0.03 var(--hue));
   --card: oklch(0.22 0.06 var(--hue));
   --card-foreground: oklch(0.95 0.03 var(--hue));
@@ -272,7 +272,7 @@ html[data-theme="green"].dark {
   --primary: oklch(0.86 0.22 105);
   --primary-foreground: oklch(0.08 0.03 150);
   --muted: oklch(0.15 0.05 150);
-  --muted-foreground: oklch(0.70 0.18 105);
+  --muted-foreground: color-mix(in srgb, var(--foreground), transparent 45%);
   --secondary: oklch(0.15 0.05 150);
   --secondary-foreground: oklch(0.86 0.22 105);
   --accent: oklch(0.15 0.05 150);
@@ -378,4 +378,51 @@ html::-webkit-scrollbar, body::-webkit-scrollbar, #smooth-wrapper::-webkit-scrol
 
 .dark {
   --shimmer-color: oklch(0.2 0 0);
+}
+#smooth-wrapper {
+  mask-image: var(--page-mask, none);
+  -webkit-mask-image: var(--page-mask, none);
+}
+
+.case-study-mask {
+  --page-mask: linear-gradient(to bottom, transparent, black 160px, black calc(100% - 160px), transparent);
+}
+
+/* --- 3D Flip Navigation --- */
+.perspective-1000 {
+  perspective: 1000px;
+  transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.flip-card-inner {
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.flip-card-front {
+  transform: translateZ(20px);
+}
+
+.flip-card-back {
+  transform: rotateX(-90deg) translateZ(20px);
+}
+
+.is-flipped .flip-card-inner {
+  transform: rotateX(90deg);
+}
+
+[data-lightbox-open="true"] header {
+  opacity: 0;
+  pointer-events: none;
+}
+
+header {
+  transition: opacity 0.3s ease;
 }

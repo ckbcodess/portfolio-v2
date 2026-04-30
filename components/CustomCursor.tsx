@@ -3,13 +3,21 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import { usePathname } from "next/navigation";
 
 export default function CustomCursor() {
+    const pathname = usePathname();
     const cursorRef = useRef<HTMLDivElement>(null);
     const [cursorType, setCursorType] = useState<"default" | "copy" | "copied" | "pointer" | "case-study" | "confidential">("default");
     const isMobile = useRef(false);
 
     const resetTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+    // Reset cursor type on route change to prevent stale state
+    useEffect(() => {
+        if (resetTimeoutRef.current) clearTimeout(resetTimeoutRef.current);
+        setCursorType("default");
+    }, [pathname]);
 
     useEffect(() => {
         if (window.matchMedia("(pointer: coarse)").matches) {
@@ -169,7 +177,7 @@ export default function CustomCursor() {
     return (
         <div
             ref={cursorRef}
-            className="hidden lg:flex fixed top-0 left-0 items-center justify-center pointer-events-none z-[9999] overflow-hidden whitespace-nowrap tracking-tight font-normal opacity-0"
+            className="hidden lg:flex fixed top-0 left-0 items-center justify-center pointer-events-none z-[2000000] overflow-hidden whitespace-nowrap tracking-tight font-normal opacity-0"
             style={{ willChange: "transform, width, height, border-radius, background-color" }}
         >
             <span className={`transition-opacity duration-300 uppercase text-[10px] font-normal tracking-wider ${cursorType === "copy" ? "opacity-100" : "opacity-0 invisible"}`}>

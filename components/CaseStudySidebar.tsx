@@ -10,27 +10,29 @@ interface SectionLink {
   targetIds?: string[];
 }
 
-export default function CaseStudySidebar({ links }: { links: SectionLink[] }) {
+export default function CaseStudySidebar({ links, visible }: { links: SectionLink[], visible?: boolean }) {
   const [activeId, setActiveId] = useState<string>("");
   const [isVisible, setIsVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
   const visibleSections = useRef(new Map<string, number>());
 
+  // Visibility: controlled externally via prop, or scroll-based fallback
   useEffect(() => {
-    setTimeout(() => setMounted(true), 0);
+    setMounted(true);
+
+    if (visible !== undefined) {
+      setIsVisible(visible);
+      return;
+    }
+
     const handleScroll = () => {
-      if (window.scrollY > 80) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
+      setIsVisible(window.scrollY > 80);
     };
 
     window.addEventListener("scroll", handleScroll);
     handleScroll();
-
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [visible]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -140,7 +142,7 @@ export default function CaseStudySidebar({ links }: { links: SectionLink[] }) {
 
   return createPortal(
     <aside
-      className={`fixed left-[40px] top-[120px] z-[60] hidden w-48 shrink-0 flex-col gap-10 md:flex fixed-preview-portal`}
+      className={`fixed left-[var(--page-px)] top-[120px] z-[60] hidden w-48 shrink-0 flex-col gap-10 md:flex fixed-preview-portal`}
     >
       <AnimatePresence mode="wait">
         {isVisible && (

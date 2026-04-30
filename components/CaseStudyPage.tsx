@@ -6,10 +6,15 @@ import TransitionLink from "@/components/TransitionLink";
 import CaseStudySidebar from "@/components/CaseStudySidebar";
 import MobileCaseStudyNav from "@/components/MobileCaseStudyNav";
 import { CaseStudyContent } from "@/content/case-studies/types";
-import { useTheme } from "next-themes";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Lock, ArrowRight, ShieldAlert } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 interface CaseStudyPageProps {
   caseStudy: CaseStudyContent;
@@ -20,6 +25,14 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
   const [password, setPassword] = useState("");
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [showError, setShowError] = useState(false);
+  const [isContentActive, setIsContentActive] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const bgRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     // Check session storage to see if they've already unlocked it this session
@@ -29,18 +42,114 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
     }
   }, [caseStudy.slug]);
 
-  // Update persistent header when locked state changes
+  // Update persistent header when locked state or scroll state changes
   useEffect(() => {
+    const baseProps = {
+      isCaseStudy: true,
+      scrolled: isContentActive,
+      backLink: "/"
+    };
+
     if (caseStudy.isLocked && !isAuthorized) {
       setHeaderProps({ 
+        ...baseProps,
         variant: "case-study", 
         title: "Protected Content", 
-        backLink: "/" 
       });
     } else {
-      setHeaderProps({ variant: "default" });
+      setHeaderProps({ 
+        ...baseProps,
+        variant: "default",
+      });
     }
-  }, [caseStudy.isLocked, isAuthorized, setHeaderProps]);
+  }, [caseStudy.isLocked, isAuthorized, isContentActive, setHeaderProps]);
+
+  // Apply a fixed CSS mask to the smooth-wrapper for the top/bottom fade effect
+  useEffect(() => {
+    const wrapper = document.getElementById("smooth-wrapper");
+    if (wrapper) {
+      wrapper.style.setProperty(
+        "--page-mask",
+        "linear-gradient(to bottom, transparent, black 80px)"
+      );
+    }
+    return () => {
+      if (wrapper) {
+        wrapper.style.removeProperty("--page-mask");
+      }
+    };
+  }, []);
+
+    // Unified Entrance Orchestration (Awwwards Style)
+  useGSAP(() => {
+    if (!isAuthorized && caseStudy.isLocked) return;
+    if (!mounted || !bgRef.current) return;
+
+    const tl = gsap.timeline();
+
+    // 1. Background Warmup - Removed scale to fix aliasing/banding artifacts
+    tl.fromTo(bgRef.current, { 
+      opacity: 0,
+    }, {
+      opacity: 1,
+      duration: 1.4,
+      delay: 0.4,
+      ease: "sine.inOut"
+    });
+
+    // 2. Kinetic Title & Content Reveal
+    tl.to(".reveal-item", {
+      y: 0,
+      opacity: 1,
+      duration: 0.8,
+      stagger: 0.04,
+      ease: "power4.out"
+    }, "-=1.1");
+
+    // 3. Metadata Stagger
+    tl.to(".meta-item", {
+      y: 0,
+      opacity: 1,
+      duration: 0.6,
+      stagger: 0.03,
+      ease: "power4.out"
+    }, "-=0.6");
+
+    // 4. Hero Entrance
+    tl.to(".hero-container", {
+      y: 0,
+      opacity: 1,
+      duration: 0.9,
+      ease: "power4.out"
+    }, "-=0.7");
+
+    // 5. Scroll-driven Background Fade
+    ScrollTrigger.create({
+      trigger: triggerRef.current,
+      start: "top center",
+      onEnter: () => {
+        setIsContentActive(true);
+        gsap.to(bgRef.current, { opacity: 0, duration: 0.8, ease: "power2.out" });
+      },
+      onLeaveBack: () => {
+        setIsContentActive(false);
+        gsap.to(bgRef.current, { opacity: 1, duration: 0.8, ease: "power2.out" });
+      },
+    });
+
+    // 6. Hero Parallax
+    gsap.to(".hero-parallax", {
+      y: "15%",
+      ease: "none",
+      scrollTrigger: {
+        trigger: ".hero-container",
+        start: "top bottom",
+        end: "bottom top",
+        scrub: true
+      }
+    });
+
+  }, { dependencies: [isAuthorized, caseStudy.isLocked, caseStudy.slug, mounted], scope: bgRef.current?.parentElement || undefined });
 
   const handleUnlock = (e: React.FormEvent) => {
     e.preventDefault();
@@ -140,66 +249,104 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-background w-full relative">
+    <div className="min-h-screen w-full relative">
 
-      <CaseStudySidebar links={sidebarLinks} />
-      <MobileCaseStudyNav links={sidebarLinks} />
+      <CaseStudySidebar links={sidebarLinks} visible={isContentActive} />
+      <MobileCaseStudyNav links={sidebarLinks} visible={isContentActive} />
 
       <div className="fixed bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-background to-transparent pointer-events-none z-[60]" />
+      
+       {!mounted ? (
+         <div 
+           className="fixed inset-0 pointer-events-none z-[-1] fixed-preview-portal"
+           style={{
+             background: `linear-gradient(180deg in oklch, 
+               #360000 0%, 
+               oklch(22% 0.15 25) 15%, 
+               oklch(30% 0.20 25) 30%, 
+               oklch(38% 0.25 25) 45%, 
+               oklch(46% 0.28 25) 60%, 
+               oklch(54% 0.31 25) 75%, 
+               oklch(60% 0.33 25) 90%, 
+               oklch(65% 0.35 25) 100%
+             )`,
+             opacity: 0,
+           }}
+         />
+       ) : createPortal(
+         <div className="fixed inset-0 pointer-events-none z-[-1] fixed-preview-portal overflow-hidden">
+           {/* High-Fidelity Eased Gradient */}
+           <div 
+             ref={bgRef}
+             className="absolute inset-0"
+             style={{
+               background: `linear-gradient(180deg in oklch, 
+                 #360000 0%, 
+                 oklch(22% 0.15 25) 15%, 
+                 oklch(30% 0.20 25) 30%, 
+                 oklch(38% 0.25 25) 45%, 
+                 oklch(46% 0.28 25) 60%, 
+                 oklch(54% 0.31 25) 75%, 
+                 oklch(60% 0.33 25) 90%, 
+                 oklch(65% 0.35 25) 100%
+               )`,
+               opacity: 0,
+               willChange: "opacity",
+             }}
+           />
+         </div>,
+         document.body
+       )}
 
-      <div id="smooth-wrapper">
-        <div
-          id="smooth-content"
-          className="flex flex-col items-center pt-48 md:pt-64 px-[var(--page-px)] pb-40 relative w-full"
-        >
-          <main className="w-full flex flex-col items-center relative z-10">
-            <header id="intro" className="w-full max-w-[1000px] pb-16 pt-16 flex flex-col md:flex-row md:justify-between md:items-end gap-10">
+      <div
+        className="flex flex-col items-center pt-48 md:pt-80 px-[var(--page-px)] pb-40 relative w-full"
+      >
+        <main className="w-full flex flex-col items-center relative z-10">
+            <header id="intro" className="w-full max-w-[1400px] pb-32 pt-16 flex flex-col md:flex-row md:justify-between md:items-end gap-10 mx-auto">
               <div className="max-w-[480px]">
-                <div className="relative w-10 h-10 rounded-xl overflow-hidden mb-6 bg-muted/40 border border-border flex items-center justify-center">
-                  {caseStudy.logoSrc ? (
-                    <Image
-                      src={caseStudy.logoSrc}
-                      alt={caseStudy.logoAlt ?? `${caseStudy.title} logo`}
-                      fill
-                      className="object-cover"
-                      priority
-                    />
-                  ) : (
-                    <span
-                      className={`text-[11px] font-semibold tracking-wide ${
-                        caseStudy.logoClassName ?? "text-foreground"
-                      }`}
-                    >
-                      {caseStudy.logoText ?? caseStudy.title.slice(0, 3).toUpperCase()}
-                    </span>
-                  )}
+                <div className="flex flex-wrap gap-x-[0.25em] mb-4">
+                  {caseStudy.title.split(" ").map((word, i) => (
+                    <div key={i} className="overflow-hidden">
+                      <h1 
+                        className="reveal-item text-3xl md:text-[36px] font-normal leading-[1.1] tracking-tight text-white opacity-0 translate-y-[110%]"
+                      >
+                        {word}
+                      </h1>
+                    </div>
+                  ))}
                 </div>
-
-                <h1 className="text-3xl md:text-[2.5rem] font-normal leading-tight tracking-tight text-foreground mb-3">
-                  {caseStudy.title}
-                </h1>
-                <p className="text-muted-foreground text-base md:text-lg leading-relaxed max-w-lg">
-                  {caseStudy.description}
-                </p>
+                
+                <div className="overflow-hidden">
+                  <p className="reveal-item text-white/60 text-lg md:text-[20px] leading-relaxed max-w-lg opacity-0 translate-y-[110%]">
+                    {caseStudy.description}
+                  </p>
+                </div>
               </div>
 
               <div className="flex flex-wrap gap-x-12 gap-y-6 md:pb-2">
                 {caseStudy.meta.map(({ label, value }) => (
-                  <div key={label} className="flex flex-col gap-1.5">
-                    <p className="text-[11px] font-semibold text-foreground tracking-wider uppercase">{label}</p>
-                    <p className="text-muted-foreground text-[13px]">{value}</p>
+                  <div key={label} className="overflow-hidden">
+                    <div className="meta-item flex flex-col gap-1.5 opacity-0 translate-y-[100%]">
+                      <p className="text-[11px] font-semibold text-white/40 tracking-wider uppercase">{label}</p>
+                      <p className="text-white/60 text-[14px]">{value}</p>
+                    </div>
                   </div>
                 ))}
               </div>
             </header>
 
-            <div className="w-full max-w-[1000px] mb-32">
-              <div className="relative rounded-2xl overflow-hidden shadow-sm border border-border aspect-video w-full bg-muted/20">
-                <Image src={caseStudy.heroSrc} alt={caseStudy.heroAlt} fill className="object-cover" priority />
+            <div className="hero-container w-full max-w-[1400px] mb-32 mx-auto opacity-0 translate-y-[30px]">
+              <div className="relative rounded-2xl overflow-hidden shadow-sm aspect-video w-full bg-muted/20">
+                <div className="hero-parallax absolute inset-0 -top-[20%] -bottom-[20%] w-full h-[140%]">
+                  <Image src={caseStudy.heroSrc} alt={caseStudy.heroAlt} fill className="object-cover" priority />
+                </div>
               </div>
             </div>
 
-            <div className="w-full max-w-[600px]">
+            {/* Scroll Trigger for Background Fade */}
+            <div ref={triggerRef} className="h-px w-full pointer-events-none mb-32" />
+
+            <div className="w-full max-w-[600px] mx-auto">
               <div className="flex flex-col gap-32 pb-32">
                 {caseStudy.sections.map((section) => (
                   <section key={section.id} id={section.id} className="flex flex-col items-start w-full">
@@ -229,7 +376,7 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
                     )}
 
                     {section.imageSrc && (
-                      <div className="mt-12 w-full relative rounded-2xl overflow-hidden bg-muted/20 aspect-[4/3] border border-border/50">
+                      <div className="mt-12 w-full relative rounded-2xl overflow-hidden bg-muted/20 aspect-[4/3]">
                         <Image src={section.imageSrc} alt={section.heading} fill className="object-cover" />
                       </div>
                     )}
@@ -255,8 +402,7 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
                 </TransitionLink>
               </div>
             </div>
-          </main>
-        </div>
+        </main>
       </div>
     </div>
   );

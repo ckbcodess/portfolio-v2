@@ -14,6 +14,8 @@ interface HeaderProps {
   variant?: "default" | "case-study";
   title?: string;
   backLink?: string;
+  isCaseStudy?: boolean;
+  scrolled?: boolean;
 }
 
 const NAV_ITEMS = [
@@ -22,113 +24,175 @@ const NAV_ITEMS = [
   { href: "https://drive.google.com/file/d/1EJm5aBA3I95pPkgT-4PDKTlOZe7ChLH9/view?usp=sharing", label: "Resume", isExternal: true },
 ];
 
-export default function Header({ variant = "default", backLink = "/" }: HeaderProps) {
+export default function Header({ variant = "default", backLink = "/", isCaseStudy = false, scrolled: scrolledProp }: HeaderProps) {
   const pathname = usePathname();
   const { isSoundEnabled, toggleSound } = useSound();
-  const { pendingHref } = useTransition();
+  const { pendingHref, isTransitioning } = useTransition();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [internalScrolled, setInternalScrolled] = useState(false);
+  const scrolled = scrolledProp ?? internalScrolled;
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 80);
+    const handleScroll = () => {
+      if (isTransitioning) return;
+      setInternalScrolled(window.scrollY > 80);
+    };
     window.addEventListener("scroll", handleScroll);
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [isTransitioning]);
 
-  if (variant === "case-study") {
-    return (
-      <header className="fixed top-0 left-0 w-full z-50 flex justify-center mix-blend-normal pointer-events-none">
-        <div
-          className={`w-full px-[var(--page-px)] relative flex items-center h-[36px] pointer-events-none transition-all duration-400 ease-out ${
-            scrolled ? "mt-6" : "mt-6 md:mt-10"
-          } justify-between`}
-        >
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-4 pointer-events-auto">
-            <TransitionLink
-              href={backLink}
-              label="Home"
-              className="group flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors duration-300"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="transform group-hover:-translate-x-1 transition-transform duration-300 text-muted-foreground group-hover:text-foreground">
-                <path d="m15 18-6-6 6-6" />
-              </svg>
-              <span className="text-[1rem] font-light">Back</span>
-            </TransitionLink>
-            <div className="w-1 h-1 rounded-full bg-muted-foreground/40" />
-            <span className="text-foreground font-light text-[1rem]">Ransford Gyasi</span>
-          </div>
-        </div>
-      </header>
-    );
-  }
+  // Reset internal scroll state on navigation to prevent jumps
+  useEffect(() => {
+    setInternalScrolled(false);
+    setIsMenuOpen(false);
+  }, [pathname]);
 
   const activeHref = pendingHref || pathname;
 
   return (
-    <header className="w-full fixed top-0 left-0 z-50 mix-blend-normal pointer-events-none pt-[var(--page-pt)]">
+    <header className="w-full fixed top-0 left-0 z-50 mix-blend-normal pointer-events-none pt-[var(--page-px)]">
       <div className="w-full px-[var(--page-px)] flex justify-between items-center relative">
-        {/* Logo */}
-        <TransitionLink
-          href="/"
-          label="Home"
-          className="text-foreground/60 hover:text-foreground text-sm font-normal tracking-tight transition-colors pointer-events-auto"
-        >
-          RG
-        </TransitionLink>
-
-        {/* Center Navigation — Pill */}
-        <nav className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center gap-8 px-6 py-3 rounded-full bg-foreground/5 backdrop-blur-md border border-border/30 pointer-events-auto">
-          {NAV_ITEMS.map((item) => {
-            const isActive = activeHref === item.href;
-            if (item.isExternal) {
-              return (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm font-normal tracking-tight transition-colors text-foreground/30 hover:text-foreground"
-                >
-                  {item.label}
-                </a>
-              );
-            }
-            return (
-              <TransitionLink
-                key={item.href}
-                href={item.href}
-                label={item.label}
-                className={`text-sm font-normal tracking-tight transition-colors ${
-                  isActive ? "text-foreground" : "text-foreground/30 hover:text-foreground"
-                }`}
-              >
-                {item.label}
-              </TransitionLink>
-            );
-          })}
-        </nav>
-
-
-        {/* Right Section — Time, Theme, Sound */}
-        <div className="hidden lg:flex items-center gap-8 pointer-events-auto">
-          <span className="text-foreground text-base font-normal tabular-nums">
-            <Clock />
-          </span>
-          <div className="flex items-center gap-6">
-            <ThemeControls />
-            <SoundToggle isSoundEnabled={isSoundEnabled} toggleSound={toggleSound} />
-          </div>
+        {/* Left Section: Logo */}
+        <div className="flex items-center gap-4 pointer-events-auto">
+          <TransitionLink
+            href="/"
+            label="Home"
+            className={`text-sm font-normal tracking-tight transition-colors ${
+              isCaseStudy && !scrolled ? "text-white/60 hover:text-white" : "text-foreground/60 hover:text-foreground"
+            }`}
+          >
+            RG
+          </TransitionLink>
         </div>
 
-        {/* Mobile Menu Toggle */}
-        <button
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="lg:hidden p-2 -mr-2 text-foreground/60 hover:text-foreground transition-colors pointer-events-auto"
-          aria-label="Toggle menu"
+        <motion.div 
+          layout={!isTransitioning}
+          transition={{
+            layout: { type: "spring", damping: 25, stiffness: 200 },
+          }}
+          className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center rounded-full bg-foreground/5 backdrop-blur-2xl overflow-hidden pointer-events-auto"
         >
-          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+          <AnimatePresence mode="popLayout" initial={false}>
+            {isCaseStudy && scrolled ? (
+              <motion.div
+                key="back"
+                layout
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ 
+                  duration: 0.2,
+                  layout: { type: "spring", damping: 25, stiffness: 200 }
+                }}
+                className="px-5 py-3 flex items-center justify-center whitespace-nowrap"
+              >
+                <TransitionLink
+                  href={backLink}
+                  label="Back"
+                  className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors group"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="transform group-hover:-translate-x-1 transition-transform">
+                    <path d="m15 18-6-6 6-6" />
+                  </svg>
+                  <span className="text-sm font-normal">Back</span>
+                </TransitionLink>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="nav"
+                layout
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                transition={{ 
+                  duration: 0.2,
+                  layout: { type: "spring", damping: 25, stiffness: 200 }
+                }}
+                className="px-8 py-3 flex items-center gap-8 whitespace-nowrap"
+              >
+                {NAV_ITEMS.map((item) => {
+                  const isActive = activeHref === item.href;
+                  const label = item.label;
+                  const isForcedDark = isCaseStudy && !scrolled;
+                  
+                  const content = (
+                    <span className={`text-sm font-normal tracking-tight whitespace-nowrap transition-colors ${
+                      isForcedDark 
+                        ? (isActive ? "text-white" : "text-white/40 group-hover:text-white") 
+                        : (isActive ? "text-foreground" : "text-foreground/30 group-hover:text-foreground")
+                    }`}>
+                      {label}
+                    </span>
+                  );
+
+                  if (item.isExternal) {
+                    return (
+                      <a
+                        key={item.href}
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group"
+                      >
+                        {content}
+                      </a>
+                    );
+                  }
+                  return (
+                    <TransitionLink
+                      key={item.href}
+                      href={item.href}
+                      label={item.label}
+                      className="group"
+                    >
+                      {content}
+                    </TransitionLink>
+                  );
+                })}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+
+
+        {/* Right Section — Time, Theme, Sound (Hidden on case study scroll) */}
+        <AnimatePresence>
+          {(!isCaseStudy || !scrolled) && (
+            <motion.div 
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 10 }}
+              transition={{ type: "spring", damping: 25, stiffness: 160 }}
+              className="hidden lg:flex items-center gap-8 pointer-events-auto"
+            >
+              <span className={`text-base font-normal tabular-nums ${
+                isCaseStudy && !scrolled ? "text-white" : "text-foreground"
+              }`}>
+                <Clock />
+              </span>
+              <div className="flex items-center gap-6">
+                <ThemeControls forceLight={isCaseStudy && !scrolled} />
+                <SoundToggle 
+                  isSoundEnabled={isSoundEnabled} 
+                  toggleSound={toggleSound} 
+                  forceLight={isCaseStudy && !scrolled} 
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Mobile Menu Toggle (Always show if not transitioning) */}
+        <div className="lg:hidden pointer-events-auto">
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="p-2 -mr-2 text-foreground/60 hover:text-foreground transition-colors"
+            aria-label="Toggle menu"
+          >
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
 
         {/* Mobile Menu Overlay */}
         <AnimatePresence>
@@ -188,13 +252,23 @@ export default function Header({ variant = "default", backLink = "/" }: HeaderPr
   );
 }
 
-function SoundToggle({ isSoundEnabled, toggleSound }: { isSoundEnabled: boolean; toggleSound: () => void }) {
+function SoundToggle({ 
+  isSoundEnabled, 
+  toggleSound,
+  forceLight
+}: { 
+  isSoundEnabled: boolean; 
+  toggleSound: () => void;
+  forceLight?: boolean;
+}) {
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger
           onClick={toggleSound}
-          className="text-foreground/60 hover:text-foreground transition-colors flex items-center justify-center cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-sm"
+          className={`${
+            forceLight ? "text-white/60 hover:text-white" : "text-foreground/60 hover:text-foreground"
+          } transition-colors flex items-center justify-center cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-sm`}
           aria-label={isSoundEnabled ? "Disable sound" : "Enable sound"}
         >
           {isSoundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}

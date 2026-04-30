@@ -61,17 +61,15 @@ export default function PlaygroundPage() {
   };
 
   return (
-    <div ref={pageRef} className="min-h-screen bg-background selection:bg-foreground selection:text-background">
-      <div id="smooth-wrapper">
-        <div id="smooth-content">
-          <LayoutGroup>
-            <motion.main 
-              variants={container}
-              initial="hidden"
-              animate={canAnimate ? "show" : "hidden"}
-              className="pt-32 md:pt-44 pb-40 px-[var(--page-px)] w-full origin-top"
-            >
-              <div className="flex flex-col gap-12 w-full max-w-[1284px]">
+    <div ref={pageRef} className="min-h-screen lg:h-screen lg:overflow-hidden bg-background selection:bg-foreground selection:text-background flex flex-col pt-32 md:pt-44 pb-12 lg:pb-0">
+      <LayoutGroup>
+        <motion.main 
+          variants={container}
+          initial="hidden"
+          animate={canAnimate ? "show" : "hidden"}
+          className="px-[var(--page-px)] w-full flex-1 flex flex-col items-start overflow-hidden origin-top-left"
+        >
+              <div className="flex flex-col gap-10 w-full h-full overflow-hidden">
                 {/* Year Filter */}
                 <MaskReveal delay={0.1}>
                   <div className="flex gap-8 items-center text-[14px] font-normal tracking-[-0.01em] whitespace-nowrap">
@@ -82,7 +80,7 @@ export default function PlaygroundPage() {
                 </MaskReveal>
 
                 {/* Grid of Items */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full items-start">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full items-start overflow-y-auto pb-40 no-scrollbar">
                   {experiments.map((exp) => {
                     const layoutId = `playground-img-${exp.id}`;
                     return (
@@ -117,9 +115,7 @@ export default function PlaygroundPage() {
               layoutId={activeImage?.id}
               onClose={() => setActiveImage(null)}
             />
-          </LayoutGroup>
-        </div>
-      </div>
+      </LayoutGroup>
     </div>
   );
 }

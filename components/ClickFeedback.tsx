@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { useSound } from "@/components/SoundProvider";
 
 interface Burst {
@@ -13,6 +13,7 @@ interface Burst {
 export default function ClickFeedback() {
   const [bursts, setBursts] = useState<Burst[]>([]);
   const { playClickDown, playClickUp } = useSound();
+  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
     const handleMouseDown = () => {
@@ -21,8 +22,10 @@ export default function ClickFeedback() {
 
     const handleMouseUp = (e: MouseEvent) => {
       playClickUp();
-      const newBurst = { id: Date.now(), x: e.clientX, y: e.clientY };
-      setBursts((prev) => [...prev, newBurst].slice(-5));
+      if (!shouldReduceMotion) {
+        const newBurst = { id: Date.now(), x: e.clientX, y: e.clientY };
+        setBursts((prev) => [...prev, newBurst].slice(-5));
+      }
     };
 
     window.addEventListener("mousedown", handleMouseDown);

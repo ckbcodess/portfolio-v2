@@ -6,6 +6,7 @@ import { MaskReveal } from "@/components/MaskReveal";
 import PreviewCard from "@/components/PreviewCard";
 import { caseStudies } from "@/content/case-studies";
 import { Signature } from "@/components/Signature";
+import FixedPreview from "@/components/FixedPreview";
 
 const TABS = ["Bio", "Side Quests", "Books", "Music", "Inspos", "Random Thoughts"] as const;
 type Tab = (typeof TABS)[number];
@@ -70,7 +71,7 @@ export default function AboutPage() {
                       className={`text-sm font-normal leading-none tracking-tight transition-colors whitespace-nowrap ${
                         isActive
                           ? "text-foreground"
-                          : "text-muted-foreground/60 hover:text-foreground"
+                          : "text-muted-foreground hover:text-foreground"
                       }`}
                     >
                       {tab}
@@ -98,7 +99,7 @@ export default function AboutPage() {
 
             {/* Signature */}
             <MaskReveal delay={0.3}>
-              <Signature className="text-foreground/80 w-16 h-auto" />
+              <Signature className="text-muted-foreground w-16 h-auto" />
             </MaskReveal>
           </div>
 
@@ -114,9 +115,9 @@ export default function AboutPage() {
                 <MaskReveal key={item.company + idx} delay={0.5 + idx * 0.05} className="w-full">
                   <li className="flex items-baseline justify-between gap-6 text-foreground text-sm">
                     <span className="truncate">
-                      {item.role} <span className="text-muted-foreground/60">— {item.company}</span>
+                      {item.role} <span className="text-muted-foreground">— {item.company}</span>
                     </span>
-                    <span className="text-muted-foreground/60 tabular-nums shrink-0">{item.period}</span>
+                    <span className="text-muted-foreground tabular-nums shrink-0">{item.period}</span>
                   </li>
                 </MaskReveal>
               ))}
@@ -126,16 +127,7 @@ export default function AboutPage() {
       </div>
 
       {/* Desktop Preview — Fixed Position (mirrors Home) */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={canAnimate ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.8 }}
-        className="hidden lg:block fixed bottom-[calc(8vh+1rem)] right-[80px] w-[clamp(350px,38vw,628px)]"
-        style={{ aspectRatio: "628 / 346" }}
-        aria-label="Preview"
-      >
-        <PreviewCard activeImage={previewImage} className="!h-full" />
-      </motion.div>
+      <FixedPreview activeImage={previewImage} isVisible={canAnimate} />
     </div>
   );
 }

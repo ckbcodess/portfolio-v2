@@ -14,18 +14,25 @@ export default function SmoothScroll() {
     const pathname = usePathname();
 
     useEffect(() => {
-        // Disable browser's native scroll restoration BEFORE ScrollSmoother initializes.
-        // Otherwise the browser jumps to the previous scroll position for one frame,
-        // then ScrollSmoother snaps back — causing the visible bounce on refresh.
-        window.history.scrollRestoration = "manual";
+        // Disable browser's native scroll restoration
+        if ("scrollRestoration" in window.history) {
+            window.history.scrollRestoration = "manual";
+        }
+        
+        // Force window to top before engine initializes
+        window.scrollTo(0, 0);
 
         const ctx = gsap.context(() => {
-            ScrollSmoother.create({
+            const smoother = ScrollSmoother.create({
                 wrapper: "#smooth-wrapper",
                 content: "#smooth-content",
                 smooth: 0.4,
                 effects: true,
             });
+
+            // Double-tap the scroll reset to ensure it sticks across page loads
+            smoother.scrollTop(0);
+            requestAnimationFrame(() => smoother.scrollTop(0));
         });
 
         return () => ctx.revert();

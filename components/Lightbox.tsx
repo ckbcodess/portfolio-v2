@@ -38,11 +38,13 @@ export default function Lightbox({ src, alt = "", layoutId, onClose }: LightboxP
   useEffect(() => {
     if (!src) return;
     document.addEventListener("keydown", handleKeyDown);
+    document.documentElement.setAttribute("data-lightbox-open", "true");
     // Lock scroll
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
+      document.documentElement.removeAttribute("data-lightbox-open");
       document.body.style.overflow = prev;
     };
   }, [src, handleKeyDown]);
@@ -58,7 +60,7 @@ export default function Lightbox({ src, alt = "", layoutId, onClose }: LightboxP
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed inset-0 z-[99999] bg-background/80 backdrop-blur-xl"
+            className="fixed inset-0 z-[1000000] bg-black/90 backdrop-blur-2xl"
             onClick={onClose}
             aria-hidden="true"
           />
@@ -66,7 +68,7 @@ export default function Lightbox({ src, alt = "", layoutId, onClose }: LightboxP
           {/* Image container */}
           <motion.div
             key="lightbox-content"
-            className="fixed inset-0 z-[100000] flex items-center justify-center p-6 md:p-12 lg:p-20"
+            className="fixed inset-0 z-[1000001] flex items-center justify-center p-6 md:p-12 lg:p-20"
             onClick={onClose}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

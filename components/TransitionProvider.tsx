@@ -14,6 +14,8 @@ interface HeaderProps {
     variant?: "default" | "case-study";
     title?: string;
     backLink?: string;
+    isCaseStudy?: boolean;
+    scrolled?: boolean;
 }
 
 interface TransitionContextType {
@@ -53,6 +55,9 @@ export default function TransitionProvider({ children }: { children: ReactNode }
             duration: 0.3,
             ease: "power2.out",
             onComplete: () => {
+                // Reset scroll immediately before navigation to prevent layout jumps 
+                // on the new page when the old scroll position is maintained.
+                window.scrollTo(0, 0);
                 router.push(href);
             }
         });
@@ -62,7 +67,13 @@ export default function TransitionProvider({ children }: { children: ReactNode }
     useEffect(() => {
         // Reset header props on navigation unless the page specifically sets them
         // This ensures the header returns to default when moving away from a case study
-        setTimeout(() => setHeaderProps({ variant: "default" }), 0);
+        setTimeout(() => {
+            if (pathname.startsWith("/work/")) {
+                setHeaderProps({ variant: "default", isCaseStudy: true });
+            } else {
+                setHeaderProps({ variant: "default" });
+            }
+        }, 0);
         setTimeout(() => setPendingHref(null), 0);
 
         // We always animate in on mount/pathname change for a smooth experience
@@ -93,7 +104,7 @@ export default function TransitionProvider({ children }: { children: ReactNode }
                 className="w-full origin-top"
                 style={{ willChange: "opacity" }}
             >
-                <div id="smooth-content" className="w-full flex flex-col items-start">
+                <div id="smooth-content" className="w-full">
                     {children}
                 </div>
             </div>

@@ -12,6 +12,7 @@ import { ArrowRight, Lock } from "lucide-react";
 import PreviewCard from "@/components/PreviewCard";
 import { caseStudies } from "@/content/case-studies";
 import { MaskReveal } from "@/components/MaskReveal";
+import FixedPreview from "@/components/FixedPreview";
 
 export default function Home() {
   const pageRef = useRef<HTMLDivElement>(null);
@@ -155,16 +156,7 @@ export default function Home() {
       </div>
 
       {/* Desktop Preview — Fixed Position */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={canAnimate ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.8 }}
-        className="hidden lg:block fixed bottom-[calc(8vh+1rem)] right-[80px] w-[clamp(350px,38vw,628px)]"
-        style={{ aspectRatio: "628 / 346" }}
-        aria-label="Case study preview"
-      >
-        <PreviewCard activeImage={activeImage} className="!h-full" />
-      </motion.div>
+      <FixedPreview activeImage={activeImage} isVisible={canAnimate} />
     </div>
   );
 }
@@ -265,7 +257,7 @@ function ProjectItem({
         <div className="flex flex-col justify-center items-start">
           <div className="flex items-center gap-2">
             <h3 className="text-foreground text-lg font-normal">{title}</h3>
-            {isLocked && <Lock size={16} className="text-muted-foreground/60" />}
+            {isLocked && <Lock size={16} className="text-muted-foreground" />}
           </div>
           <p className="text-muted-foreground text-sm font-normal mt-1 opacity-40">2025</p>
         </div>

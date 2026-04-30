@@ -11,7 +11,7 @@ interface SectionLink {
   targetIds?: string[];
 }
 
-export default function MobileCaseStudyNav({ links }: { links: SectionLink[] }) {
+export default function MobileCaseStudyNav({ links, visible }: { links: SectionLink[], visible?: boolean }) {
   const [activeId, setActiveId] = useState<string>("");
   const [isVisible, setIsVisible] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -21,31 +21,30 @@ export default function MobileCaseStudyNav({ links }: { links: SectionLink[] }) 
   const navRef = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
 
+  // Visibility + scroll progress tracking
   useEffect(() => {
-    setTimeout(() => setMounted(true), 0);
+    setMounted(true);
+
     const handleScroll = () => {
-      if (window.scrollY > 80) {
-        setIsVisible(true);
+      // Visibility: controlled externally via prop, or scroll-based fallback
+      if (visible !== undefined) {
+        setIsVisible(visible);
+        if (!visible) setIsOpen(false);
       } else {
-        setIsVisible(false);
-        setIsOpen(false);
+        const scrolledPastThreshold = window.scrollY > 80;
+        setIsVisible(scrolledPastThreshold);
+        if (!scrolledPastThreshold) setIsOpen(false);
       }
 
-      const scrollHeight = document.documentElement.scrollHeight;
-      const clientHeight = document.documentElement.clientHeight;
-      const maxScroll = scrollHeight - clientHeight;
-      const progress = maxScroll > 0 ? (window.scrollY / maxScroll) * 100 : 0;
-      setScrollProgress(Math.min(100, Math.max(0, progress)));
+      // Scroll progress (always tracked for the ring indicator)
+      const maxScroll = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      setScrollProgress(maxScroll > 0 ? Math.min(100, (window.scrollY / maxScroll) * 100) : 0);
     };
 
     window.addEventListener("scroll", handleScroll);
-    const timeout = setTimeout(handleScroll, 100);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      clearTimeout(timeout);
-    };
-  }, []);
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [visible]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -152,6 +151,8 @@ export default function MobileCaseStudyNav({ links }: { links: SectionLink[] }) 
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
           className="flex w-full items-center justify-between gap-3 px-4 py-3"
+          aria-expanded={isOpen}
+          aria-controls="mobile-case-study-nav-menu"
         >
           <div className="flex min-w-0 items-center gap-3">
             <span className="truncate text-[1rem] font-normal leading-tight text-muted-foreground">{activeLink?.label}</span>
@@ -201,6 +202,7 @@ export default function MobileCaseStudyNav({ links }: { links: SectionLink[] }) 
         </button>
 
         <motion.div
+          id="mobile-case-study-nav-menu"
           initial={false}
           animate={
             shouldReduceMotion
