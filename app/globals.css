@@ -128,8 +128,10 @@ html {
 }
 
 .dark {
-  --background: #111111;
-  --glass-bg: rgba(17, 17, 17, 0.8);
+  --background: #060607;
+  --glass-bg: rgba(6, 6, 7, 0.8);
+  --nav-accent: #FFFFFF;
+  --nav-pill-bg: #0F0F0F;
   --foreground: oklch(0.98 0 0);
   --muted: oklch(0.20 0 0);
   --muted-foreground: color-mix(in srgb, var(--foreground), transparent 45%);
@@ -237,8 +239,10 @@ html[data-theme="blue"]:not(.dark) {
 
 .dark[data-theme]:not([data-theme="neutral"]),
 [data-theme]:not([data-theme="neutral"]).dark {
-  --background: #111111;
-  --glass-bg: rgba(17, 17, 17, 0.8);
+  --background: #060607;
+  --glass-bg: rgba(6, 6, 7, 0.8);
+  --nav-accent: #FFFFFF;
+  --nav-pill-bg: #0F0F0F;
   --foreground: oklch(0.95 0.03 var(--hue));
   --muted: oklch(0.26 0.08 var(--hue));
   --muted-foreground: color-mix(in srgb, var(--foreground), transparent 45%);
@@ -379,9 +383,9 @@ html::-webkit-scrollbar, body::-webkit-scrollbar, #smooth-wrapper::-webkit-scrol
 .dark {
   --shimmer-color: oklch(0.2 0 0);
 }
-#smooth-wrapper {
-  mask-image: var(--page-mask, none);
-  -webkit-mask-image: var(--page-mask, none);
+#smooth-wrapper[style*="--page-mask"] {
+  mask-image: var(--page-mask);
+  -webkit-mask-image: var(--page-mask);
 }
 
 .case-study-mask {
@@ -424,5 +428,5 @@ html::-webkit-scrollbar, body::-webkit-scrollbar, #smooth-wrapper::-webkit-scrol
 }
 
 header {
-  transition: opacity 0.3s ease;
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }

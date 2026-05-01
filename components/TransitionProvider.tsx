@@ -91,9 +91,6 @@ export default function TransitionProvider({ children }: { children: ReactNode }
 
     return (
         <TransitionContext.Provider value={{ navigate, isTransitioning, pendingHref, setHeaderProps }}>
-            {/* Persistent Header */}
-            <Header {...headerProps} />
-
             {/* 
                 These IDs are required by ScrollSmoother in components/SmoothScroll.tsx. 
                 Do not rename or remove them without updating that file.
@@ -113,6 +110,9 @@ export default function TransitionProvider({ children }: { children: ReactNode }
             <LoadingScreen />
             <SmoothScroll />
             <CustomCursor />
+
+            {/* Persistent Header — Rendered last to ensure it's on top of all stacking contexts */}
+            <Header {...headerProps} />
         </TransitionContext.Provider>
     );
 }

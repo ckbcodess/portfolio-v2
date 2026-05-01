@@ -33,11 +33,10 @@ export default function Home() {
   }, []);
 
   const containerVariants: Variants = {
-    hidden: { opacity: 0, scale: 0.98, filter: "blur(4px)" },
+    hidden: { opacity: 0, scale: 0.98 },
     show: {
       opacity: 1,
       scale: 1,
-      filter: "blur(0px)",
       transition: { staggerChildren: 0.05, delayChildren: 0.1, duration: 0.4, ease: [0.16, 1, 0.3, 1] },
     },
   };
@@ -259,7 +258,7 @@ function ProjectItem({
             <h3 className="text-foreground text-lg font-normal">{title}</h3>
             {isLocked && <Lock size={16} className="text-muted-foreground" />}
           </div>
-          <p className="text-muted-foreground text-sm font-normal mt-1 opacity-40">2025</p>
+          <p className="text-muted-foreground text-sm font-normal mt-1 opacity-40">{new Date().getFullYear()}</p>
         </div>
       </div>
       <ArrowRight size={20} className="text-foreground opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200" />

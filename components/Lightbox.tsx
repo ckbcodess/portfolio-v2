@@ -9,6 +9,8 @@ interface LightboxProps {
   alt?: string;
   layoutId?: string;
   onClose: () => void;
+  onNext?: () => void;
+  onPrev?: () => void;
 }
 
 /**
@@ -26,26 +28,35 @@ interface LightboxProps {
  *   - Scroll lock while open
  *   - Keyboard accessibility
  */
-export default function Lightbox({ src, alt = "", layoutId, onClose }: LightboxProps) {
+export default function Lightbox({ src, alt = "", layoutId, onClose, onNext, onPrev }: LightboxProps) {
   // Escape to close
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
+      if (e.key === "ArrowRight") onNext?.();
+      if (e.key === "ArrowLeft") onPrev?.();
     },
-    [onClose],
+    [onClose, onNext, onPrev],
   );
 
   useEffect(() => {
     if (!src) return;
     document.addEventListener("keydown", handleKeyDown);
     document.documentElement.setAttribute("data-lightbox-open", "true");
+    
+    // Focus management
+    const focusableElements = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    const activeElement = document.activeElement as HTMLElement;
+    
     // Lock scroll
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
       document.documentElement.removeAttribute("data-lightbox-open");
       document.body.style.overflow = prev;
+      if (activeElement) activeElement.focus();
     };
   }, [src, handleKeyDown]);
 
@@ -95,6 +106,30 @@ export default function Lightbox({ src, alt = "", layoutId, onClose }: LightboxP
               />
             </motion.div>
 
+            {/* Navigation buttons */}
+            {onPrev && (
+              <button
+                onClick={(e) => { e.stopPropagation(); onPrev(); }}
+                className="absolute left-4 top-1/2 -translate-y-1/2 p-4 text-foreground/40 hover:text-foreground transition-colors z-[1000002]"
+                aria-label="Previous image"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="m15 18-6-6 6-6" />
+                </svg>
+              </button>
+            )}
+            {onNext && (
+              <button
+                onClick={(e) => { e.stopPropagation(); onNext(); }}
+                className="absolute right-4 top-1/2 -translate-y-1/2 p-4 text-foreground/40 hover:text-foreground transition-colors z-[1000002]"
+                aria-label="Next image"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              </button>
+            )}
+
             {/* Close hint */}
             <motion.span
               initial={{ opacity: 0, y: 10 }}
@@ -103,7 +138,7 @@ export default function Lightbox({ src, alt = "", layoutId, onClose }: LightboxP
               transition={{ duration: 0.4, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
               className="absolute bottom-6 left-1/2 -translate-x-1/2 text-foreground text-xs font-normal tracking-tight select-none pointer-events-none"
             >
-              Press Esc or click anywhere to close
+              Arrows or click to navigate · Esc to close
             </motion.span>
           </motion.div>
         </>

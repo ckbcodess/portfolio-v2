@@ -34,13 +34,11 @@ export default function PlaygroundPage() {
   const container: Variants = {
     hidden: { 
       opacity: 0,
-      scale: 0.98,
-      filter: "blur(4px)"
+      scale: 0.98
     },
     show: {
       opacity: 1,
       scale: 1,
-      filter: "blur(0px)",
       transition: {
         staggerChildren: 0.05,
         delayChildren: 0.05,
@@ -51,13 +49,28 @@ export default function PlaygroundPage() {
   };
 
   const item: Variants = {
-    hidden: { opacity: 0, scale: 0.96, filter: "blur(4px)" },
+    hidden: { opacity: 0, scale: 0.96 },
     show: { 
       opacity: 1, 
-      scale: 1, 
-      filter: "blur(0px)",
+      scale: 1,
       transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } 
     }
+  };
+
+  const handleNext = () => {
+    if (!activeImage) return;
+    const currentIndex = experiments.findIndex(exp => `playground-img-${exp.id}` === activeImage.id);
+    const nextIndex = (currentIndex + 1) % experiments.length;
+    const nextExp = experiments[nextIndex];
+    setActiveImage({ src: "/allex-card.png", id: `playground-img-${nextExp.id}` });
+  };
+
+  const handlePrev = () => {
+    if (!activeImage) return;
+    const currentIndex = experiments.findIndex(exp => `playground-img-${exp.id}` === activeImage.id);
+    const prevIndex = (currentIndex - 1 + experiments.length) % experiments.length;
+    const prevExp = experiments[prevIndex];
+    setActiveImage({ src: "/allex-card.png", id: `playground-img-${prevExp.id}` });
   };
 
   return (
@@ -114,6 +127,8 @@ export default function PlaygroundPage() {
               alt="Playground experiment"
               layoutId={activeImage?.id}
               onClose={() => setActiveImage(null)}
+              onNext={handleNext}
+              onPrev={handlePrev}
             />
       </LayoutGroup>
     </div>

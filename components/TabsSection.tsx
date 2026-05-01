@@ -55,7 +55,7 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
 
   return (
     <div className="self-stretch flex flex-col justify-start items-start gap-8">
-      <div className="w-full relative grid [grid-template-areas:'stack'] transition-[height] duration-500 ease-[cubic-bezier(0.175,0.885,0.32,1.15)]">
+      <div className="w-full relative grid [grid-template-areas:'stack'] transition-[height] duration-600 ease-[cubic-bezier(0.16,1,0.3,1)]">
         <AnimatePresence>
           <motion.h1
             key={active}

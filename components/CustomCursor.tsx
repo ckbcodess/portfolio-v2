@@ -79,22 +79,19 @@ export default function CustomCursor() {
         };
 
         const handleMouseDown = () => {
-            // Only scale down if we hold for more than 100ms
             gsap.to(cursorRef.current, { 
                 scale: 0.8, 
                 duration: 0.15, 
-                delay: 0.1, // This mimics the 'extended period' logic
+                delay: 0.1, 
                 ease: "power2.out",
                 overwrite: "auto" 
             });
         };
         
         const handleMouseUp = () => {
-            // Immediately snap back to 1
             gsap.to(cursorRef.current, { 
                 scale: 1, 
                 duration: 0.15, 
-                delay: 0, 
                 ease: "power4.out", 
                 overwrite: "auto" 
             });
@@ -104,21 +101,11 @@ export default function CustomCursor() {
         window.addEventListener("mousedown", handleMouseDown);
         window.addEventListener("mouseup", handleMouseUp);
 
-        return () => {
-            window.removeEventListener("mousemove", handleMouseMove);
-            window.removeEventListener("mousedown", handleMouseDown);
-            window.removeEventListener("mouseup", handleMouseUp);
-        };
-    }, { scope: cursorRef });
-
-    useGSAP(() => {
-        if (!cursorRef.current) return;
-
+        // Variant Styling logic (consolidated)
         if (cursorType === "copy") {
             gsap.to(cursorRef.current, {
                 mixBlendMode: "normal",
-                width: 100,
-                height: 40,
+                width: 100, height: 40,
                 borderRadius: "20px",
                 backgroundColor: "#ffffff",
                 color: "#000000",
@@ -151,8 +138,7 @@ export default function CustomCursor() {
             });
         } else if (cursorType === "pointer") {
             gsap.to(cursorRef.current, {
-                width: 8,
-                height: 8,
+                width: 8, height: 8,
                 borderRadius: "100%",
                 backgroundColor: "white",
                 mixBlendMode: "difference",
@@ -162,8 +148,7 @@ export default function CustomCursor() {
             });
         } else {
             gsap.to(cursorRef.current, {
-                width: 16,
-                height: 16,
+                width: 16, height: 16,
                 borderRadius: "100%",
                 backgroundColor: "white",
                 mixBlendMode: "difference",
@@ -172,7 +157,13 @@ export default function CustomCursor() {
                 ease: "power3.out"
             });
         }
-    }, { dependencies: [cursorType] });
+
+        return () => {
+            window.removeEventListener("mousemove", handleMouseMove);
+            window.removeEventListener("mousedown", handleMouseDown);
+            window.removeEventListener("mouseup", handleMouseUp);
+        };
+    }, { scope: cursorRef, dependencies: [cursorType] });
 
     return (
         <div
