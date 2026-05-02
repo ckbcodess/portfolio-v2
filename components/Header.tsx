@@ -9,8 +9,10 @@ import { useTransition } from "./TransitionProvider";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { Menu, X, Volume2, VolumeX, ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import FloatingNav from "./FloatingNav";
-import RefractiveNav from "./RefractiveNav";
+import dynamic from "next/dynamic";
+
+const FloatingNav = dynamic(() => import("./FloatingNav"), { ssr: false });
+const RefractiveNav = dynamic(() => import("./RefractiveNav"), { ssr: false });
 
 interface HeaderProps {
   backLink?: string;
