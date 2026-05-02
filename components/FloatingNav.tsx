@@ -6,10 +6,36 @@ const RefractiveNav = dynamic(() => import("./RefractiveNav"), { ssr: false });
 import { usePathname } from "next/navigation";
 import { useTransition } from "./TransitionProvider";
 import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { ArrowLeft } from "lucide-react";
 
 export default function FloatingNav() {
   const pathname = usePathname();
   const { pendingHref } = useTransition();
+  const [isMorphed, setIsMorphed] = useState(false);
+
+  useEffect(() => {
+    const hero = document.getElementById("hero");
+    if (!hero) {
+      setIsMorphed(false);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          // Morph when scrolled past the 50% mark of the hero
+          setIsMorphed(!entry.isIntersecting);
+        });
+      },
+      {
+        threshold: 0.5,
+      }
+    );
+
+    observer.observe(hero);
+    return () => observer.disconnect();
+  }, [pathname]); // Re-bind observer if pathname changes
 
   const navItems = [
     { label: "Playground", href: "/playground", transitionLabel: "Playground" },
@@ -20,7 +46,15 @@ export default function FloatingNav() {
   return (
     <div className="pointer-events-auto">
       <RefractiveNav>
-        {navItems.map((item) => {
+        <div className="relative grid items-center overflow-hidden">
+          {/* Default Nav State */}
+          <div 
+            className={cn(
+              "col-start-1 row-start-1 flex items-center gap-1 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
+              isMorphed ? "opacity-0 -translate-y-5 invisible" : "opacity-100 translate-y-0 visible"
+            )}
+          >
+            {navItems.map((item) => {
           const isActive = !item.isExternal && (pendingHref || pathname) === item.href;
           
           if (item.isExternal) {
@@ -30,6 +64,7 @@ export default function FloatingNav() {
                 href={item.href}
                 target="_blank"
                 rel="noopener noreferrer"
+                tabIndex={isMorphed ? -1 : 0}
                 className={cn(
                   "group relative px-3 py-2 md:px-5 md:py-2.5 h-full flex items-center justify-center text-[0.85rem] md:text-[0.9rem] font-normal rounded-full overflow-hidden transition-all duration-300",
                   "text-muted-foreground hover:text-foreground active:scale-95"
@@ -45,6 +80,7 @@ export default function FloatingNav() {
               key={item.href}
               href={item.href}
               label={item.transitionLabel || item.label}
+              tabIndex={isMorphed ? -1 : 0}
               className={cn(
                 "group relative px-3 py-2 md:px-5 md:py-2.5 h-full flex items-center justify-center text-[0.85rem] md:text-[0.9rem] font-normal rounded-full overflow-hidden transition-all duration-300",
                 isActive 
@@ -60,6 +96,30 @@ export default function FloatingNav() {
             </TransitionLink>
           );
         })}
+          </div>
+
+          {/* Back Button State */}
+          <div 
+            className={cn(
+              "col-start-1 row-start-1 flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
+              isMorphed ? "opacity-100 translate-y-0 visible" : "opacity-0 translate-y-5 invisible"
+            )}
+          >
+            <TransitionLink
+              href="/"
+              label="Home"
+              tabIndex={isMorphed ? 0 : -1}
+              className={cn(
+                "group relative px-5 py-2.5 h-full flex items-center justify-center gap-2 text-[0.9rem] font-medium rounded-full overflow-hidden transition-all duration-300",
+                "text-foreground shadow-sm border border-white/10 dark:border-white/20 active:scale-95 bg-[var(--glass-bg)]"
+              )}
+            >
+              <div className="absolute inset-x-0 top-0 h-[60%] bg-gradient-to-b from-white/15 via-white/1 to-transparent pointer-events-none" />
+              <ArrowLeft size={16} className="relative z-10 transition-transform group-hover:-translate-x-1" />
+              <span className="relative z-10">Back to Home</span>
+            </TransitionLink>
+          </div>
+        </div>
       </RefractiveNav>
     </div>
   );
