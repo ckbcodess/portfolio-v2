@@ -342,8 +342,7 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
                  oklch(60% 0.33 25) 90%, 
                  oklch(65% 0.35 25) 100%
                )`,
-               opacity: 0,
-               willChange: "opacity",
+               opacity: 0
              }}
            />
          </div>,

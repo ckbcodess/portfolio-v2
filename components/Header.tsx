@@ -45,7 +45,10 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
   const activeHref = pendingHref || pathname;
 
   return (
-    <header className="w-full fixed top-0 left-0 z-50 pointer-events-none pt-[var(--page-px)]">
+    <header 
+      className="w-full fixed top-0 left-0 z-50 pointer-events-none pt-[var(--page-px)]"
+      style={{ transform: "translateZ(0)" }}
+    >
       <div className="w-full px-[var(--page-px)] flex justify-between items-center relative">
         {/* Left Section: Logo */}
         <div className="flex items-center gap-4 pointer-events-auto">
