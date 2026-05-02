@@ -19,7 +19,7 @@ export default function Home() {
   const [activeImage, setActiveImage] = useState<string>(caseStudies[0].heroSrc);
   const [surprises, setSurprises] = useState<number[]>([]);
   const [canAnimate, setCanAnimate] = useState(false);
-  const [hoveredSlug, setHoveredSlug] = useState<string | null>(null);
+  const [hoveredSlug, setHoveredSlug] = useState<string | null>(caseStudies[0]?.slug ?? null);
 
   useEffect(() => {
     // @ts-expect-error global appLoaded flag
@@ -134,16 +134,27 @@ export default function Home() {
                         setActiveImage(study.heroSrc);
                         setHoveredSlug(study.slug);
                       }}
-                      onMouseLeave={() => setHoveredSlug(null)}
-                      animate={{ opacity: hoveredSlug && hoveredSlug !== study.slug ? 0.6 : 1 }}
-                      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                      onFocus={() => {
+                        setActiveImage(study.heroSrc);
+                        setHoveredSlug(study.slug);
+                      }}
+                      onMouseLeave={() => setHoveredSlug(caseStudies[0]?.slug ?? null)}
+                      onBlur={() => setHoveredSlug(caseStudies[0]?.slug ?? null)}
+                      animate={{
+                        opacity: hoveredSlug && hoveredSlug !== study.slug ? 0.5 : 1,
+                        y: hoveredSlug === study.slug ? -2 : 0,
+                        scale: hoveredSlug === study.slug ? 1.01 : 1,
+                        filter: hoveredSlug && hoveredSlug !== study.slug ? "saturate(0.85)" : "saturate(1)",
+                      }}
+                      transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
                     >
                       <ProjectItem
                         title={study.logoText || study.title}
-                        subtitle={study.sections[0].heading}
                         slug={study.slug}
                         isLocked={study.isLocked}
                         color={study.logoClassName?.includes("#") ? study.logoClassName.split("[")[1].split("]")[0] : "#333"}
+                        isActive={hoveredSlug === study.slug}
+                        isDimmed={!!hoveredSlug && hoveredSlug !== study.slug}
                       />
                     </motion.div>
                   </MaskReveal>
@@ -229,46 +240,55 @@ function SocialLink({ href, icon, "aria-label": ariaLabel }: { href: string; ico
 
 function ProjectItem({
   title,
-  subtitle,
   slug,
   color = "#ff4d4d",
   isLocked = false,
+  isActive = false,
+  isDimmed = false,
 }: {
   title: string;
-  subtitle: string;
   slug: string;
   color?: string;
   isLocked?: boolean;
+  isActive?: boolean;
+  isDimmed?: boolean;
 }) {
   const content = (
     <div
       data-cursor={isLocked ? "confidential" : "case-study"}
-      className="group flex items-center justify-between w-full p-4 -mx-4 rounded-xl hover:bg-foreground/[0.04] transition-all duration-200 cursor-pointer"
+      className={`group flex items-center justify-between w-full p-4 -mx-4 rounded-2xl border border-transparent transition-[transform,background-color,border-color,box-shadow,opacity] duration-300 cursor-pointer ${
+        isActive
+          ? "bg-foreground/[0.05] border-foreground/10 shadow-[0_18px_55px_-36px_rgba(0,0,0,0.45)]"
+          : "hover:bg-foreground/[0.04] hover:border-foreground/5"
+      } ${isDimmed ? "opacity-55" : "opacity-100"}`}
     >
       <div className="flex items-center gap-5">
         <div
-          className="w-16 h-16 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:scale-[1.02] shadow-sm relative overflow-hidden"
+          className={`w-16 h-16 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-500 shadow-sm relative overflow-hidden ${
+            isActive ? "scale-[1.04]" : "group-hover:scale-[1.02]"
+          }`}
           style={{ backgroundColor: color }}
         >
           <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-50" />
+          <div className={`absolute inset-0 bg-white/10 transition-opacity duration-300 ${isActive ? "opacity-100" : "opacity-0 group-hover:opacity-60"}`} />
           <span className="relative z-10 text-white text-[10px] font-bold uppercase tracking-widest opacity-90">{title.slice(0, 5)}</span>
         </div>
         <div className="flex flex-col justify-center items-start">
           <div className="flex items-center gap-2">
-            <h3 className="text-foreground text-lg font-normal">{title}</h3>
+            <h3 className={`text-foreground text-lg font-normal transition-transform duration-300 ${isActive ? "translate-x-0.5" : ""}`}>{title}</h3>
             {isLocked && <Lock size={16} className="text-muted-foreground" />}
           </div>
           <p className="text-muted-foreground text-sm font-normal mt-1 opacity-40">{new Date().getFullYear()}</p>
         </div>
       </div>
-      <ArrowRight size={20} className="text-foreground opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-200" />
+      <ArrowRight size={20} className={`text-foreground transition-all duration-200 ${isActive ? "opacity-100 translate-x-1" : "opacity-0 group-hover:opacity-100 group-hover:translate-x-1"}`} />
     </div>
   );
 
   if (!slug) return content;
 
   return (
-    <TransitionLink href={`/work/${slug}`} label={title} color={color} className="w-full">
+    <TransitionLink href={`/work/${slug}`} label={title} color={color} className="block w-full focus:outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-2xl">
       {content}
     </TransitionLink>
   );

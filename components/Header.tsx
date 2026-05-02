@@ -60,33 +60,25 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
         </div>
 
         <motion.div 
-          layout={!isTransitioning}
-          transition={{
-            layout: { type: "spring", damping: 25, stiffness: 200 },
-          }}
-          className={`hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center rounded-full pointer-events-auto transition-colors duration-300 ${
-            isCaseStudy 
-              ? "bg-white/5" 
-              : "bg-foreground/[0.08]"
+          className={`hidden lg:inline-flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full pointer-events-auto border transition-[background-color,border-color,box-shadow] duration-300 ${
+            isCaseStudy
+              ? "bg-background/20 border-white/10 shadow-[0_18px_48px_-28px_rgba(0,0,0,0.55)]"
+              : "bg-foreground/[0.08] border-border/40 shadow-[0_18px_48px_-28px_rgba(0,0,0,0.18)]"
           }`}
           style={{ 
-            backdropFilter: "blur(40px) saturate(180%)", 
-            WebkitBackdropFilter: "blur(40px) saturate(180%)" 
+            backdropFilter: "blur(28px) saturate(180%)", 
+            WebkitBackdropFilter: "blur(28px) saturate(180%)",
           }}
         >
 
-          <AnimatePresence mode="popLayout" initial={false}>
+          <AnimatePresence mode="wait" initial={false}>
             {isCaseStudy && scrolled ? (
               <motion.div
                 key="back"
-                layout
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ 
-                  duration: 0.2,
-                  layout: { type: "spring", damping: 25, stiffness: 200 }
-                }}
+                initial={{ opacity: 0, y: 6, filter: "blur(6px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                exit={{ opacity: 0, y: -6, filter: "blur(6px)" }}
+                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
                 className="px-5 py-3 flex items-center justify-center whitespace-nowrap relative"
               >
                 <TransitionLink
@@ -103,20 +95,15 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
             ) : (
               <motion.div
                 key="nav"
-                layout
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ 
-                  duration: 0.2,
-                  layout: { type: "spring", damping: 25, stiffness: 200 }
-                }}
-                className="px-8 py-3 flex items-center gap-8 whitespace-nowrap relative"
+                initial={{ opacity: 0, y: 6, filter: "blur(6px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                exit={{ opacity: 0, y: -6, filter: "blur(6px)" }}
+                transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
+                className="px-8 py-3 flex items-center justify-center gap-8 whitespace-nowrap relative"
               >
                 {NAV_ITEMS.map((item) => {
                   const isActive = activeHref === item.href;
                   const label = item.label;
-                  const isForcedDark = isCaseStudy && !scrolled;
                   
                   const content = (
                     <span className={`text-sm font-normal tracking-tight whitespace-nowrap transition-opacity duration-300 antialiased [text-rendering:optimizeLegibility] transform-gpu ${
@@ -159,21 +146,21 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
 
 
         {/* Right Section — Time, Theme, Sound (Hidden on case study scroll) */}
-        <AnimatePresence>
+        <AnimatePresence mode="wait">
           {(!isCaseStudy || !scrolled) && (
             <motion.div 
               initial={{ opacity: 0, x: 10 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 10 }}
               transition={{ type: "spring", damping: 25, stiffness: 160 }}
-              className="hidden lg:flex items-center gap-8 pointer-events-auto"
+              className="hidden lg:flex pointer-events-auto"
             >
-              <span className={`text-base font-normal tabular-nums ${
-                isCaseStudy ? "text-white mix-blend-difference" : "text-foreground"
-              }`}>
-                <Clock />
-              </span>
               <div className="flex items-center gap-6">
+                <div className={`text-base font-normal tabular-nums inline-flex w-[10.5ch] justify-end ${
+                  isCaseStudy ? "text-white mix-blend-difference" : "text-foreground"
+                }`}>
+                  <Clock />
+                </div>
                 <ThemeControls />
                 <SoundToggle 
                   isSoundEnabled={isSoundEnabled} 
@@ -295,12 +282,12 @@ function Clock() {
     return () => clearInterval(interval);
   }, []);
 
-  if (!time) return <span className="inline-block min-w-[104px]" />;
+  if (!time) return <span className="inline-block w-[10.5ch]" />;
 
   const timeString = time.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", second: "2-digit" });
 
   return (
-    <span className="tabular-nums inline-flex min-w-[104px] items-center justify-start text-left">
+    <span className="tabular-nums inline-flex w-[10.5ch] items-center justify-end text-right">
       {timeString}
     </span>
   );
