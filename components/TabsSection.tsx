@@ -59,7 +59,7 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
         <AnimatePresence>
           <motion.h1
             key={active}
-            className="[grid-area:stack] text-[32px] md:text-[36px] lg:text-[var(--font-size-hero)] text-foreground font-normal font-sans leading-[1.1] tracking-tight text-left [text-wrap:balance] w-full m-0"
+            className="[grid-area:stack] text-hero text-foreground font-normal font-sans leading-[1.1] tracking-tight text-left [text-wrap:balance] w-full m-0"
           >
             {tabsData[active].text.split(/(\s+)/).map((word, i) => {
               if (/\s+/.test(word)) {

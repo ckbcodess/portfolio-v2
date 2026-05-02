@@ -13,6 +13,7 @@ import { motion, AnimatePresence } from "motion/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { Button, Form, InputOTP, Label, Spinner, REGEXP_ONLY_DIGITS_AND_CHARS } from "@heroui/react";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -22,11 +23,16 @@ interface CaseStudyPageProps {
 
 export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
   const { setHeaderProps } = useTransition();
-  const [password, setPassword] = useState("");
+  const accessCode = "gcb2024";
+  const codeLength = accessCode.length;
+  const firstGroupLength = 3;
+  const [codeValue, setCodeValue] = useState("");
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [showError, setShowError] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isContentActive, setIsContentActive] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const pageRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
   const bgRef = useRef<HTMLDivElement>(null);
 
@@ -149,19 +155,24 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
       }
     });
 
-  }, { dependencies: [isAuthorized, caseStudy.isLocked, caseStudy.slug, mounted], scope: bgRef.current?.parentElement || undefined });
+  }, { dependencies: [isAuthorized, caseStudy.isLocked, caseStudy.slug, mounted], scope: pageRef });
 
-  const handleUnlock = (e: React.FormEvent) => {
+  const handleUnlock = async (e: React.FormEvent) => {
     e.preventDefault();
-    // THE PASSWORD: change this to whatever you want
-    if (password === "gcb2024") {
+    if (!isCodeComplete || isSubmitting) return;
+
+    setIsSubmitting(true);
+    await new Promise((resolve) => setTimeout(resolve, 450));
+
+    if (codeValue.toLowerCase() === accessCode) {
       setIsAuthorized(true);
       setShowError(false);
       sessionStorage.setItem(`authorized-${caseStudy.slug}`, "true");
     } else {
       setShowError(true);
-      setPassword("");
+      setCodeValue("");
     }
+    setIsSubmitting(false);
   };
 
   const sidebarLinks = caseStudy.sections.reduce((acc, curr) => {
@@ -178,6 +189,10 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
 
   sidebarLinks.unshift({ id: "intro", label: "Intro", targetIds: ["intro"] });
 
+  const isCodeComplete = Array.from({ length: codeLength }).every((_, index) =>
+    /[a-z0-9]/i.test(codeValue[index] ?? "")
+  );
+
 
 
   if (caseStudy.isLocked && !isAuthorized) {
@@ -189,39 +204,76 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-md bg-card/30 backdrop-blur-xl border border-border p-8 rounded-3xl shadow-2xl relative z-10 flex flex-col items-center text-center"
+          className="w-full max-w-3xl relative z-10 flex flex-col items-center text-center"
         >
-          <div className="w-16 h-16 bg-muted/50 rounded-2xl flex items-center justify-center mb-6 border border-white/5">
+          <div className="w-16 h-16 bg-card/40 backdrop-blur-xl rounded-2xl flex items-center justify-center mb-8 border border-white/5 shadow-[0_20px_50px_-30px_rgba(0,0,0,0.55)]">
             <Lock className="text-foreground/80" size={28} />
           </div>
           
-          <h1 className="text-2xl font-normal text-foreground mb-2">NDA Protected</h1>
-          <p className="text-muted-foreground text-sm mb-8 leading-relaxed">
-            The content of <strong>{caseStudy.title}</strong> is restricted. Please enter the access password provided to you.
+          <h1 className="max-w-4xl text-hero font-normal tracking-tight text-foreground mb-4 leading-[1.08]">
+            Like a carefully tended garden, some of my work needs to stay protected.
+          </h1>
+          <p className="text-muted-foreground text-sm md:text-base mb-12 leading-relaxed max-w-xl">
+            Enter the access code for <strong>{caseStudy.title}</strong> to continue.
           </p>
 
-          <form onSubmit={handleUnlock} className="w-full">
-            <div className="relative mb-4 group">
-              <input
-                type="password"
-                placeholder="Enter password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  if (showError) setShowError(false);
-                }}
-                autoFocus
-                className={`w-full h-12 bg-muted/40 hover:bg-muted/60 focus:bg-muted/80 border ${showError ? 'border-destructive' : 'border-border focus:border-primary'} rounded-xl px-4 outline-none transition-all placeholder:text-muted-foreground/50 text-foreground font-sans`}
-              />
-              <motion.button
-                type="submit"
-                whileHover={{ x: 3 }}
-                whileTap={{ scale: 0.95 }}
-                className="absolute right-2 top-2 h-8 w-8 bg-foreground rounded-lg flex items-center justify-center text-background shadow-lg transition-transform"
-              >
-                <ArrowRight size={16} />
-              </motion.button>
-            </div>
+          <Form onSubmit={handleUnlock} className="w-full flex flex-col items-center gap-0">
+            <Label className="sr-only">Access code</Label>
+            <InputOTP
+              maxLength={codeLength}
+              value={codeValue}
+              pattern={REGEXP_ONLY_DIGITS_AND_CHARS}
+              isInvalid={showError}
+              autoFocus
+              onComplete={() => {
+                if (showError) setShowError(false);
+              }}
+              onChange={(value) => {
+                setCodeValue(value.toLowerCase());
+                if (showError) setShowError(false);
+              }}
+              className="mb-8"
+              inputClassName="text-foreground"
+            >
+              <InputOTP.Group className="gap-3 md:gap-4">
+                {Array.from({ length: firstGroupLength }).map((_, index) => (
+                  <InputOTP.Slot
+                    key={index}
+                    index={index}
+                    className="h-16 w-14 md:h-18 md:w-16 rounded-2xl border border-border/60 bg-card/20 backdrop-blur-xl text-center text-2xl md:text-[28px] font-normal text-foreground uppercase shadow-[0_18px_40px_-30px_rgba(0,0,0,0.55)] transition-all data-[active=true]:border-foreground/50 data-[has-value=true]:border-foreground/30 data-[invalid=true]:border-destructive/80"
+                  />
+                ))}
+              </InputOTP.Group>
+              <InputOTP.Separator className="mx-2 h-px w-6 bg-border/70" />
+              <InputOTP.Group className="gap-3 md:gap-4">
+                {Array.from({ length: codeLength - firstGroupLength }).map((_, index) => (
+                  <InputOTP.Slot
+                    key={firstGroupLength + index}
+                    index={firstGroupLength + index}
+                    className="h-16 w-14 md:h-18 md:w-16 rounded-2xl border border-border/60 bg-card/20 backdrop-blur-xl text-center text-2xl md:text-[28px] font-normal text-foreground uppercase shadow-[0_18px_40px_-30px_rgba(0,0,0,0.55)] transition-all data-[active=true]:border-foreground/50 data-[has-value=true]:border-foreground/30 data-[invalid=true]:border-destructive/80"
+                  />
+                ))}
+              </InputOTP.Group>
+            </InputOTP>
+
+            <Button
+              type="submit"
+              isDisabled={!isCodeComplete || isSubmitting}
+              className="inline-flex min-w-36 rounded-full px-5 py-3 text-xs tracking-[0.22em] uppercase font-medium"
+              variant="ghost"
+            >
+              {isSubmitting ? (
+                <>
+                  <Spinner color="current" size="sm" />
+                  Verifying...
+                </>
+              ) : (
+                <>
+                  Verify Code
+                  <ArrowRight size={14} />
+                </>
+              )}
+            </Button>
 
             <AnimatePresence>
               {showError && (
@@ -229,16 +281,16 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="flex items-center gap-2 text-destructive text-xs font-medium pl-1 overflow-hidden"
+                  className="flex items-center gap-2 text-destructive text-xs font-medium mt-5 overflow-hidden"
                 >
                   <ShieldAlert size={12} />
-                  Invalid access password
+                  Invalid access code
                 </motion.div>
               )}
             </AnimatePresence>
-          </form>
+          </Form>
 
-          <div className="mt-10 pt-6 border-t border-border/5 w-full">
+          <div className="mt-12 pt-6 border-t border-border/5 w-full max-w-md">
               <TransitionLink href="/" label="Go back to Home" className="text-xs text-muted-foreground hover:text-foreground transition-colors tracking-widest font-medium">
                 Back to home
               </TransitionLink>
@@ -249,7 +301,7 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
   }
 
   return (
-    <div className="min-h-screen w-full relative">
+    <div ref={pageRef} className="min-h-screen w-full relative">
 
       <CaseStudySidebar links={sidebarLinks} visible={isContentActive} />
       <MobileCaseStudyNav links={sidebarLinks} visible={isContentActive} />
@@ -308,7 +360,7 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
                   {caseStudy.title.split(" ").map((word, i) => (
                     <div key={i} className="overflow-hidden">
                       <h1 
-                        className="reveal-item text-3xl md:text-[36px] font-normal leading-[1.1] tracking-tight text-white opacity-0 translate-y-[110%]"
+                        className="reveal-item text-hero font-normal leading-[1.1] tracking-tight text-white opacity-0 translate-y-[110%]"
                       >
                         {word}
                       </h1>

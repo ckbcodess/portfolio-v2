@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "@heroui/react/styles";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -41,9 +42,9 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --font-size-hero: clamp(2.2rem, 4vw + 0.8rem, 2.5rem);
+  --text-hero: clamp(2.3rem, 4.5vw + 0.5rem, 2.6rem);
   --font-size-hero-mobile: 1.8rem;
-  
+
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -55,7 +56,7 @@
 
 :root {
   interpolate-size: allow-keywords;
-  
+
   /* --- Fluid Spacing Scale (Recalibrated for 14px base) --- */
   --space-3xs: clamp(0.28rem, 0.22vw + 0.22rem, 0.42rem);
   --space-2xs: clamp(0.57rem, 0.44vw + 0.45rem, 0.85rem);
@@ -72,16 +73,20 @@
   /* text-3xl (Hero Text) target: ~28px (2rem) -> ~48px (3.4rem) */
   --text-xs: clamp(0.78rem, 0.05vw + 0.76rem, 0.85rem);
   --text-sm: clamp(0.92rem, 0.11vw + 0.9rem, 1rem);
-  --text-base: 1rem; /* 14px */
-  --text-lg: 1.142rem; /* 16px */
+  --text-base: 1rem;
+  /* 14px */
+  --text-lg: 1.142rem;
+  /* 16px */
   --text-xl: clamp(1.42rem, 0.55vw + 1.28rem, 1.71rem);
   --text-2xl: clamp(1.71rem, 1.1vw + 1.43rem, 2.28rem);
   --text-3xl: clamp(2rem, 1.5vw + 1.5rem, 3.4rem);
   --text-4xl: clamp(2.8rem, 2.5vw + 2rem, 4.5rem);
 
   /* --- Layout Tokens (Compact for One-Pager) --- */
-  --page-px: clamp(1.5rem, 6vw, 80px); /* Hits 80px at 1333px viewport */
-  --page-pt: clamp(1.5rem, 6vh, 80px); /* Hits 80px at ~1333px height */
+  --page-px: clamp(1.5rem, 6vw, 5.71rem);
+  /* 80px / 14px */
+  --page-pt: clamp(1.5rem, 6vh, 5.71rem);
+  /* 80px / 14px */
   --header-mb: clamp(2rem, 7.5vh, 6rem);
   --section-gap: clamp(3rem, 11vh, 10rem);
 
@@ -119,12 +124,25 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  --container-max-width: 800px;
-  --header-max-width: 1400px;
+  --container-max-width: 57.14rem;
+  /* 800px / 14px */
+  --header-max-width: 100rem;
+  /* 1400px / 14px */
 }
 
 html {
   font-size: 14px;
+}
+
+@media (min-width: 810px) {
+  html {
+    /* 
+      Counteracts high browser/OS zoom (e.g. 150% on laptop).
+      Calculated to make a 1280px viewport (150% zoom) feel like a 1536px viewport (125% zoom).
+      14px * (1280/1536) = 11.66px.
+    */
+    font-size: clamp(11.5px, 0.911vw, 14px);
+  }
 }
 
 .dark {
@@ -164,10 +182,21 @@ html {
   --sidebar-ring: oklch(0.98 0 0);
 }
 
-[data-theme="red"] { --hue: 25; }
-[data-theme="green"] { --hue: 150; }
-[data-theme="blue"] { --hue: 200; }
-[data-theme="neutral"] { --hue: 0; }
+[data-theme="red"] {
+  --hue: 25;
+}
+
+[data-theme="green"] {
+  --hue: 150;
+}
+
+[data-theme="blue"] {
+  --hue: 200;
+}
+
+[data-theme="neutral"] {
+  --hue: 0;
+}
 
 [data-theme]:not([data-theme="neutral"]) {
   --background: oklch(0.98 0.02 var(--hue));
@@ -300,7 +329,10 @@ body {
 }
 
 @media (pointer: fine) {
-  *, *::before, *::after {
+
+  *,
+  *::before,
+  *::after {
     cursor: none !important;
   }
 }
@@ -310,9 +342,13 @@ body {
     @apply bg-background text-foreground;
     transition: none !important;
   }
-  *, *::before, *::after {
+
+  *,
+  *::before,
+  *::after {
     border-color: var(--border);
   }
+
   html {
     @apply font-sans;
   }
@@ -325,10 +361,12 @@ body {
 }
 
 @layer utilities {
+
   .no-scrollbar::-webkit-scrollbar,
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
   .no-scrollbar,
   .scrollbar-hide {
     -ms-overflow-style: none;
@@ -336,12 +374,16 @@ body {
   }
 }
 
-html, body, #smooth-wrapper {
+html,
+body,
+#smooth-wrapper {
   scrollbar-width: none !important;
   -ms-overflow-style: none !important;
 }
 
-html::-webkit-scrollbar, body::-webkit-scrollbar, #smooth-wrapper::-webkit-scrollbar {
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+#smooth-wrapper::-webkit-scrollbar {
   display: none !important;
 }
 
@@ -355,19 +397,22 @@ html::-webkit-scrollbar, body::-webkit-scrollbar, #smooth-wrapper::-webkit-scrol
 }
 
 @keyframes shimmer {
-  0% { background-position: -150% 0; }
-  100% { background-position: 150% 0; }
+  0% {
+    background-position: -150% 0;
+  }
+
+  100% {
+    background-position: 150% 0;
+  }
 }
 
 @utility shimmer-text {
-  background: linear-gradient(
-    90deg,
-    var(--foreground) 0%,
-    var(--foreground) 40%,
-    var(--shimmer-color, oklch(0.4 0 0)) 50%,
-    var(--foreground) 60%,
-    var(--foreground) 100%
-  );
+  background: linear-gradient(90deg,
+      var(--foreground) 0%,
+      var(--foreground) 40%,
+      var(--shimmer-color, oklch(0.4 0 0)) 50%,
+      var(--foreground) 60%,
+      var(--foreground) 100%);
   background-size: 200% 100%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -383,6 +428,7 @@ html::-webkit-scrollbar, body::-webkit-scrollbar, #smooth-wrapper::-webkit-scrol
 .dark {
   --shimmer-color: oklch(0.2 0 0);
 }
+
 #smooth-wrapper[style*="--page-mask"] {
   mask-image: var(--page-mask);
   -webkit-mask-image: var(--page-mask);

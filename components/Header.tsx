@@ -9,6 +9,7 @@ import { useTransition } from "./TransitionProvider";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { Menu, X, Volume2, VolumeX } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import FloatingNav from "./FloatingNav";
 
 interface HeaderProps {
   backLink?: string;
@@ -52,111 +53,17 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
             href="/"
             label="Home"
             className={`text-sm font-normal tracking-tight transition-colors p-4 -m-4 ${
-              isCaseStudy ? "text-white mix-blend-difference" : "text-foreground"
+              isCaseStudy ? "text-white" : "text-foreground"
             }`}
           >
             RG
           </TransitionLink>
         </div>
 
-        <div className="hidden lg:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-auto">
-        <motion.div
-          layout
-          transition={{ layout: { duration: 0.36, ease: [0.16, 1, 0.3, 1] } }}
-          className={`inline-flex items-center justify-center rounded-full border overflow-hidden relative ${
-            isCaseStudy
-              ? "border-white/10 shadow-[0_18px_48px_-28px_rgba(0,0,0,0.5)]"
-              : "border-border/40 shadow-[0_18px_48px_-28px_rgba(0,0,0,0.18)]"
-          }`}
-        >
-          <div
-            className={`absolute inset-0 pointer-events-none ${
-              isCaseStudy ? "bg-background/30" : "bg-background/50"
-            }`}
-            style={{
-              backdropFilter: "blur(40px) saturate(200%)",
-              WebkitBackdropFilter: "blur(40px) saturate(200%)",
-              transform: "translateZ(0)",
-            }}
-          />
-          <div className="absolute inset-0 bg-white/6 pointer-events-none" />
-
-          <AnimatePresence mode="popLayout" initial={false}>
-            {isCaseStudy && scrolled ? (
-              <motion.div
-                key="back"
-                initial={{ opacity: 0, y: 6, filter: "blur(6px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: -6, filter: "blur(6px)" }}
-                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                className="px-5 py-3 flex items-center justify-center whitespace-nowrap relative z-10"
-              >
-                <TransitionLink
-                  href={backLink}
-                  label="Back"
-                  className={`flex items-center gap-2 transition-colors group p-4 -m-4 ${
-                    isCaseStudy ? "text-white" : "text-foreground"
-                  }`}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transform group-hover:-translate-x-1 transition-transform -ml-0.5">
-                    <path d="m15 18-6-6 6-6" />
-                  </svg>
-                  <span className="text-sm font-normal">Back</span>
-                </TransitionLink>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="nav"
-                initial={{ opacity: 0, y: 6, filter: "blur(6px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: -6, filter: "blur(6px)" }}
-                transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
-                className="px-8 py-3 flex items-center justify-center gap-8 whitespace-nowrap relative z-10"
-              >
-                {NAV_ITEMS.map((item) => {
-                  const isActive = activeHref === item.href;
-                  const label = item.label;
-                  
-                  const content = (
-                    <span className={`text-sm font-normal tracking-tight whitespace-nowrap transition-opacity duration-300 antialiased [text-rendering:optimizeLegibility] transform-gpu ${
-                      isCaseStudy ? "text-white" : "text-foreground"
-                    } ${
-                      isActive ? "opacity-100" : "opacity-40 group-hover:opacity-100"
-                    }`}>
-                      {label}
-                    </span>
-                  );
-
-                  if (item.isExternal) {
-                    return (
-                      <a
-                        key={item.href}
-                        href={item.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group"
-                      >
-                        {content}
-                      </a>
-                    );
-                  }
-                  return (
-                    <TransitionLink
-                      key={item.href}
-                      href={item.href}
-                      label={item.label}
-                      className="group"
-                    >
-                      {content}
-                    </TransitionLink>
-                  );
-                })}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
+        {/* Center Section: Floating Navigation (Dead Center) */}
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-auto hidden lg:block">
+          <FloatingNav />
         </div>
-
 
         {/* Right Section — Time, Theme, Sound (Hidden on case study scroll) */}
         <AnimatePresence mode="wait">
@@ -170,7 +77,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
             >
               <div className="flex items-center gap-6">
                 <div className={`text-base font-normal tabular-nums inline-flex w-[10.5ch] justify-end ${
-                  isCaseStudy ? "text-white mix-blend-difference" : "text-foreground"
+                  isCaseStudy ? "text-white" : "text-foreground"
                 }`}>
                   <Clock />
                 </div>
@@ -253,6 +160,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
     </header>
   );
 }
+
 function SoundToggle({ 
   isSoundEnabled, 
   toggleSound,
@@ -268,7 +176,7 @@ function SoundToggle({
         <TooltipTrigger
           onClick={toggleSound}
           className={`${
-            isCaseStudy ? "text-white mix-blend-difference" : "text-foreground/60 hover:text-foreground"
+            isCaseStudy ? "text-white" : "text-foreground/60 hover:text-foreground"
           } transition-colors flex items-center justify-center cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-sm p-4 -m-4`}
           aria-label={isSoundEnabled ? "Disable sound" : "Enable sound"}
         >
