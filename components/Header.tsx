@@ -64,7 +64,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
         </div>
 
         {/* Center Section: Floating Navigation (Dead Center) */}
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-auto hidden lg:block">
+        <div className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-auto hidden lg:block ${isCaseStudy && !scrolled ? "dark" : ""}`}>
           <FloatingNav />
         </div>
 
