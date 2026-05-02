@@ -14,6 +14,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { Button, Form, InputOTP, Label, Spinner, REGEXP_ONLY_DIGITS_AND_CHARS } from "@heroui/react";
+import { cn } from "@/lib/utils";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -93,16 +94,6 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
 
     const tl = gsap.timeline();
 
-    // 1. Background Warmup - Removed scale to fix aliasing/banding artifacts
-    tl.fromTo(bgRef.current, { 
-      opacity: 0,
-    }, {
-      opacity: 1,
-      duration: 1.4,
-      delay: 0.4,
-      ease: "sine.inOut"
-    });
-
     // 2. Kinetic Title & Content Reveal
     tl.to(".reveal-item", {
       y: 0,
@@ -135,11 +126,9 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
       start: "top center",
       onEnter: () => {
         setIsContentActive(true);
-        gsap.to(bgRef.current, { opacity: 0, duration: 0.8, ease: "power2.out" });
       },
       onLeaveBack: () => {
         setIsContentActive(false);
-        gsap.to(bgRef.current, { opacity: 1, duration: 0.8, ease: "power2.out" });
       },
     });
 
@@ -329,8 +318,10 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
          <div className="fixed inset-0 pointer-events-none z-[-1] fixed-preview-portal overflow-hidden">
            {/* High-Fidelity Eased Gradient */}
            <div 
-             ref={bgRef}
-             className="absolute inset-0"
+             className={cn(
+               "absolute inset-0 transition-opacity duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]",
+               isContentActive ? "opacity-0" : "opacity-100"
+             )}
              style={{
                background: `linear-gradient(180deg in oklch, 
                  #360000 0%, 
@@ -341,8 +332,7 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
                  oklch(54% 0.31 25) 75%, 
                  oklch(60% 0.33 25) 90%, 
                  oklch(65% 0.35 25) 100%
-               )`,
-               opacity: 0
+               )`
              }}
            />
          </div>,
