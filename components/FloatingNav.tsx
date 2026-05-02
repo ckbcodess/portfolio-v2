@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { useTransition } from "./TransitionProvider";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import { ArrowLeft } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 
 export default function FloatingNav() {
   const pathname = usePathname();
@@ -46,14 +46,18 @@ export default function FloatingNav() {
   return (
     <div className="pointer-events-auto">
       <RefractiveNav>
-        <div className="relative grid items-center overflow-hidden">
+        <div className="relative flex items-center overflow-hidden">
           {/* Default Nav State */}
           <div 
-            className={cn(
-              "col-start-1 row-start-1 flex items-center gap-1 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
-              isMorphed ? "opacity-0 -translate-y-5 invisible" : "opacity-100 translate-y-0 visible"
-            )}
+            className="grid transition-[grid-template-columns,opacity,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+            style={{
+              gridTemplateColumns: isMorphed ? "0fr" : "1fr",
+              opacity: isMorphed ? 0 : 1,
+              transform: isMorphed ? "translateY(-10px)" : "translateY(0px)"
+            }}
           >
+            <div className="overflow-hidden flex items-center gap-1">
+              <div className="w-max flex items-center gap-1">
             {navItems.map((item) => {
           const isActive = !item.isExternal && (pendingHref || pathname) === item.href;
           
@@ -96,28 +100,36 @@ export default function FloatingNav() {
             </TransitionLink>
           );
         })}
+              </div>
+            </div>
           </div>
 
           {/* Back Button State */}
           <div 
-            className={cn(
-              "col-start-1 row-start-1 flex items-center justify-center transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]",
-              isMorphed ? "opacity-100 translate-y-0 visible" : "opacity-0 translate-y-5 invisible"
-            )}
+            className="grid transition-[grid-template-columns,opacity,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]"
+            style={{
+              gridTemplateColumns: isMorphed ? "1fr" : "0fr",
+              opacity: isMorphed ? 1 : 0,
+              transform: isMorphed ? "translateY(0px)" : "translateY(10px)"
+            }}
           >
+            <div className="overflow-hidden flex items-center justify-center">
+              <div className="w-max">
             <TransitionLink
               href="/"
               label="Home"
               tabIndex={isMorphed ? 0 : -1}
               className={cn(
-                "group relative px-5 py-2.5 h-full flex items-center justify-center gap-2 text-[0.9rem] font-medium rounded-full overflow-hidden transition-all duration-300",
+                "group relative px-5 py-2.5 h-full flex items-center justify-center gap-1.5 text-[0.9rem] font-medium rounded-full overflow-hidden transition-all duration-300",
                 "text-foreground shadow-sm border border-white/10 dark:border-white/20 active:scale-95 bg-[var(--glass-bg)]"
               )}
             >
               <div className="absolute inset-x-0 top-0 h-[60%] bg-gradient-to-b from-white/15 via-white/1 to-transparent pointer-events-none" />
-              <ArrowLeft size={16} className="relative z-10 transition-transform group-hover:-translate-x-1" />
-              <span className="relative z-10">Back to Home</span>
+              <ChevronLeft size={16} className="relative z-10 transition-transform group-hover:-translate-x-1" />
+              <span className="relative z-10">Back</span>
             </TransitionLink>
+              </div>
+            </div>
           </div>
         </div>
       </RefractiveNav>
