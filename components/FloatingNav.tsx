@@ -32,6 +32,7 @@ export default function FloatingNav({ isCaseStudy, scrolled, backLink = "/" }: F
         <AnimatePresence mode="wait">
           {showBack ? (
             <motion.div
+              layout
               key="back"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -50,6 +51,7 @@ export default function FloatingNav({ isCaseStudy, scrolled, backLink = "/" }: F
             </motion.div>
           ) : (
             <motion.div
+              layout
               key="nav"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}

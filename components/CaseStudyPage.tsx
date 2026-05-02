@@ -93,14 +93,14 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
 
     const tl = gsap.timeline();
 
-    // 1. Background Warmup - Removed scale to fix aliasing/banding artifacts
     tl.fromTo(bgRef.current, { 
       opacity: 0,
     }, {
       opacity: 1,
       duration: 1.4,
       delay: 0.4,
-      ease: "sine.inOut"
+      ease: "sine.inOut",
+      clearProps: "transform,willChange"
     });
 
     // 2. Kinetic Title & Content Reveal
@@ -326,7 +326,10 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
            }}
          />
        ) : createPortal(
-         <div className="fixed inset-0 pointer-events-none z-[-1] fixed-preview-portal overflow-hidden">
+         <div 
+           className="fixed inset-0 pointer-events-none z-[-1] fixed-preview-portal overflow-hidden"
+           style={{ transform: "translateZ(0)" }}
+         >
            {/* High-Fidelity Eased Gradient */}
            <div 
              ref={bgRef}
