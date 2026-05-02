@@ -386,7 +386,7 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
               </div>
             </header>
 
-            <div className="hero-container w-full max-w-[1400px] mb-32 mx-auto opacity-0 translate-y-[30px]">
+            <div id="hero" className="hero-container w-full max-w-[1400px] mb-32 mx-auto opacity-0 translate-y-[30px]">
               <div className="relative rounded-2xl overflow-hidden shadow-sm aspect-video w-full bg-muted/20">
                 <div className="hero-parallax absolute inset-0 -top-[20%] -bottom-[20%] w-full h-[140%]">
                   <Image src={caseStudy.heroSrc} alt={caseStudy.heroAlt} fill className="object-cover" priority />
