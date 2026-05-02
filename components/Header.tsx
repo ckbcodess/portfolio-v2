@@ -7,10 +7,9 @@ import ThemeControls from "./ThemeControls";
 import { useSound } from "@/components/SoundProvider";
 import { useTransition } from "./TransitionProvider";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
-import { Menu, X, Volume2, VolumeX, ArrowLeft } from "lucide-react";
+import { Menu, X, Volume2, VolumeX } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import FloatingNav from "./FloatingNav";
-import RefractiveNav from "./RefractiveNav";
 
 interface HeaderProps {
   backLink?: string;
@@ -52,33 +51,21 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
     >
       <div className="w-full px-[var(--page-px)] flex justify-between items-center relative">
         {/* Left Section: Logo */}
-        <div className="flex items-center gap-4 pointer-events-auto h-14">
-          <AnimatePresence mode="wait">
-            {(!isCaseStudy || !scrolled) && (
-              <motion.div
-                key="logo"
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -10 }}
-                transition={{ duration: 0.3 }}
-              >
-                <TransitionLink
-                  href="/"
-                  label="Home"
-                  className={`text-sm font-normal tracking-tight transition-colors p-4 -m-4 ${
-                    isCaseStudy ? "text-white" : "text-foreground"
-                  }`}
-                >
-                  RG
-                </TransitionLink>
-              </motion.div>
-            )}
-          </AnimatePresence>
+        <div className="flex items-center gap-4 pointer-events-auto">
+          <TransitionLink
+            href="/"
+            label="Home"
+            className={`text-sm font-normal tracking-tight transition-colors p-4 -m-4 ${
+              isCaseStudy ? "text-white" : "text-foreground"
+            }`}
+          >
+            RG
+          </TransitionLink>
         </div>
 
-        {/* Center Section: Floating Navigation / Back Button (Dead Center) */}
-        <div className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-auto ${isCaseStudy && !scrolled ? "dark" : ""}`}>
-          <FloatingNav isCaseStudy={isCaseStudy} scrolled={scrolled} backLink={backLink} />
+        {/* Center Section: Floating Navigation (Dead Center) */}
+        <div className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-auto hidden lg:block ${isCaseStudy && !scrolled ? "dark" : ""}`}>
+          <FloatingNav />
         </div>
 
         {/* Right Section — Time, Theme, Sound (Hidden on case study scroll) */}
@@ -109,25 +96,15 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
         </AnimatePresence>
 
         {/* Mobile Menu Toggle (Always show if not transitioning) */}
-        <AnimatePresence mode="wait">
-          {(!isCaseStudy || !scrolled) && (
-            <motion.div
-              initial={{ opacity: 0, x: 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 10 }}
-              transition={{ duration: 0.3 }}
-              className="lg:hidden pointer-events-auto h-14 flex items-center"
-            >
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="p-2 -mr-2 text-foreground/60 hover:text-foreground transition-colors"
-                aria-label="Toggle menu"
-              >
-                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <div className="lg:hidden pointer-events-auto">
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="p-2 -mr-2 text-foreground/60 hover:text-foreground transition-colors"
+            aria-label="Toggle menu"
+          >
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
 
         {/* Mobile Menu Overlay */}
         <AnimatePresence>
