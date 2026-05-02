@@ -33,11 +33,11 @@ export default function FloatingNav({ isCaseStudy, scrolled, backLink = "/" }: F
           {showBack ? (
             <motion.div
               key="back"
-              initial={{ opacity: 0, width: 0 }}
-              animate={{ opacity: 1, width: "auto" }}
-              exit={{ opacity: 0, width: 0 }}
-              transition={{ duration: 0.3 }}
-              className="flex items-center overflow-hidden"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="flex items-center"
             >
               <TransitionLink
                 href={backLink}
@@ -51,11 +51,11 @@ export default function FloatingNav({ isCaseStudy, scrolled, backLink = "/" }: F
           ) : (
             <motion.div
               key="nav"
-              initial={{ opacity: 0, width: 0 }}
-              animate={{ opacity: 1, width: "auto" }}
-              exit={{ opacity: 0, width: 0 }}
-              transition={{ duration: 0.3 }}
-              className="flex items-center overflow-hidden hidden lg:flex"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="hidden lg:flex items-center"
             >
               {navItems.map((item) => {
                 const isActive = !item.isExternal && (pendingHref || pathname) === item.href;
