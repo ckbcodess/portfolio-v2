@@ -80,39 +80,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
 
         {/* Center Section: Floating Navigation / Back Button (Dead Center) */}
         <div className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-auto ${isCaseStudy && !scrolled ? "dark" : ""}`}>
-          <AnimatePresence mode="wait">
-            {isCaseStudy && scrolled ? (
-              <motion.div
-                key="back"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.3 }}
-              >
-                <RefractiveNav>
-                  <TransitionLink
-                    href={backLink}
-                    label="Back"
-                    className="group relative px-6 py-2.5 h-full flex items-center justify-center gap-2 text-[0.9rem] font-normal rounded-full overflow-hidden transition-all duration-300 text-foreground hover:text-muted-foreground active:scale-95"
-                  >
-                    <ArrowLeft size={16} className="relative z-10" />
-                    <span className="relative z-10">Back</span>
-                  </TransitionLink>
-                </RefractiveNav>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="nav"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.3 }}
-                className="hidden lg:block"
-              >
-                <FloatingNav />
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <FloatingNav isCaseStudy={isCaseStudy} scrolled={scrolled} backLink={backLink} />
         </div>
 
         {/* Right Section — Time, Theme, Sound (Hidden on case study scroll) */}
