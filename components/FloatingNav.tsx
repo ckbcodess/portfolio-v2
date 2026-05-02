@@ -24,8 +24,12 @@ export default function FloatingNav() {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          // Morph when scrolled past the 50% mark of the hero
-          setIsMorphed(!entry.isIntersecting);
+          // Only morph when the hero is out of view AND we scrolled past it (it went UP)
+          if (!entry.isIntersecting && entry.boundingClientRect.top < 0) {
+            setIsMorphed(true);
+          } else {
+            setIsMorphed(false);
+          }
         });
       },
       {
@@ -120,11 +124,10 @@ export default function FloatingNav() {
               label="Home"
               tabIndex={isMorphed ? 0 : -1}
               className={cn(
-                "group relative px-5 py-2.5 h-full flex items-center justify-center gap-1.5 text-[0.9rem] font-medium rounded-full overflow-hidden transition-all duration-300",
-                "text-foreground shadow-sm border border-white/10 dark:border-white/20 active:scale-95 bg-[var(--glass-bg)]"
+                "group relative px-3 py-2 md:px-5 md:py-2.5 h-full flex items-center justify-center gap-1.5 text-[0.85rem] md:text-[0.9rem] font-normal rounded-full overflow-hidden transition-all duration-300",
+                "text-muted-foreground hover:text-foreground active:scale-95"
               )}
             >
-              <div className="absolute inset-x-0 top-0 h-[60%] bg-gradient-to-b from-white/15 via-white/1 to-transparent pointer-events-none" />
               <ChevronLeft size={16} className="relative z-10 transition-transform group-hover:-translate-x-1" />
               <span className="relative z-10">Back</span>
             </TransitionLink>
