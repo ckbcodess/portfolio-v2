@@ -99,7 +99,6 @@ export default function TransitionProvider({ children }: { children: ReactNode }
                 id="smooth-wrapper"
                 ref={contentRef}
                 className="w-full origin-top"
-                style={{ willChange: "opacity" }}
             >
                 <div id="smooth-content" className="w-full">
                     {children}
