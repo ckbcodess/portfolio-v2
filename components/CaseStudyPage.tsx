@@ -35,7 +35,6 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
   const [mounted, setMounted] = useState(false);
   const pageRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
-  const bgRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -90,9 +89,9 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
     // Unified Entrance Orchestration (Awwwards Style)
   useGSAP(() => {
     if (!isAuthorized && caseStudy.isLocked) return;
-    if (!mounted || !bgRef.current) return;
+    if (!mounted) return;
 
-    const tl = gsap.timeline();
+    const tl = gsap.timeline({ delay: 0.7 });
 
     // 2. Kinetic Title & Content Reveal
     tl.to(".reveal-item", {
@@ -101,7 +100,7 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
       duration: 0.8,
       stagger: 0.04,
       ease: "power4.out"
-    }, "-=1.1");
+    });
 
     // 3. Metadata Stagger
     tl.to(".meta-item", {
