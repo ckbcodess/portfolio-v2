@@ -9,6 +9,7 @@ import { useTransition } from "./TransitionProvider";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { Menu, X, Volume2, VolumeX } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import Clock from "./Clock";
 
 interface HeaderProps {
   backLink?: string;
@@ -59,97 +60,100 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
           </TransitionLink>
         </div>
 
-        <motion.div
-          className={`hidden lg:inline-flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full pointer-events-auto border transition-[background-color,border-color,box-shadow] duration-300 ${
-            isCaseStudy
-              ? "bg-background/10 border-white/10 shadow-[0_18px_48px_-28px_rgba(0,0,0,0.55)]"
-              : "bg-foreground/[0.04] border-border/40 shadow-[0_18px_48px_-28px_rgba(0,0,0,0.18)]"
-          }`}
-        >
-          {/* Backdrop-blur lives on a sibling layer so that child `filter`
-              animations (blur on enter/exit) don't cause Chrome/Safari to drop
-              the parent's backdrop-filter rendering during the transition. */}
-          <div
-            aria-hidden
-            className="absolute inset-0 rounded-full pointer-events-none -z-10"
+        {/* Middle Section: Morphing Pill */}
+        <div className="hidden lg:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center justify-center pointer-events-auto">
+          {/* Glass Shell — Isolated from transforms to prevent blur snapping */}
+          <div 
+            className={`absolute inset-0 rounded-full border transition-[background-color,border-color,box-shadow] duration-500 z-0 ${
+              isCaseStudy
+                ? "bg-background/10 border-white/10 shadow-[0_18px_48px_-28px_rgba(0,0,0,0.55)]"
+                : "bg-foreground/[0.04] border-border/40 shadow-[0_18px_48px_-28px_rgba(0,0,0,0.18)]"
+            }`}
             style={{
-              backdropFilter: "blur(28px) saturate(180%)",
-              WebkitBackdropFilter: "blur(28px) saturate(180%)",
+              backdropFilter: "blur(24px) saturate(180%)",
+              WebkitBackdropFilter: "blur(24px) saturate(180%)",
             }}
           />
 
-          <AnimatePresence mode="wait" initial={false}>
-            {isCaseStudy && scrolled ? (
-              <motion.div
-                key="back"
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                className="px-5 py-3 flex items-center justify-center whitespace-nowrap relative"
-              >
-                <TransitionLink
-                  href={backLink}
-                  label="Back"
-                  className="flex items-center gap-2 text-foreground transition-colors group p-4 -m-4"
+          {/* Content Layer — Handles layout transitions */}
+          <motion.div
+            layout
+            className="relative z-10 flex items-center justify-center overflow-hidden"
+            transition={{ 
+              layout: { duration: 0.4, ease: [0.16, 1, 0.3, 1] }
+            }}
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              {isCaseStudy && scrolled ? (
+                <motion.div
+                  key="back"
+                  initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
+                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, y: -8, filter: "blur(4px)" }}
+                  transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                  className="px-5 py-3 flex items-center justify-center whitespace-nowrap"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transform group-hover:-translate-x-1 transition-transform -ml-0.5">
-                    <path d="m15 18-6-6 6-6" />
-                  </svg>
-                  <span className="text-sm font-normal">Back</span>
-                </TransitionLink>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="nav"
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
-                className="px-8 py-3 flex items-center justify-center gap-8 whitespace-nowrap relative"
-              >
-                {NAV_ITEMS.map((item) => {
-                  const isActive = activeHref === item.href;
-                  const label = item.label;
-                  
-                  const content = (
-                    <span className={`text-sm font-normal tracking-tight whitespace-nowrap transition-opacity duration-300 antialiased [text-rendering:optimizeLegibility] transform-gpu ${
-                      isCaseStudy ? "text-white mix-blend-difference" : "text-foreground"
-                    } ${
-                      isActive ? "opacity-100" : "opacity-40 group-hover:opacity-100"
-                    }`}>
-                      {label}
-                    </span>
-                  );
+                  <TransitionLink
+                    href={backLink}
+                    label="Back"
+                    className="flex items-center gap-2 text-foreground transition-colors group p-4 -m-4"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transform group-hover:-translate-x-1 transition-transform -ml-0.5">
+                      <path d="m15 18-6-6 6-6" />
+                    </svg>
+                    <span className="text-sm font-normal">Back</span>
+                  </TransitionLink>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="nav"
+                  initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
+                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, y: -8, filter: "blur(4px)" }}
+                  transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                  className="px-8 py-3 flex items-center justify-center gap-8 whitespace-nowrap"
+                >
+                  {NAV_ITEMS.map((item) => {
+                    const isActive = activeHref === item.href;
+                    const content = (
+                      <span className={`text-sm font-normal tracking-tight whitespace-nowrap transition-opacity duration-300 antialiased [text-rendering:optimizeLegibility] transform-gpu ${
+                        isCaseStudy ? "text-white mix-blend-difference" : "text-foreground"
+                      } ${
+                        isActive ? "opacity-100" : "opacity-40 group-hover:opacity-100"
+                      }`}>
+                        {item.label}
+                      </span>
+                    );
 
-                  if (item.isExternal) {
+                    if (item.isExternal) {
+                      return (
+                        <a
+                          key={item.href}
+                          href={item.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group"
+                        >
+                          {content}
+                        </a>
+                      );
+                    }
                     return (
-                      <a
+                      <TransitionLink
                         key={item.href}
                         href={item.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        label={item.label}
                         className="group"
                       >
                         {content}
-                      </a>
+                      </TransitionLink>
                     );
-                  }
-                  return (
-                    <TransitionLink
-                      key={item.href}
-                      href={item.href}
-                      label={item.label}
-                      className="group"
-                    >
-                      {content}
-                    </TransitionLink>
-                  );
-                })}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
+                  })}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        </div>
 
 
         {/* Right Section — Time, Theme, Sound (Hidden on case study scroll) */}
@@ -280,22 +284,4 @@ function SoundToggle({
   );
 }
 
-function Clock() {
-  const [time, setTime] = useState<Date | null>(null);
 
-  useEffect(() => {
-    setTimeout(() => setTime(new Date()), 0);
-    const interval = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  if (!time) return <span className="inline-block w-[10.5ch]" />;
-
-  const timeString = time.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", second: "2-digit" });
-
-  return (
-    <span className="tabular-nums inline-flex w-[10.5ch] items-center justify-end text-right">
-      {timeString}
-    </span>
-  );
-}
