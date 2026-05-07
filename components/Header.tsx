@@ -59,25 +59,32 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
           </TransitionLink>
         </div>
 
-        <motion.div 
+        <motion.div
           className={`hidden lg:inline-flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full pointer-events-auto border transition-[background-color,border-color,box-shadow] duration-300 ${
             isCaseStudy
-              ? "bg-background/20 border-white/10 shadow-[0_18px_48px_-28px_rgba(0,0,0,0.55)]"
-              : "bg-foreground/[0.08] border-border/40 shadow-[0_18px_48px_-28px_rgba(0,0,0,0.18)]"
+              ? "bg-background/10 border-white/10 shadow-[0_18px_48px_-28px_rgba(0,0,0,0.55)]"
+              : "bg-foreground/[0.04] border-border/40 shadow-[0_18px_48px_-28px_rgba(0,0,0,0.18)]"
           }`}
-          style={{ 
-            backdropFilter: "blur(28px) saturate(180%)", 
-            WebkitBackdropFilter: "blur(28px) saturate(180%)",
-          }}
         >
+          {/* Backdrop-blur lives on a sibling layer so that child `filter`
+              animations (blur on enter/exit) don't cause Chrome/Safari to drop
+              the parent's backdrop-filter rendering during the transition. */}
+          <div
+            aria-hidden
+            className="absolute inset-0 rounded-full pointer-events-none -z-10"
+            style={{
+              backdropFilter: "blur(28px) saturate(180%)",
+              WebkitBackdropFilter: "blur(28px) saturate(180%)",
+            }}
+          />
 
           <AnimatePresence mode="wait" initial={false}>
             {isCaseStudy && scrolled ? (
               <motion.div
                 key="back"
-                initial={{ opacity: 0, y: 6, filter: "blur(6px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: -6, filter: "blur(6px)" }}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
                 transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
                 className="px-5 py-3 flex items-center justify-center whitespace-nowrap relative"
               >
@@ -95,9 +102,9 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
             ) : (
               <motion.div
                 key="nav"
-                initial={{ opacity: 0, y: 6, filter: "blur(6px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: -6, filter: "blur(6px)" }}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
                 transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
                 className="px-8 py-3 flex items-center justify-center gap-8 whitespace-nowrap relative"
               >

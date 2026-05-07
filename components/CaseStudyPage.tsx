@@ -88,13 +88,13 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
     const tl = gsap.timeline();
 
     // 1. Background Warmup - Removed scale to fix aliasing/banding artifacts
-    tl.fromTo(bgRef.current, { 
+    tl.fromTo(bgRef.current, {
       opacity: 0,
     }, {
       opacity: 1,
       duration: 1.4,
       delay: 0.4,
-      ease: "sine.inOut"
+      ease: "sine.inOut",
     });
 
     // 2. Kinetic Title & Content Reveal
@@ -123,18 +123,27 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
       ease: "power4.out"
     }, "-=0.7");
 
-    // 5. Scroll-driven Background Fade
+    // 5a. Scrub-driven background fade — opacity tracks scroll progress for a
+    // physical, frame-accurate feel. Starts after the warmup window so the
+    // intro fade-in isn't fought by the scrub.
+    tl.add(() => {
+      ScrollTrigger.create({
+        trigger: triggerRef.current,
+        start: "top bottom",
+        end: "top center",
+        scrub: 0.6,
+        animation: gsap.to(bgRef.current, { opacity: 0, ease: "none" }),
+      });
+    });
+
+    // 5b. Discrete UI state flip (sidebar / header back button) — kept as a
+    // separate trigger so the gradient can fade smoothly while the chrome
+    // snaps decisively at a single threshold.
     ScrollTrigger.create({
       trigger: triggerRef.current,
       start: "top center",
-      onEnter: () => {
-        setIsContentActive(true);
-        gsap.to(bgRef.current, { opacity: 0, duration: 0.8, ease: "power2.out" });
-      },
-      onLeaveBack: () => {
-        setIsContentActive(false);
-        gsap.to(bgRef.current, { opacity: 1, duration: 0.8, ease: "power2.out" });
-      },
+      onEnter: () => setIsContentActive(true),
+      onLeaveBack: () => setIsContentActive(false),
     });
 
     // 6. Hero Parallax
