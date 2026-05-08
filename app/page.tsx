@@ -90,6 +90,7 @@ export default function Home() {
                           width={32}
                           height={32}
                           priority
+                          decoding="async"
                         />
                         <SurpriseParticles ids={surprises} />
                       </motion.div>

@@ -32,6 +32,7 @@ export default function PreviewCard({ activeImage, className, aspectRatio = "asp
               sizes="(max-width: 768px) 100vw, 700px"
               className="object-cover"
               priority
+              decoding="async"
             />
             <div className="absolute inset-0 bg-black/5" />
           </motion.div>

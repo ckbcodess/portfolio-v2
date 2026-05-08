@@ -1,7 +1,7 @@
 "use client";
 
 import TransitionLink from "./TransitionLink";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { usePathname } from "next/navigation";
 import ThemeControls from "./ThemeControls";
 import { useSound } from "@/components/SoundProvider";
@@ -9,6 +9,12 @@ import { useTransition } from "./TransitionProvider";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { Menu, X, Volume2, VolumeX } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { animate, spring } from "animejs";
+import dynamic from "next/dynamic";
+const RefractiveNav = dynamic(() => import("./RefractiveNav"), { 
+  ssr: false,
+  loading: () => <div className="h-12 w-[300px] bg-black/5 dark:bg-black/40 rounded-full animate-pulse" />
+});
 import Clock from "./Clock";
 
 interface HeaderProps {
@@ -22,12 +28,21 @@ const NAV_ITEMS = [
   { href: "https://drive.google.com/file/d/1EJm5aBA3I95pPkgT-4PDKTlOZe7ChLH9/view?usp=sharing", label: "Resume", isExternal: true },
 ];
 
+const SPRING_VALUES = [0, 0.0119, 0.0444, 0.0932, 0.1542, 0.2239, 0.2991, 0.3772, 0.4559, 0.5331, 0.6075, 0.6778, 0.743, 0.8027, 0.8563, 0.9038, 0.9451, 0.9804, 1.0099, 1.034, 1.053, 1.0675, 1.0778, 1.0845, 1.0881, 1.089, 1.0878, 1.0847, 1.0802, 1.0747, 1.0684, 1.0617, 1.0547, 1.0477, 1.0408, 1.0342, 1.028, 1.0223, 1.017, 1.0123, 1.0081, 1.0045, 1.0014, 0.9989, 0.9968, 0.9951, 0.9939, 0.993, 0.9924, 0.9921, 0.9921, 0.9922, 0.9925, 0.9929, 0.9934, 0.994, 0.9946, 0.9952, 0.9958, 0.9964, 0.997, 0.9976, 0.9981, 0.9985, 0.9989, 0.9993, 0.9996, 0.9999, 1.0001, 1.0003, 1.0004, 1.0006, 1.0006, 1.0007, 1.0007, 1.0007, 1.0007, 1.0007, 1.0006, 1.0006, 1.0005, 1.0005, 1.0004, 1.0004, 1.0003, 1.0003, 1.0002, 1.0002, 1.0001, 1.0001, 1.0001, 1, 1, 1, 1, 1, 0.9999, 0.9999, 0.9999, 0.9999, 1];
+
+const customSpringEase = (t: number) => {
+  const index = Math.min(Math.floor(t * SPRING_VALUES.length), SPRING_VALUES.length - 1);
+  return SPRING_VALUES[index];
+};
+
 export default function Header({ backLink = "/", scrolled: scrolledProp }: HeaderProps) {
   const pathname = usePathname();
   const { isSoundEnabled, toggleSound } = useSound();
   const { pendingHref, isTransitioning } = useTransition();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [internalScrolled, setInternalScrolled] = useState(false);
+  const navRef = useRef<HTMLElement>(null);
+  const navInnerRef = useRef<HTMLDivElement>(null);
 
   const isCaseStudy = pathname.startsWith("/work/");
   const scrolled = scrolledProp ?? internalScrolled;
@@ -41,6 +56,30 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isTransitioning]);
+
+  useEffect(() => {
+    if (!navRef.current || !navInnerRef.current) return;
+
+    // Get current dimensions
+    const currentWidth = navRef.current.offsetWidth;
+    const currentHeight = navRef.current.offsetHeight;
+
+    // Reset styles to measure the target size
+    navRef.current.style.width = 'auto';
+    navRef.current.style.height = 'auto';
+    
+    const targetWidth = navInnerRef.current.offsetWidth;
+    const targetHeight = navInnerRef.current.offsetHeight;
+
+    // Animate from current to target
+    animate(navRef.current, {
+      width: [currentWidth, targetWidth],
+      height: [currentHeight, targetHeight],
+    }, {
+      duration: 800,
+      easing: customSpringEase
+    });
+  }, [isCaseStudy, scrolled]);
 
   const activeHref = pendingHref || pathname;
 
@@ -60,72 +99,76 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
           </TransitionLink>
         </div>
 
-        {/* Middle Section: CSS-Only Morphing Navigation Pill */}
+        {/* Middle Section: Refractive Morphing Navigation Pill */}
         <div className="flex-none hidden lg:flex items-center justify-center pointer-events-auto">
-          <nav className={`relative rounded-full backdrop-blur-[40px] will-change-[width,height,padding,backdrop-filter] transition-[width,height,padding,margin,background-color,border-color,backdrop-filter] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden ${
-            isCaseStudy && !scrolled
-              ? "bg-white/10 text-white" 
-              : "bg-black/5 dark:bg-black/40 text-foreground"
-          }`}
-          style={{ transitionDuration: '500ms, 500ms, 500ms, 500ms, 200ms, 200ms, 500ms' }} // Added backdrop-filter duration
+          <RefractiveNav 
+            ref={navRef}
+            isScrolled={scrolled}
+            className={`relative rounded-full backdrop-blur-[40px] will-change-[width,height] overflow-hidden ${
+              isCaseStudy && !scrolled
+                ? "text-white" 
+                : "text-foreground"
+            }`}
           >
-            <AnimatePresence mode="wait" initial={false}>
-              {isCaseStudy && scrolled ? (
-                <motion.div
-                  key="back"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.2 }}
-                  className="px-5 py-3 flex items-center justify-center whitespace-nowrap"
-                >
-                  <TransitionLink
-                    href={backLink}
-                    label="Back"
-                    className="flex items-center gap-2 text-foreground transition-colors group p-4 -m-4"
+            <div ref={navInnerRef} className="h-full">
+              <AnimatePresence mode="wait" initial={false}>
+                {isCaseStudy && scrolled ? (
+                  <motion.div
+                    key="back"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                    className="px-5 py-3 flex items-center justify-center whitespace-nowrap"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transform group-hover:-translate-x-1 transition-transform -ml-0.5">
-                      <path d="m15 18-6-6 6-6" />
-                    </svg>
-                    <span className="text-sm font-normal">Back</span>
-                  </TransitionLink>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="nav"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.2 }}
-                  className="px-8 py-3 flex items-center justify-center gap-8 whitespace-nowrap"
-                >
-                  {NAV_ITEMS.map((item) => {
-                    const isActive = activeHref === item.href;
-                    const content = (
-                      <span className={`text-sm font-normal tracking-tight transition-all duration-300 ${
-                        isActive ? "opacity-100" : "opacity-40 hover:opacity-100"
-                      }`}>
-                        {item.label}
-                      </span>
-                    );
-
-                    if (item.isExternal) {
-                      return (
-                        <a key={item.href} href={item.href} target="_blank" rel="noopener noreferrer" className="group">
-                          {content}
-                        </a>
+                    <TransitionLink
+                      href={backLink}
+                      label="Back"
+                      className="flex items-center gap-2 text-foreground transition-colors group p-4 -m-4"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transform group-hover:-translate-x-1 transition-transform -ml-0.5">
+                        <path d="m15 18-6-6 6-6" />
+                      </svg>
+                      <span className="text-sm font-normal">Back</span>
+                    </TransitionLink>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="nav"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                    className="px-8 py-3 flex items-center justify-center gap-8 whitespace-nowrap"
+                  >
+                    {NAV_ITEMS.map((item) => {
+                      const isActive = activeHref === item.href;
+                      const content = (
+                        <span className={`text-sm font-normal tracking-tight transition-all duration-300 ${
+                          isActive ? "opacity-100" : "opacity-40 hover:opacity-100"
+                        }`}>
+                          {item.label}
+                        </span>
                       );
-                    }
-                    return (
-                      <TransitionLink key={item.href} href={item.href} label={item.label} className="group">
-                        {content}
-                      </TransitionLink>
-                    );
-                  })}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </nav>
+
+                      if (item.isExternal) {
+                        return (
+                          <a key={item.href} href={item.href} target="_blank" rel="noopener noreferrer" className="group">
+                            {content}
+                          </a>
+                        );
+                      }
+                      return (
+                        <TransitionLink key={item.href} href={item.href} label={item.label} className="group">
+                          {content}
+                        </TransitionLink>
+                      );
+                    })}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </RefractiveNav>
         </div>
 
         {/* Right Section — Time, Theme, Sound (Hidden on case study scroll) */}

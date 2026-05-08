@@ -155,9 +155,9 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
       const source = ctx.createBufferSource();
       source.buffer = buffer;
 
-      // Optional: slight gain reduction so it's not jarring
+      // Reduced volume for a more subtle mechanical feel
       const gain = ctx.createGain();
-      gain.gain.value = 0.5;
+      gain.gain.value = 0.15;
       source.connect(gain);
       gain.connect(ctx.destination);
 

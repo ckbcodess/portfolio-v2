@@ -77,7 +77,7 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
     o.frequency.setValueAtTime(2500 + Math.random() * 500, t);
 
     g.gain.setValueAtTime(0.001, t);
-    g.gain.linearRampToValueAtTime(0.02, t + 0.001);
+    g.gain.linearRampToValueAtTime(0.008, t + 0.001);
     g.gain.exponentialRampToValueAtTime(0.001, t + 0.004);
 
     o.connect(g).connect(ctx.destination);

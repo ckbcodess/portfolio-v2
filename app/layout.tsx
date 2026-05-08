@@ -27,6 +27,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning className={geist.variable}>
+      <head>
+        <link
+          rel="preload"
+          as="image"
+          href="/avatar.webp"
+          type="image/webp"
+          // @ts-expect-error - fetchPriority is supported by React 18.3+ but might need cast for older types
+          fetchPriority="high"
+        />
+      </head>
       <body className="font-sans font-normal antialiased text-foreground bg-background">
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <ThemeColorProvider>

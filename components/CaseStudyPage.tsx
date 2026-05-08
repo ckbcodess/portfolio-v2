@@ -7,7 +7,7 @@ import { useTransition } from "@/components/TransitionProvider";
 import CaseStudyBackground from "@/components/CaseStudyBackground";
 import CaseStudySidebar from "@/components/CaseStudySidebar";
 import { motion } from "framer-motion";
-import ParallaxImage from "@/components/ParallaxImage";
+
 
 
 
@@ -106,11 +106,16 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
           </div>
 
           <div className="mt-20 mb-32">
-            <ParallaxImage 
-              src={caseStudy.heroSrc} 
-              alt={caseStudy.heroAlt || `Hero image for ${caseStudy.title}`} 
-              aspectRatio="aspect-[21/9]"
-            />
+            <div className="relative overflow-hidden rounded-2xl bg-muted aspect-[21/9]">
+              <Image 
+                src={caseStudy.heroSrc} 
+                alt={caseStudy.heroAlt || `Hero image for ${caseStudy.title}`} 
+                fill
+                className="object-cover"
+                sizes="(max-width: 1400px) 100vw, 1400px"
+                priority
+              />
+            </div>
           </div>
 
         </section>
@@ -159,11 +164,15 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
 
               {section.imageSrc && (
                 <div className="w-full mt-8">
-                  <ParallaxImage
-                    src={section.imageSrc}
-                    alt={section.heading}
-                    aspectRatio="aspect-video"
-                  />
+                  <div className="relative overflow-hidden rounded-2xl bg-muted aspect-video">
+                    <Image
+                      src={section.imageSrc}
+                      alt={section.heading}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 768px"
+                    />
+                  </div>
                 </div>
               )}
 
