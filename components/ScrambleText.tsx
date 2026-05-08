@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { animate, scrambleText } from "animejs";
+import { useWebHaptics } from "web-haptics/react";
 
 interface ScrambleTextProps {
   text: string;
@@ -22,11 +23,13 @@ export function ScrambleText({
 }: ScrambleTextProps) {
   const textRef = useRef<HTMLSpanElement>(null);
   const hasAnimated = useRef(false);
+  const { trigger } = useWebHaptics();
 
   useEffect(() => {
     if (!textRef.current) return;
     if (once && hasAnimated.current) return;
 
+    let lastTick = 0;
     const animation = animate(textRef.current, {
       innerHTML: scrambleText({
         text: text,
@@ -35,6 +38,14 @@ export function ScrambleText({
         duration: duration * 1000,
         ease: "linear",
       }),
+      update: () => {
+        const now = performance.now();
+        // Throttle to every 40ms to create a nice "ticking" feel
+        if (now - lastTick > 40) {
+          trigger([{ duration: 5, intensity: 0.3 }]); // Very light, rapid tick
+          lastTick = now;
+        }
+      },
       complete: () => {
         hasAnimated.current = true;
       }
@@ -43,7 +54,7 @@ export function ScrambleText({
     return () => {
       animation.pause();
     };
-  }, [text, characters, duration, delay, once]);
+  }, [text, characters, duration, delay, once, trigger]);
 
   return (
     <span ref={textRef} className={className}>
