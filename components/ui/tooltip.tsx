@@ -25,7 +25,7 @@ function Tooltip({ ...props }: TooltipPrimitive.Root.Props) {
 function TooltipTrigger({ asChild, children, ...props }: TooltipPrimitive.Trigger.Props & { asChild?: boolean }) {
   if (asChild) {
     return (
-      <TooltipPrimitive.Trigger data-slot="tooltip-trigger" render={children} {...props} />
+      <TooltipPrimitive.Trigger data-slot="tooltip-trigger" render={children as any} {...props} />
     )
   }
   return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props}>{children}</TooltipPrimitive.Trigger>
