@@ -7,6 +7,7 @@ import { useTransition } from "@/components/TransitionProvider";
 import CaseStudyBackground from "@/components/CaseStudyBackground";
 import CaseStudySidebar from "@/components/CaseStudySidebar";
 import { motion } from "framer-motion";
+import { MaskReveal } from "@/components/MaskReveal";
 
 
 
@@ -23,12 +24,20 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
   
   // Visibility logic: Trigger sidebar once the hero section is scrolled past
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      if (!introRef.current) return;
-      const rect = introRef.current.getBoundingClientRect();
-      
-      // Show sidebar when the bottom of the hero/intro section is near or above the top of the viewport
-      setShowSidebar(rect.bottom < 200);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (!introRef.current) {
+            ticking = false;
+            return;
+          }
+          const rect = introRef.current.getBoundingClientRect();
+          setShowSidebar(rect.bottom < 200);
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -77,31 +86,37 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
         {/* Prominent Hero Section */}
         <section ref={introRef} id="intro" aria-labelledby="case-study-title" className="text-white">
           <div className="flex flex-col gap-8">
-            <h1 
-              id="case-study-title"
-              className="text-3xl md:text-4xl lg:text-5xl font-normal tracking-tight max-w-4xl break-words"
-            >
-              {caseStudy.title}
-            </h1>
+            <MaskReveal delay={0.4}>
+              <h1 
+                id="case-study-title"
+                className="text-3xl md:text-4xl lg:text-5xl font-normal tracking-tight max-w-4xl break-words"
+              >
+                {caseStudy.title}
+              </h1>
+            </MaskReveal>
             
             <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12">
-              <p className="text-lg md:text-xl text-white/80 max-w-2xl leading-relaxed break-words">
-                {caseStudy.description}
-              </p>
+              <MaskReveal delay={0.5}>
+                <p className="text-lg md:text-xl text-white/80 max-w-2xl leading-relaxed break-words">
+                  {caseStudy.description}
+                </p>
+              </MaskReveal>
 
               {/* Metadata Grid - Hardened against long values */}
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-x-12 gap-y-6 min-w-0">
-                {caseStudy.meta.map((item) => (
-                  <div key={item.label} className="flex flex-col gap-1 min-w-0">
-                    <span className="text-[10px] uppercase tracking-widest text-white/40 truncate" title={item.label}>
-                      {item.label}
-                    </span>
-                    <span className="text-sm font-normal break-words text-white/90">
-                      {item.value}
-                    </span>
-                  </div>
-                ))}
-              </div>
+              <MaskReveal delay={0.6}>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-x-12 gap-y-6 min-w-0">
+                  {caseStudy.meta.map((item) => (
+                    <div key={item.label} className="flex flex-col gap-1 min-w-0">
+                      <span className="text-[10px] uppercase tracking-widest text-white/40 truncate" title={item.label}>
+                        {item.label}
+                      </span>
+                      <span className="text-sm font-normal break-words text-white/90">
+                        {item.value}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </MaskReveal>
             </div>
           </div>
 

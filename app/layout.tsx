@@ -37,7 +37,7 @@ export default function RootLayout({
         />
       </head>
       <body className="font-sans font-normal antialiased text-foreground bg-background">
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
           <ThemeColorProvider>
             <SoundProvider>
               <TooltipProvider delay={300}>

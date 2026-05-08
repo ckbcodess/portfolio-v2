@@ -48,11 +48,19 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
   const scrolled = scrolledProp ?? internalScrolled;
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      if (isTransitioning) return;
-      setInternalScrolled(window.scrollY > 50);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (!isTransitioning) {
+            setInternalScrolled(window.scrollY > 50);
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isTransitioning]);

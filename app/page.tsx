@@ -5,7 +5,7 @@
 import Image from "next/image";
 import TransitionLink from "@/components/TransitionLink";
 import TabsSection from "@/components/TabsSection";
-import { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence, Variants } from "motion/react";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { ArrowRight, Lock } from "lucide-react";
@@ -204,16 +204,16 @@ function SurpriseParticles({ ids }: { ids: number[] }) {
   );
 }
 
-function SocialLinks() {
+const SocialLinks = React.memo(function SocialLinks() {
   return (
     <nav className="inline-flex items-start gap-3">
       <SocialLink href="https://www.linkedin.com/in/ransford-gyasi/" aria-label="LinkedIn" icon="linkedin" />
       <SocialLink href="mailto:rnsfordgyasi@gmail.com" aria-label="Email" icon="email" />
     </nav>
   );
-}
+});
 
-function SocialLink({ href, icon, "aria-label": ariaLabel }: { href: string; icon: string; "aria-label": string }) {
+const SocialLink = React.memo(function SocialLink({ href, icon, "aria-label": ariaLabel }: { href: string; icon: string; "aria-label": string }) {
   const isEmail = href.startsWith("mailto");
   const isLinkedIn = icon === "linkedin";
 
@@ -247,9 +247,9 @@ function SocialLink({ href, icon, "aria-label": ariaLabel }: { href: string; ico
       </TooltipContent>
     </Tooltip>
   );
-}
+});
 
-function ProjectItem({
+const ProjectItem = React.memo(function ProjectItem({
   title,
   slug,
   color = "#ff4d4d",
@@ -301,4 +301,4 @@ function ProjectItem({
       {content}
     </TransitionLink>
   );
-}
+});

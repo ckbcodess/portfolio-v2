@@ -127,6 +127,12 @@
       "sourceType": "github",
       "computedHash": "00ae5e9912b02f5d92ebf4ca9f6326c8745e05acdac530646ba89e99f0012596"
     },
+    "performance-optimization": {
+      "source": "addyosmani/agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/performance-optimization/SKILL.md",
+      "computedHash": "e143bfc3b19f8009b3399bdd96deba13e4edb6cdbd9f7f30b570ba5ea49e3613"
+    },
     "polish": {
       "source": "pbakaus/impeccable",
       "sourceType": "github",

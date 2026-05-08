@@ -38,11 +38,14 @@ export default function CaseStudyBackground({ colors }: CaseStudyBackgroundProps
 
   return createPortal(
     <motion.div 
-      style={{ opacity }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1.2, ease: "easeOut", delay: 0.2 }}
       className="fixed inset-0 z-0 overflow-hidden pointer-events-none bg-background"
     >
       <motion.div 
         style={{ 
+          opacity,
           scale, 
           filter: blur,
           backgroundImage: `linear-gradient(to bottom, ${c1}, ${c2}, ${c3})`
