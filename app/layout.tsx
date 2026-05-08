@@ -33,7 +33,6 @@ export default function RootLayout({
           as="image"
           href="/avatar.webp"
           type="image/webp"
-          // @ts-expect-error - fetchPriority is supported by React 18.3+ but might need cast for older types
           fetchPriority="high"
         />
       </head>
