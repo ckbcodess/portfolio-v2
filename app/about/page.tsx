@@ -55,7 +55,7 @@ export default function AboutPage() {
   return (
     <div
       ref={pageRef}
-      className="bg-background min-h-screen lg:h-screen lg:overflow-hidden pt-32 md:pt-44 pb-[var(--page-pt)] lg:pb-[8vh] w-full selection:bg-primary selection:text-primary-foreground flex flex-col"
+      className="bg-background min-h-screen lg:h-screen lg:overflow-hidden pt-40 md:pt-56 pb-[var(--page-pt)] lg:pb-[8vh] w-full selection:bg-primary selection:text-primary-foreground flex flex-col"
     >
       <div className="w-full flex-1 flex flex-col lg:flex-row lg:items-stretch lg:justify-start gap-12 lg:gap-16 px-[var(--page-px)]">
         <motion.main
@@ -74,8 +74,8 @@ export default function AboutPage() {
                       key={tab}
                       type="button"
                       onClick={() => setActiveTab(tab)}
-                      className={`text-sm font-normal leading-none tracking-tight transition-colors whitespace-nowrap ${
-                        isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                      className={`text-sm font-normal leading-none tracking-tight transition-opacity whitespace-nowrap ${
+                        isActive ? "text-foreground opacity-100" : "text-foreground opacity-40 hover:opacity-100"
                       }`}
                     >
                       {tab}

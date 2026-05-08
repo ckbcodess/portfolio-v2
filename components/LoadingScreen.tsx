@@ -17,7 +17,7 @@ const CRITICAL_ASSETS = [
   "/avatar.webp",
   "/allex-card.png",
   "/allex-hero.webp",
-  "/gcb-card-v4.png",
+  "/gcb-card-v4.webp",
   "/cs-img-6.webp",
   // Interface Sounds
   "/sounds/click-1.wav",

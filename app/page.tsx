@@ -45,7 +45,7 @@ export default function Home() {
     const sounds = ["/sounds/pop-1.wav", "/sounds/pop-2.wav", "/sounds/pop-3.wav"];
     const audio = new Audio(sounds[Math.floor(Math.random() * sounds.length)]);
     audio.volume = 0.4;
-    audio.play().catch(() => {});
+    audio.play().catch(() => { });
 
     const id = Date.now();
     setSurprises((prev) => [...prev, id]);
@@ -55,7 +55,7 @@ export default function Home() {
   return (
     <div
       ref={pageRef}
-      className="bg-background min-h-screen lg:h-screen lg:overflow-hidden pt-32 md:pt-44 pb-[var(--page-pt)] lg:pb-[8vh] w-full selection:bg-primary selection:text-primary-foreground flex flex-col"
+      className="bg-background min-h-screen pt-40 md:pt-56 pb-[var(--page-pt)] lg:pb-[8vh] w-full selection:bg-primary selection:text-primary-foreground flex flex-col"
     >
       {/* Main Content */}
       <div className="w-full flex-1 flex flex-col lg:flex-row lg:items-stretch lg:justify-start gap-12 lg:gap-16 px-[var(--page-px)]">
@@ -127,7 +127,7 @@ export default function Home() {
               </MaskReveal>
               <div className="flex flex-col justify-start items-start gap-4 w-full">
                 {caseStudies.slice(0, 2).map((study, idx) => (
-                  <MaskReveal key={study.slug} delay={0.5 + idx * 0.05} className="w-full -mx-4 px-4">
+                  <MaskReveal key={study.slug} delay={0.5 + idx * 0.05} className="w-full -mx-8 px-8 -my-6 py-6">
                     <motion.div
                       className="w-full"
                       onMouseEnter={() => {
@@ -214,27 +214,37 @@ function SocialLinks() {
 
 function SocialLink({ href, icon, "aria-label": ariaLabel }: { href: string; icon: string; "aria-label": string }) {
   const isEmail = href.startsWith("mailto");
+  const isLinkedIn = icon === "linkedin";
+
   return (
-    <motion.a
-      whileTap={{ scale: 0.94 }}
-      href={href}
-      {...(!isEmail && { target: "_blank" })}
-      aria-label={ariaLabel}
-      className="w-10 h-10 rounded-full bg-foreground/5 hover:bg-foreground/10 border border-border/50 flex items-center justify-center transition-colors"
-    >
-      {icon === "linkedin" ? (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-60">
-          <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-          <rect width="4" height="12" x="2" y="9" />
-          <circle cx="4" cy="4" r="2" />
-        </svg>
-      ) : (
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-60">
-          <rect width="20" height="16" x="2" y="4" rx="2" />
-          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-        </svg>
-      )}
-    </motion.a>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <motion.a
+          whileTap={{ scale: 0.94 }}
+          href={href}
+          {...(!isEmail && { target: "_blank" })}
+          aria-label={ariaLabel}
+          data-cursor="wrap"
+          className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 group ${isLinkedIn
+              ? "bg-foreground/5 hover:bg-[#0774E2]"
+              : "bg-foreground/5 hover:bg-[#FFD700]"
+            }`}
+        >
+          {isLinkedIn ? (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className="opacity-60 group-hover:opacity-100 group-hover:fill-white transition-all duration-300">
+              <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.238 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+            </svg>
+          ) : (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className="opacity-60 group-hover:opacity-100 group-hover:fill-black transition-all duration-300">
+              <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+            </svg>
+          )}
+        </motion.a>
+      </TooltipTrigger>
+      <TooltipContent side="bottom" sideOffset={12} className="text-xs">
+        <p>{isLinkedIn ? "Connect on LinkedIn" : "Send an Email"}</p>
+      </TooltipContent>
+    </Tooltip>
   );
 }
 
@@ -256,17 +266,15 @@ function ProjectItem({
   const content = (
     <div
       data-cursor={isLocked ? "confidential" : "case-study"}
-      className={`group flex items-center justify-between w-full p-4 -mx-4 rounded-2xl border border-transparent transition-[transform,background-color,border-color,box-shadow,opacity] duration-300 cursor-pointer ${
-        isActive
-          ? "bg-foreground/[0.05] border-foreground/10 shadow-[0_18px_55px_-36px_rgba(0,0,0,0.45)]"
-          : "hover:bg-foreground/[0.04] hover:border-foreground/5"
-      } ${isDimmed ? "opacity-55" : "opacity-100"}`}
+      className={`group flex items-center justify-between w-full p-4 -mx-4 rounded-2xl transition-[transform,background-color,opacity] duration-300 cursor-pointer ${isActive
+        ? "bg-foreground/[0.03]"
+        : "bg-transparent hover:bg-foreground/[0.02]"
+        } ${isDimmed ? "opacity-55" : "opacity-100"}`}
     >
       <div className="flex items-center gap-5">
         <div
-          className={`w-16 h-16 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-500 shadow-sm relative overflow-hidden ${
-            isActive ? "scale-[1.04]" : "group-hover:scale-[1.02]"
-          }`}
+          className={`w-16 h-16 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-500 relative overflow-hidden ${isActive ? "scale-[1.04]" : "group-hover:scale-[1.02]"
+            }`}
           style={{ backgroundColor: color }}
         >
           <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-50" />

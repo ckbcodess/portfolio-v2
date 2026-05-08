@@ -35,6 +35,7 @@ export interface CaseStudyContent {
   sections: CaseStudySection[];
   nextProject: CaseStudyNextProject;
   badgeVariant?: string;
+  gradientColors?: [string, string, string]; // [top, middle, bottom]
   isLocked?: boolean;
   password?: string;
 }

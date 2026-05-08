@@ -2,6 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { animate, createTimer } from 'animejs';
+import { scrambleText } from 'animejs/text';
 
 const tabsData = [
   {
@@ -18,11 +20,11 @@ const tabsData = [
   },
   {
     name: "UX Research",
-    text: "I always ask why before I ever open Figma. Research isn't a phase, it's the foundation of every pixel.",
+    text: "I ask why before I ever open Figma. Research isn't a phase, it's the foundation of every pixel.",
   },
   {
     name: "Vibe Coders",
-    text: "I prompted my way into a full portfolio in 48 hours... and I'll do it again. Speed is my strongest vibe.",
+    text: "I prompted a full portfolio in 48 hours... and I'll do it again. Speed is my strongest vibe.",
   },
   {
     name: "Artists",
@@ -35,9 +37,106 @@ import { MaskReveal } from "@/components/MaskReveal";
 export default function TabsSection({ canAnimate = true }: { canAnimate?: boolean }) {
   const [active, setActive] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isScrambling, setIsScrambling] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const textRef = useRef<HTMLHeadingElement>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const allowSoundRef = useRef(false);
+  const soundTimerRef = useRef<any>(null);
 
+  useEffect(() => {
+    // Lazy init audio context and timer for sound sync
+    if (typeof window !== "undefined" && !audioCtxRef.current) {
+      audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    }
+
+    if (!soundTimerRef.current) {
+      soundTimerRef.current = createTimer({
+        onUpdate: () => { allowSoundRef.current = true; },
+        frameRate: 30
+      });
+    }
+
+    return () => {
+      if (soundTimerRef.current) soundTimerRef.current.pause();
+    };
+  }, []);
+
+  const tickSound = () => {
+    const ctx = audioCtxRef.current;
+    if (!ctx || !allowSoundRef.current || ctx.state === 'suspended') return;
+
+    allowSoundRef.current = false;
+    const t = ctx.currentTime;
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+
+    // Triangle wave for a more mechanical click sound
+    o.type = 'triangle';
+    o.frequency.setValueAtTime(2500 + Math.random() * 500, t);
+
+    g.gain.setValueAtTime(0.001, t);
+    g.gain.linearRampToValueAtTime(0.02, t + 0.001);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.004);
+
+    o.connect(g).connect(ctx.destination);
+    o.start(t);
+    o.stop(t + 0.005);
+  };
+
+  const isAnimatingRef = useRef(false);
+  const animeInstanceRef = useRef<any>(null);
+
+  const runScramble = (force = false) => {
+    if (!textRef.current || (isAnimatingRef.current && !force)) return;
+
+    if (animeInstanceRef.current) {
+      animeInstanceRef.current.pause();
+    }
+
+    setIsScrambling(true);
+    isAnimatingRef.current = true;
+    animeInstanceRef.current = animate(textRef.current, {
+      innerHTML: scrambleText({
+        text: tabsData[4].text,
+        chars: '01<>[]{}_—=+*^?#&$!/\\|;:',
+        from: 'left',
+        duration: 400,
+        settleDuration: 100,
+        perturbation: 0.5,
+        cursor: '_',
+        onChange: tickSound
+      }),
+      onComplete: () => {
+        setIsScrambling(false);
+        isAnimatingRef.current = false;
+        animeInstanceRef.current = null;
+      }
+    });
+  };
+
+  useEffect(() => {
+    return () => {
+      if (animeInstanceRef.current) animeInstanceRef.current.pause();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (active === 4) {
+      // Wait for ref to be available (especially important with AnimatePresence mode="wait")
+      let rafId: number;
+      const checkAndRun = () => {
+        if (textRef.current) {
+          runScramble(true);
+        } else {
+          rafId = requestAnimationFrame(checkAndRun);
+        }
+      };
+      rafId = requestAnimationFrame(checkAndRun);
+      return () => cancelAnimationFrame(rafId);
+    }
+  }, [active]);
   useEffect(() => {
     if (canAnimate) {
       const timer = setTimeout(() => setIsInitialLoad(false), 2000);
@@ -47,6 +146,10 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
 
   const handleTabClick = (i: number) => {
     setActive(i);
+    // Resume audio context on user interaction
+    if (audioCtxRef.current && audioCtxRef.current.state === 'suspended') {
+      audioCtxRef.current.resume();
+    }
   };
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
@@ -55,69 +158,106 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
 
   return (
     <div className="self-stretch flex flex-col justify-start items-start gap-8">
-      <div className="w-full relative grid [grid-template-areas:'stack'] transition-[height] duration-600 ease-[cubic-bezier(0.16,1,0.3,1)]">
-        <AnimatePresence>
+      <div className="w-full relative grid [grid-template-areas:'stack'] overflow-hidden">
+        <AnimatePresence mode="popLayout">
           <motion.h1
             key={active}
-            className="[grid-area:stack] text-[32px] md:text-[36px] lg:text-[var(--font-size-hero)] text-foreground font-normal font-sans leading-[1.1] tracking-tight text-left [text-wrap:balance] w-full m-0"
+            id="tabs-content"
+            role="tabpanel"
+            aria-labelledby={`tab-${active}`}
+            initial={{ opacity: 0, y: 10, filter: 'blur(10px)' }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, y: -10, filter: 'blur(10px)' }}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="[grid-area:stack] text-2xl text-foreground font-normal font-sans leading-[1.2] tracking-tight text-left w-full m-0 relative tabular-nums"
           >
-            {tabsData[active].text.split(/(\s+)/).map((word, i) => {
-              if (/\s+/.test(word)) {
-                return <span key={i} className="inline">{word}</span>;
-              }
-              return (
-                <motion.span
-                  key={i}
-                  initial={{ opacity: 0, y: 4.6 }}
-                  animate={{ 
-                    opacity: canAnimate ? 1 : 0, 
-                    y: canAnimate ? 0 : 4.6, 
-                    transition: { duration: 0.2, delay: (isInitialLoad ? 0.4 : 0.04) + i * 0.015, ease: "easeOut" } 
-                  }}
-                  exit={{ 
-                    opacity: 0, 
-                    y: -3.5, 
-                    transition: { duration: 0.12, delay: i * 0.01, ease: "easeIn" } 
-                  }}
-                  className="inline-block origin-[50%_55%] will-change-[transform,opacity]"
-                >
-                  {word}
-                </motion.span>
-              );
-            })}
+            {active === 4 ? (
+              <>
+                {/* Ghost text to hold the layout volume */}
+                <span className="invisible select-none pointer-events-none block" aria-hidden="true">
+                  {tabsData[active].text}
+                </span>
+                {/* Scramble reveal layer */}
+                <span
+                  ref={textRef}
+                  className={`absolute inset-0 w-full h-full transition-all duration-700 ${
+                    isScrambling 
+                      ? "text-[#00FF41] drop-shadow-[0_0_8px_rgba(0,255,65,0.4)]" 
+                      : "text-foreground"
+                  }`}
+                />
+              </>
+            ) : (
+              tabsData[active].text.split(/(\s+)/).map((word, i) => {
+                if (/\s+/.test(word)) {
+                  return <span key={i} className="inline">{word}</span>;
+                }
+                return (
+                  <motion.span
+                    key={i}
+                    initial={{ opacity: 0, y: 4.6 }}
+                    animate={{
+                      opacity: canAnimate ? 1 : 0,
+                      y: canAnimate ? 0 : 4.6,
+                      transition: { duration: 0.2, delay: (isInitialLoad ? 0.4 : 0.04) + i * 0.015, ease: "easeOut" }
+                    }}
+                    exit={{
+                      opacity: 0,
+                      y: -3.5,
+                      transition: { duration: 0.12, delay: i * 0.01, ease: "easeIn" }
+                    }}
+                    className="inline-block origin-[50%_55%] will-change-[transform,opacity]"
+                  >
+                    {word}
+                  </motion.span>
+                );
+              })
+            )}
           </motion.h1>
         </AnimatePresence>
       </div>
 
-      <MaskReveal delay={0.5} className="w-full mx-[calc(var(--page-px)*-1)] px-[var(--page-px)] lg:mx-0 lg:px-0">
-        <div 
+      <div className="w-full mx-[calc(var(--page-px)*-1)] px-[var(--page-px)] lg:mx-0 lg:px-0">
+        <div
           ref={scrollRef}
           onScroll={handleScroll}
+          role="tablist"
+          aria-label="Content filters"
           style={{
-            maskImage: isScrolled 
-              ? 'linear-gradient(to right, transparent, black 40px, black calc(100% - 40px), transparent)' 
+            maskImage: isScrolled
+              ? 'linear-gradient(to right, transparent, black 40px, black calc(100% - 40px), transparent)'
               : 'linear-gradient(to right, black calc(100% - 40px), transparent)',
-            WebkitMaskImage: isScrolled 
-              ? 'linear-gradient(to right, transparent, black 40px, black calc(100% - 40px), transparent)' 
+            WebkitMaskImage: isScrolled
+              ? 'linear-gradient(to right, transparent, black 40px, black calc(100% - 40px), transparent)'
               : 'linear-gradient(to right, black calc(100% - 40px), transparent)',
           }}
           className="flex flex-row items-center w-full overflow-x-auto lg:overflow-x-visible justify-start gap-4 pb-2 md:pb-0 scrollbar-hide [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden mx-[calc(var(--page-px)*-1)] px-[var(--page-px)] lg:!mask-none lg:mx-0 lg:px-0"
         >
           {tabsData.map((tab, i) => (
-            <button
-              key={tab.name}
-              onClick={() => handleTabClick(i)}
-              data-cursor="pointer"
-              className={`text-center shrink-0 whitespace-nowrap justify-start text-[1rem] font-normal font-sans leading-5 transition-all duration-200 ${active === i
-                ? "text-foreground"
-                : "text-foreground/30 hover:text-foreground/60"
-                }`}
+            <MaskReveal 
+              key={tab.name} 
+              delay={0.6 + i * 0.08} 
+              duration={0.6}
+              className="shrink-0"
             >
-              {tab.name}
-            </button>
+              <button
+                id={`tab-${i}`}
+                role="tab"
+                aria-selected={active === i}
+                aria-controls="tabs-content"
+                onClick={() => handleTabClick(i)}
+                data-cursor="pointer"
+                className={`text-center shrink-0 whitespace-nowrap justify-start text-[1rem] font-normal font-sans leading-5 transition-all duration-300 outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-sm ${active === i
+                  ? "text-foreground opacity-100"
+                  : "text-foreground opacity-35 hover:opacity-60"
+                  }`}
+              >
+                {tab.name}
+              </button>
+            </MaskReveal>
           ))}
         </div>
-      </MaskReveal>
+      </div>
     </div>
   );
 }

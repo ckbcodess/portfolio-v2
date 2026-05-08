@@ -29,7 +29,7 @@ export const gcbCaseStudy: CaseStudyContent = {
     {
       id: "insight-behavior",
       label: "Key Insight",
-      heading: "Users wanted reassurance as much as speed",
+      heading: "Speed vs. Reassurance",
       body: [
         "People were not only asking for faster flows. They also wanted clear feedback, strong visibility into transaction states, and fewer moments of uncertainty.",
       ],
@@ -42,7 +42,7 @@ export const gcbCaseStudy: CaseStudyContent = {
     {
       id: "decision-information",
       label: "Design Decision",
-      heading: "Prioritize information hierarchy before visual detail",
+      heading: "Hierarchy over visual detail",
       body: [
         "I restructured the IA around core daily actions, then used visual design to reinforce confidence: clear labels, explicit statuses, and deliberate spacing for readability.",
         "This approach ensured the app felt predictable and easy to scan, even for less frequent digital banking users.",
@@ -52,7 +52,7 @@ export const gcbCaseStudy: CaseStudyContent = {
     {
       id: "solution-flows",
       label: "Solution",
-      heading: "Streamlined core flows with high-confidence feedback",
+      heading: "High-confidence feedback",
       body: [
         "Core journeys were redesigned around fewer decisions per step, persistent context, and immediate confirmations after critical actions.",
       ],
@@ -66,7 +66,7 @@ export const gcbCaseStudy: CaseStudyContent = {
     {
       id: "learnings",
       label: "Key Learnings",
-      heading: "Trust is a design outcome, not just a brand promise",
+      heading: "Trust is a design outcome",
       body: [
         "Small interaction details changed user confidence significantly. Clear system responses and better hierarchy made the experience feel safer and more professional.",
         "The project reinforced a core principle in fintech design: speed matters, but clarity builds trust.",
@@ -80,4 +80,5 @@ export const gcbCaseStudy: CaseStudyContent = {
     eyebrow: "The Allex",
     title: "Brand + Product System Case Study",
   },
+  gradientColors: ["#001530", "#0f3d7a", "#2563eb"],
 };

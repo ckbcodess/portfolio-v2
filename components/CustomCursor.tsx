@@ -8,9 +8,10 @@ import { usePathname } from "next/navigation";
 export default function CustomCursor() {
     const pathname = usePathname();
     const cursorRef = useRef<HTMLDivElement>(null);
-    const [cursorType, setCursorType] = useState<"default" | "copy" | "copied" | "pointer" | "case-study" | "confidential">("default");
+    const [cursorType, setCursorType] = useState<"default" | "copy" | "copied" | "pointer" | "case-study" | "confidential" | "none" | "wrap">("default");
     const isMobile = useRef(false);
 
+    const [targetPos, setTargetPos] = useState<{ x: number; y: number } | null>(null);
     const resetTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
     // Reset cursor type on route change to prevent stale state
@@ -38,11 +39,23 @@ export default function CustomCursor() {
 
             if (cursorAttr) {
                 if (resetTimeoutRef.current) clearTimeout(resetTimeoutRef.current);
-                setCursorType(cursorAttr as "default" | "copy" | "copied" | "pointer" | "case-study" | "confidential");
+                setCursorType(cursorAttr as any);
+                
+                const element = target.closest("[data-cursor]");
+                if (cursorAttr === "wrap" && element) {
+                    const rect = element.getBoundingClientRect();
+                    setTargetPos({
+                        x: rect.left + rect.width / 2,
+                        y: rect.top + rect.height / 2
+                    });
+                } else {
+                    setTargetPos(null);
+                }
             } else {
                 if (resetTimeoutRef.current) clearTimeout(resetTimeoutRef.current);
                 resetTimeoutRef.current = setTimeout(() => {
                     setCursorType("default");
+                    setTargetPos(null);
                 }, 50);
             }
         };
@@ -74,8 +87,14 @@ export default function CustomCursor() {
                 gsap.to(cursorRef.current, { autoAlpha: 1, duration: 0.3 });
                 isVisible = true;
             }
-            xTo(e.clientX);
-            yTo(e.clientY);
+            
+            if (targetPos) {
+                xTo(targetPos.x);
+                yTo(targetPos.y);
+            } else {
+                xTo(e.clientX);
+                yTo(e.clientY);
+            }
         };
 
         const handleMouseDown = () => {
@@ -109,6 +128,7 @@ export default function CustomCursor() {
                 borderRadius: "20px",
                 backgroundColor: "#ffffff",
                 color: "#000000",
+                border: "0px solid transparent",
                 duration: 0.4,
                 ease: "elastic.out(1, 0.82)"
             });
@@ -133,8 +153,25 @@ export default function CustomCursor() {
                 borderRadius: "20px",
                 backgroundColor: "#ffffff",
                 color: "#000000",
+                border: "0px solid transparent",
                 duration: 0.4,
                 ease: "elastic.out(1, 0.82)"
+            });
+        } else if (cursorType === "wrap") {
+            gsap.to(cursorRef.current, {
+                mixBlendMode: "difference",
+                width: 44,
+                height: 44,
+                borderRadius: "100%",
+                backgroundColor: "transparent",
+                border: "1.5px solid white",
+                duration: 0.4,
+                ease: "power3.out"
+            });
+        } else if (cursorType === "none") {
+            gsap.to(cursorRef.current, {
+                autoAlpha: 0,
+                duration: 0.2
             });
         } else if (cursorType === "pointer") {
             gsap.to(cursorRef.current, {
@@ -143,6 +180,7 @@ export default function CustomCursor() {
                 backgroundColor: "white",
                 mixBlendMode: "difference",
                 color: "#ffffff",
+                border: "0px solid transparent",
                 duration: 0.3,
                 ease: "power2.out"
             });
@@ -153,6 +191,7 @@ export default function CustomCursor() {
                 backgroundColor: "white",
                 mixBlendMode: "difference",
                 color: "#ffffff",
+                border: "0px solid transparent",
                 duration: 0.4,
                 ease: "power3.out"
             });
@@ -163,7 +202,7 @@ export default function CustomCursor() {
             window.removeEventListener("mousedown", handleMouseDown);
             window.removeEventListener("mouseup", handleMouseUp);
         };
-    }, { scope: cursorRef, dependencies: [cursorType] });
+    }, { scope: cursorRef, dependencies: [cursorType, targetPos] });
 
     return (
         <div

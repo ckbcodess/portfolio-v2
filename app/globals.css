@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "@heroui/react/styles";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -41,9 +42,8 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --font-size-hero: clamp(2.2rem, 4vw + 0.8rem, 2.5rem);
-  --font-size-hero-mobile: 1.8rem;
-  
+  --font-size-hero: clamp(7rem, 18vw, 15rem);
+
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -55,7 +55,7 @@
 
 :root {
   interpolate-size: allow-keywords;
-  
+
   /* --- Fluid Spacing Scale (Recalibrated for 14px base) --- */
   --space-3xs: clamp(0.28rem, 0.22vw + 0.22rem, 0.42rem);
   --space-2xs: clamp(0.57rem, 0.44vw + 0.45rem, 0.85rem);
@@ -72,16 +72,20 @@
   /* text-3xl (Hero Text) target: ~28px (2rem) -> ~48px (3.4rem) */
   --text-xs: clamp(0.78rem, 0.05vw + 0.76rem, 0.85rem);
   --text-sm: clamp(0.92rem, 0.11vw + 0.9rem, 1rem);
-  --text-base: 1rem; /* 14px */
-  --text-lg: 1.142rem; /* 16px */
+  --text-base: 1rem;
+  /* 14px */
+  --text-lg: 1.142rem;
+  /* 16px */
   --text-xl: clamp(1.42rem, 0.55vw + 1.28rem, 1.71rem);
   --text-2xl: clamp(1.71rem, 1.1vw + 1.43rem, 2.28rem);
   --text-3xl: clamp(2rem, 1.5vw + 1.5rem, 3.4rem);
   --text-4xl: clamp(2.8rem, 2.5vw + 2rem, 4.5rem);
 
   /* --- Layout Tokens (Compact for One-Pager) --- */
-  --page-px: clamp(1.5rem, 6vw, 80px); /* Hits 80px at 1333px viewport */
-  --page-pt: clamp(1.5rem, 6vh, 80px); /* Hits 80px at ~1333px height */
+  --page-px: clamp(1.5rem, 6vw, 5.71rem);
+  /* 80px / 14px */
+  --page-pt: clamp(1.5rem, 6vh, 5.71rem);
+  /* 80px / 14px */
   --header-mb: clamp(2rem, 7.5vh, 6rem);
   --section-gap: clamp(3rem, 11vh, 10rem);
 
@@ -91,7 +95,7 @@
   --secondary-foreground: oklch(0.205 0 0);
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
-  --glass-bg: oklch(1 0 0);
+  --glass-bg: #f9f9f9;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -119,19 +123,32 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  --container-max-width: 800px;
-  --header-max-width: 1400px;
+  --container-max-width: 57.14rem;
+  /* 800px / 14px */
+  --header-max-width: 100rem;
+  /* 1400px / 14px */
 }
 
 html {
   font-size: 14px;
 }
 
+@media (min-width: 810px) {
+  html {
+    /* 
+      Counteracts high browser/OS zoom (e.g. 150% on laptop).
+      Calculated to make a 1280px viewport (150% zoom) feel like a 1536px viewport (125% zoom).
+      14px * (1280/1536) = 11.66px.
+    */
+    font-size: clamp(11.5px, 0.911vw, 14px);
+  }
+}
+
 .dark {
   --background: #060607;
-  --glass-bg: rgba(6, 6, 7, 0.8);
+  --glass-bg: #171717;
   --nav-accent: #FFFFFF;
-  --nav-pill-bg: #0F0F0F;
+  --nav-pill-bg: #0c0c0c;
   --foreground: oklch(0.98 0 0);
   --muted: oklch(0.20 0 0);
   --muted-foreground: color-mix(in srgb, var(--foreground), transparent 45%);
@@ -164,14 +181,25 @@ html {
   --sidebar-ring: oklch(0.98 0 0);
 }
 
-[data-theme="red"] { --hue: 25; }
-[data-theme="green"] { --hue: 150; }
-[data-theme="blue"] { --hue: 200; }
-[data-theme="neutral"] { --hue: 0; }
+[data-theme="red"] {
+  --hue: 25;
+}
+
+[data-theme="green"] {
+  --hue: 150;
+}
+
+[data-theme="blue"] {
+  --hue: 200;
+}
+
+[data-theme="neutral"] {
+  --hue: 0;
+}
 
 [data-theme]:not([data-theme="neutral"]) {
   --background: oklch(0.98 0.02 var(--hue));
-  --glass-bg: oklch(0.99 0.01 var(--hue));
+  --glass-bg: oklch(0.97 0.01 var(--hue));
   --foreground: oklch(0.20 0.06 var(--hue));
   --muted: oklch(0.92 0.06 var(--hue));
   --muted-foreground: color-mix(in srgb, var(--foreground), transparent 40%);
@@ -211,7 +239,7 @@ html[data-theme="red"]:not(.dark) {
   --border: oklch(0.28 0.05 25 / 0.1);
   --input: oklch(0.28 0.05 25 / 0.15);
   --ring: oklch(0.28 0.05 25);
-  --glass-bg: oklch(0.88 0.08 25 / 0.85);
+  --glass-bg: oklch(0.88 0.08 25);
   --card: oklch(0.86 0.08 25);
   --card-foreground: oklch(0.28 0.05 25);
   --popover: oklch(0.86 0.08 25);
@@ -230,7 +258,7 @@ html[data-theme="blue"]:not(.dark) {
   --border: oklch(0.25 0.04 200 / 0.1);
   --input: oklch(0.25 0.04 200 / 0.15);
   --ring: oklch(0.25 0.04 200);
-  --glass-bg: oklch(0.95 0.03 200 / 0.85);
+  --glass-bg: oklch(0.95 0.03 200);
   --card: oklch(0.92 0.05 200);
   --card-foreground: oklch(0.25 0.04 200);
   --popover: oklch(0.92 0.05 200);
@@ -240,7 +268,7 @@ html[data-theme="blue"]:not(.dark) {
 .dark[data-theme]:not([data-theme="neutral"]),
 [data-theme]:not([data-theme="neutral"]).dark {
   --background: #060607;
-  --glass-bg: rgba(6, 6, 7, 0.8);
+  --glass-bg: #0a0a0b;
   --nav-accent: #FFFFFF;
   --nav-pill-bg: #0F0F0F;
   --foreground: oklch(0.95 0.03 var(--hue));
@@ -284,7 +312,7 @@ html[data-theme="green"].dark {
   --border: oklch(0.86 0.22 105 / 0.15);
   --input: oklch(0.86 0.22 105 / 0.2);
   --ring: oklch(0.86 0.22 105);
-  --glass-bg: oklch(0.08 0.03 150 / 0.85);
+  --glass-bg: oklch(0.10 0.03 150);
   --card: oklch(0.12 0.04 150);
   --card-foreground: oklch(0.86 0.22 105);
   --popover: oklch(0.12 0.04 150);
@@ -300,7 +328,10 @@ body {
 }
 
 @media (pointer: fine) {
-  *, *::before, *::after {
+
+  *,
+  *::before,
+  *::after {
     cursor: none !important;
   }
 }
@@ -310,9 +341,13 @@ body {
     @apply bg-background text-foreground;
     transition: none !important;
   }
-  *, *::before, *::after {
+
+  *,
+  *::before,
+  *::after {
     border-color: var(--border);
   }
+
   html {
     @apply font-sans;
   }
@@ -325,10 +360,12 @@ body {
 }
 
 @layer utilities {
+
   .no-scrollbar::-webkit-scrollbar,
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
   .no-scrollbar,
   .scrollbar-hide {
     -ms-overflow-style: none;
@@ -336,12 +373,16 @@ body {
   }
 }
 
-html, body, #smooth-wrapper {
+html,
+body,
+#smooth-wrapper {
   scrollbar-width: none !important;
   -ms-overflow-style: none !important;
 }
 
-html::-webkit-scrollbar, body::-webkit-scrollbar, #smooth-wrapper::-webkit-scrollbar {
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+#smooth-wrapper::-webkit-scrollbar {
   display: none !important;
 }
 
@@ -355,34 +396,15 @@ html::-webkit-scrollbar, body::-webkit-scrollbar, #smooth-wrapper::-webkit-scrol
 }
 
 @keyframes shimmer {
-  0% { background-position: -150% 0; }
-  100% { background-position: 150% 0; }
+  0% {
+    background-position: -150% 0;
+  }
+
+  100% {
+    background-position: 150% 0;
+  }
 }
 
-@utility shimmer-text {
-  background: linear-gradient(
-    90deg,
-    var(--foreground) 0%,
-    var(--foreground) 40%,
-    var(--shimmer-color, oklch(0.4 0 0)) 50%,
-    var(--foreground) 60%,
-    var(--foreground) 100%
-  );
-  background-size: 200% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  display: inline-block;
-  color: transparent !important;
-  animation: shimmer 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-}
-
-:root {
-  --shimmer-color: oklch(1 0 0);
-}
-
-.dark {
-  --shimmer-color: oklch(0.2 0 0);
-}
 #smooth-wrapper[style*="--page-mask"] {
   mask-image: var(--page-mask);
   -webkit-mask-image: var(--page-mask);

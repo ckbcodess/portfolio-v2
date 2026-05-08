@@ -21,17 +21,16 @@ export default function CaseStudySidebar({ links, visible }: { links: SectionLin
     setMounted(true);
 
     if (visible !== undefined) {
+      // Sync immediately on mount if prop is provided
       setIsVisible(visible);
-      return;
+    } else {
+      const handleScroll = () => {
+        setIsVisible(window.scrollY > 80);
+      };
+      window.addEventListener("scroll", handleScroll);
+      handleScroll();
+      return () => window.removeEventListener("scroll", handleScroll);
     }
-
-    const handleScroll = () => {
-      setIsVisible(window.scrollY > 80);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
   }, [visible]);
 
   useEffect(() => {
@@ -142,7 +141,7 @@ export default function CaseStudySidebar({ links, visible }: { links: SectionLin
 
   return createPortal(
     <aside
-      className={`fixed left-[var(--page-px)] top-[120px] z-[60] hidden w-48 shrink-0 flex-col gap-10 md:flex fixed-preview-portal`}
+      className={`fixed left-[var(--page-px)] top-[230px] z-[60] hidden w-48 shrink-0 flex-col gap-10 md:flex fixed-preview-portal`}
     >
       <AnimatePresence mode="wait">
         {isVisible && (

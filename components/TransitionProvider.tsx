@@ -50,8 +50,8 @@ export default function TransitionProvider({ children }: { children: ReactNode }
         setIsTransitioning(true);
         setPendingHref(href);
 
-        gsap.to([contentRef.current, ".fixed-preview-portal"], {
-            opacity: 0,
+        gsap.to(contentRef.current, {
+            autoAlpha: 0,
             duration: 0.3,
             ease: "power2.out",
             onComplete: () => {
@@ -77,10 +77,10 @@ export default function TransitionProvider({ children }: { children: ReactNode }
         setTimeout(() => setPendingHref(null), 0);
 
         // We always animate in on mount/pathname change for a smooth experience
-        gsap.fromTo([contentRef.current, ".fixed-preview-portal"], {
-            opacity: 0
+        gsap.fromTo(contentRef.current, {
+            autoAlpha: 0
         }, {
-            opacity: 1,
+            autoAlpha: 1,
             duration: 0.4,
             ease: "power2.out",
             onComplete: () => {
@@ -98,8 +98,7 @@ export default function TransitionProvider({ children }: { children: ReactNode }
             <div
                 id="smooth-wrapper"
                 ref={contentRef}
-                className="w-full origin-top"
-                style={{ willChange: "opacity" }}
+                className="w-full origin-top relative z-10"
             >
                 <div id="smooth-content" className="w-full">
                     {children}

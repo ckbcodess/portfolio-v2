@@ -74,7 +74,7 @@ export default function PlaygroundPage() {
   };
 
   return (
-    <div ref={pageRef} className="min-h-screen lg:h-screen lg:overflow-hidden bg-background selection:bg-foreground selection:text-background flex flex-col pt-32 md:pt-44 pb-12 lg:pb-0">
+    <div ref={pageRef} className="min-h-screen lg:h-screen lg:overflow-hidden bg-background selection:bg-foreground selection:text-background flex flex-col pt-40 md:pt-56 pb-12 lg:pb-0">
       <LayoutGroup>
         <motion.main 
           variants={container}
@@ -86,9 +86,9 @@ export default function PlaygroundPage() {
                 {/* Year Filter */}
                 <MaskReveal delay={0.1}>
                   <div className="flex gap-8 items-center text-[14px] font-normal tracking-[-0.01em] whitespace-nowrap">
-                    <span className="text-foreground cursor-pointer transition-colors">2026</span>
-                    <span className="text-foreground/30 hover:text-foreground/60 transition-colors cursor-pointer">2025</span>
-                    <span className="text-foreground/30 hover:text-foreground/60 transition-colors cursor-pointer">2024</span>
+                    <span className="text-foreground cursor-pointer transition-opacity opacity-100">2026</span>
+                    <span className="text-foreground opacity-40 hover:opacity-100 transition-opacity cursor-pointer">2025</span>
+                    <span className="text-foreground opacity-40 hover:opacity-100 transition-opacity cursor-pointer">2024</span>
                   </div>
                 </MaskReveal>
 
