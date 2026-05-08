@@ -46,9 +46,31 @@ export default function TransitionProvider({ children }: { children: ReactNode }
     const [headerProps, setHeaderProps] = useState<HeaderProps>({ variant: "default" });
     const [currentLabel, setCurrentLabel] = useState("");
 
-    // Check if we are currently mid-transition
+    // Check if we are currently mid-navigation
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [pendingHref, setPendingHref] = useState<string | null>(null);
+    const isFirstMount = useRef(true);
+
+    // ─── 1. Initial Load Synchronization ────────────────────────────────────
+    useEffect(() => {
+        // @ts-expect-error global flag
+        if (globalThis.appLoaded) return;
+
+        // Hide content initially during first-time load
+        gsap.set(contentRef.current, { autoAlpha: 0 });
+
+        const revealHandler = () => {
+            gsap.to(contentRef.current, {
+                autoAlpha: 1,
+                duration: 1.2,
+                ease: "power3.out",
+                delay: 0.2
+            });
+        };
+
+        window.addEventListener("apps-loaded", revealHandler);
+        return () => window.removeEventListener("apps-loaded", revealHandler);
+    }, []);
 
     const navigate = (href: string, label: string, _color?: string) => {
         if (pathname === href) return;
@@ -57,15 +79,19 @@ export default function TransitionProvider({ children }: { children: ReactNode }
         setCurrentLabel(label);
 
         // Reset text position and visibility for consistent upward motion
-        // Use 110% to ensure it's completely hidden
         gsap.set(".curtain-text", { y: "110%", autoAlpha: 1 });
 
-        // Animate curtain IN (Faster)
         const tl = gsap.timeline({
             onComplete: () => {
                 window.scrollTo(0, 0);
                 router.push(href);
             }
+        });
+
+        tl.to(contentRef.current, {
+            autoAlpha: 0,
+            duration: 0.4,
+            ease: "power2.inOut",
         });
 
         tl.to(curtainRef.current, {
@@ -74,13 +100,12 @@ export default function TransitionProvider({ children }: { children: ReactNode }
             ease: "power3.inOut",
         });
 
-        // Animate text reveal - START AFTER CURTAIN IS FULLY IN
+        // Animate text reveal
         tl.to(".curtain-text", {
             y: 0,
             duration: 0.8,
             ease: "power4.out",
             onStart: () => {
-                // Scramble effect
                 const el = document.getElementById("curtain-text-el");
                 if (el) {
                     animate(el, {
@@ -96,15 +121,7 @@ export default function TransitionProvider({ children }: { children: ReactNode }
             }
         });
 
-        // Add a slight hold for cinematic effect
         tl.to({}, { duration: 0.3 });
-
-        // Optionally slightly fade content too
-        tl.to(contentRef.current, {
-            autoAlpha: 0,
-            duration: 0.5,
-            ease: "power2.inOut",
-        }, 0);
     };
 
     // Helper to get a label from the pathname for browser navigation
@@ -119,7 +136,7 @@ export default function TransitionProvider({ children }: { children: ReactNode }
         return "Navigating";
     };
 
-    // When the pathname changes, handle the entrance animation
+    // ─── 2. Route Change Listener ──────────────────────────────────────────
     useEffect(() => {
         // Handle header props
         setTimeout(() => {
@@ -131,18 +148,23 @@ export default function TransitionProvider({ children }: { children: ReactNode }
         }, 0);
         setTimeout(() => setPendingHref(null), 0);
 
-        // If we are NOT transitioning, it means browser back/forward was used
+        // A. Skip everything on the very first mount (Refresh/Initial Landing)
+        if (isFirstMount.current) {
+            isFirstMount.current = false;
+            return;
+        }
+
+        // B. Handle Browser Back/Forward (when isTransitioning is false)
         if (!isTransitioning) {
-            setCurrentLabel(getLabelFromPath(pathname));
+            const label = getLabelFromPath(pathname);
+            setCurrentLabel(label);
             
-            // Create a full entrance sequence to match manual clicks
             const browserTl = gsap.timeline({
                 onComplete: () => {
                     setIsTransitioning(false);
                 }
             });
 
-            // Hide content and show curtain
             gsap.set(contentRef.current, { autoAlpha: 0 });
             gsap.set(".curtain-text", { y: "110%", autoAlpha: 1 });
             
@@ -161,7 +183,7 @@ export default function TransitionProvider({ children }: { children: ReactNode }
                     if (el) {
                         animate(el, {
                             innerHTML: scrambleText({
-                                text: getLabelFromPath(pathname),
+                                text: label,
                                 chars: '01<>[]{}_—=+*^?#&$!/\\|;:',
                                 from: 'left',
                                 duration: 400,
@@ -193,10 +215,10 @@ export default function TransitionProvider({ children }: { children: ReactNode }
                 ease: "power2.out",
             }, "-=0.4");
 
-            return; // Exit early, browserTl handles everything
+            return;
         }
 
-        // Animate curtain OUT (For manual clicks)
+        // C. Handle Manual Navigation (Completion stage)
         const tl = gsap.timeline({
             delay: 0.05,
             onComplete: () => {
@@ -233,6 +255,7 @@ export default function TransitionProvider({ children }: { children: ReactNode }
                 id="smooth-wrapper"
                 ref={contentRef}
                 className="w-full origin-top relative z-10"
+                style={{ opacity: 0 }}
             >
                 <div id="smooth-content" className="w-full">
                     {children}

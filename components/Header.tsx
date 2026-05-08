@@ -83,9 +83,8 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
     animate(navRef.current, {
       width: [currentWidth, targetWidth],
       height: [currentHeight, targetHeight],
-    }, {
       duration: 800,
-      easing: customSpringEase
+      ease: customSpringEase
     });
   }, [isCaseStudy, scrolled]);
 

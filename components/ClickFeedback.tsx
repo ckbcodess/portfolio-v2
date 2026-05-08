@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { useSound } from "@/components/SoundProvider";
+import { useWebHaptics } from "web-haptics/react";
 
 interface Burst {
   id: number;
@@ -14,27 +15,31 @@ export default function ClickFeedback() {
   const [bursts, setBursts] = useState<Burst[]>([]);
   const { playClickDown, playClickUp } = useSound();
   const shouldReduceMotion = useReducedMotion();
+  const { trigger } = useWebHaptics();
 
   useEffect(() => {
     const handleMouseDown = () => {
       playClickDown();
+      trigger([{ duration: 15, intensity: 0.8 }]); // Light tap on down
     };
 
     const handleMouseUp = (e: MouseEvent) => {
       playClickUp();
+      trigger([{ duration: 10, intensity: 0.5 }]); // Softer tap on up
       if (!shouldReduceMotion) {
-        const newBurst = { id: Date.now(), x: e.clientX, y: e.clientY };
+        // performance.now() provides sub-millisecond precision, better for rapidly repeated events
+        const newBurst = { id: performance.now(), x: e.clientX, y: e.clientY };
         setBursts((prev) => [...prev, newBurst].slice(-5));
       }
     };
 
-    window.addEventListener("mousedown", handleMouseDown);
-    window.addEventListener("mouseup", handleMouseUp);
+    window.addEventListener("mousedown", handleMouseDown, { passive: true });
+    window.addEventListener("mouseup", handleMouseUp, { passive: true });
     return () => {
       window.removeEventListener("mousedown", handleMouseDown);
       window.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [playClickDown, playClickUp]);
+  }, [playClickDown, playClickUp, shouldReduceMotion, trigger]);
 
   const removeBurst = (id: number) => {
     setBursts((prev) => prev.filter((b) => b.id !== id));
@@ -63,8 +68,8 @@ export default function ClickFeedback() {
                 <motion.div
                   className="absolute w-[2px] bg-foreground rounded-full"
                   style={{ top: "50%", left: "50%", x: "-50%" }}
-                  initial={{ y: -8, opacity: 1, height: 6 }} 
-                  animate={{ y: -24, opacity: 0, height: 2 }} 
+                  initial={{ y: -8, opacity: 1, height: 6 }}
+                  animate={{ y: -24, opacity: 0, height: 2 }}
                   transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                   onAnimationComplete={() => {
                     if (deg === 0) removeBurst(burst.id);

@@ -12,14 +12,20 @@ const PATHS = {
   end:       "M 0 0 Q 50 0 100 0 L 100 0 Q 50 0 0 0 Z",
 };
 
+// Comprehensive list of critical assets for the "best experience"
 const CRITICAL_ASSETS = [
-  // Core Images
   "/avatar.webp",
   "/allex-card.png",
   "/allex-hero.webp",
-  "/gcb-card-v4.webp",
+  "/gcb-card-v4.png",
+  "/cs-img-0.webp",
+  "/cs-img-1.webp",
   "/cs-img-6.webp",
-  // Interface Sounds
+  "/cs-img-7.webp",
+  "/img-60.webp",
+  "/img-61.webp",
+  "/lp-img-0.webp",
+  "/lp-img-1.webp",
   "/sounds/click-1.wav",
   "/sounds/click-2.wav",
   "/sounds/click-3.wav",
@@ -39,7 +45,8 @@ export default function LoadingScreen() {
 
   const [shouldAnimate, setShouldAnimate] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [isAssetsLoaded, setIsAssetsLoaded] = useState(false);
+  const [assetsLoaded, setAssetsLoaded] = useState(false);
+  const [counterFinished, setCounterFinished] = useState(false);
 
   useIsomorphicLayoutEffect(() => {
     if (sessionStorage.getItem(SESSION_KEY)) {
@@ -53,44 +60,55 @@ export default function LoadingScreen() {
     sessionStorage.setItem(SESSION_KEY, "1");
     setShouldAnimate(true);
 
-    // Asset Preloading Logic
+    // ─── 1. Asset Preloading ────────────────────────────────────────────────
     let loadedCount = 0;
     const totalCount = CRITICAL_ASSETS.length;
 
-    const updateProgress = () => {
+    const onAssetLoaded = () => {
       loadedCount++;
-      const currentProgress = Math.round((loadedCount / totalCount) * 100);
-      setProgress(currentProgress);
       if (loadedCount === totalCount) {
-        setIsAssetsLoaded(true);
+        setAssetsLoaded(true);
       }
     };
 
     CRITICAL_ASSETS.forEach(src => {
-      if (src.endsWith('.wav') || src.endsWith('.ogg') || src.endsWith('.mp3')) {
+      if (src.endsWith('.wav')) {
         const audio = new Audio();
-        audio.addEventListener('canplaythrough', updateProgress, { once: true });
+        audio.addEventListener('canplaythrough', onAssetLoaded, { once: true });
         audio.src = src;
         audio.load();
       } else {
         const img = new Image();
-        img.onload = updateProgress;
-        img.onerror = updateProgress; // Don't block if one image fails
+        img.onload = onAssetLoaded;
+        img.onerror = onAssetLoaded; 
         img.src = src;
       }
     });
 
-    // Fallback in case loading hangs
-    const timeout = setTimeout(() => {
-        setIsAssetsLoaded(true);
-        setProgress(100);
-    }, 5000);
+    // Fallback for asset loading
+    const assetTimeout = setTimeout(() => setAssetsLoaded(true), 4000);
 
-    return () => clearTimeout(timeout);
+    // ─── 2. Buttery Counter ────────────────────────────────────────────────
+    const counterObj = { value: 0 };
+    gsap.to(counterObj, {
+      value: 100,
+      duration: 2.2,
+      ease: "power2.inOut",
+      onUpdate: () => {
+        const val = Math.round(counterObj.value);
+        setProgress(val);
+      },
+      onComplete: () => {
+        setCounterFinished(true);
+      }
+    });
+
+    return () => clearTimeout(assetTimeout);
   }, []);
 
   useGSAP(() => {
-    if (!shouldAnimate || !isAssetsLoaded) return;
+    // Only reveal once BOTH assets are loaded AND counter has reached 100
+    if (!shouldAnimate || !assetsLoaded || !counterFinished) return;
 
     const overlay = overlayRef.current!;
     const path = pathRef.current!;
@@ -98,7 +116,7 @@ export default function LoadingScreen() {
     const greet = greetRef.current!;
 
     const tl = gsap.timeline({
-      delay: 0.2, // Small buffer after assets are ready
+      delay: 0.3,
       onComplete: () => {
         gsap.set(overlay, { display: "none", pointerEvents: "none" });
         // @ts-expect-error global flag
@@ -107,37 +125,35 @@ export default function LoadingScreen() {
       }
     });
 
-    // ─── Phase 2: swap count → greeting ────────────────────────────────────
-    tl.to(counter, { autoAlpha: 0, y: -20, duration: 0.2, ease: "power2.in" });
+    // Fade out counter and slide in greeting
+    tl.to(counter, { autoAlpha: 0, y: -40, duration: 0.4, ease: "power3.in" });
     tl.fromTo(
       greet,
-      { autoAlpha: 0, y: 20 },
-      { autoAlpha: 1, y: 0, duration: 0.3, ease: "power2.out" }
+      { autoAlpha: 0, y: 40 },
+      { autoAlpha: 1, y: 0, duration: 0.6, ease: "power4.out" },
+      "-=0.2"
     );
 
-    // ─── Phase 3: hold & exit ───────────────────────────────────────────────
-    tl.to({}, { duration: 0.5 }); 
+    // Hold greeting
+    tl.to({}, { duration: 0.8 }); 
 
+    // Morph path and slide up
     tl.set(path, { attr: { d: "M 0 0 Q 50 0 100 0 L 100 100 Q 50 100 0 100 Z" } });
     tl.to(path, {
-      duration: 0.4,
+      duration: 0.8,
       attr: { d: PATHS.curveDown },
-      ease: "power3.in",
+      ease: "power4.in",
     });
     tl.to(path, {
-      duration: 0.5,
+      duration: 0.6,
       attr: { d: PATHS.end },
       ease: "power4.out",
     });
 
-  }, [shouldAnimate, isAssetsLoaded]);
+    // Final fade of greeting as path exits
+    tl.to(greet, { autoAlpha: 0, y: -20, duration: 0.3 }, "-=0.8");
 
-  // Update visible counter based on progress state
-  useEffect(() => {
-    if (countRef.current) {
-        countRef.current.textContent = `${progress}%`;
-    }
-  }, [progress]);
+  }, [shouldAnimate, assetsLoaded, counterFinished]);
 
   return (
     <div
@@ -164,7 +180,7 @@ export default function LoadingScreen() {
         style={{ fontSize: "clamp(3rem, 10vw, 7rem)", lineHeight: 1 }}
         aria-live="polite"
       >
-        {progress}%
+        {progress}
       </span>
 
       <div

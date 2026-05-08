@@ -58,12 +58,9 @@ const RefractiveNav = forwardRef<HTMLElement, {
       role="navigation"
       aria-label="Main Floating Navigation"
     >
-      {/* Dynamic saturation and vibrance boost */}
-      <div className="absolute inset-0 backdrop-saturate-[1.8] pointer-events-none" />
-
-      {/* Subtle Theme Tint Layer - Only visible when scrolled */}
+      {/* Subtle Theme Tint Layer & Saturation Boost - Merged for performance */}
       <div 
-        className={`absolute inset-0 bg-background/40 dark:bg-black/20 backdrop-blur-md pointer-events-none transition-opacity duration-700 ${
+        className={`absolute inset-0 bg-background/40 dark:bg-black/20 backdrop-saturate-[1.8] pointer-events-none transition-opacity duration-700 ${
           isScrolled ? "opacity-100" : "opacity-0"
         }`} 
       />
