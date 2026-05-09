@@ -139,7 +139,7 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
   }, [active]);
   useEffect(() => {
     if (canAnimate) {
-      const timer = setTimeout(() => setIsInitialLoad(false), 2000);
+      const timer = setTimeout(() => setIsInitialLoad(false), 0);
       return () => clearTimeout(timer);
     }
   }, [canAnimate]);

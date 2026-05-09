@@ -18,7 +18,7 @@ export default function Home() {
   const pageRef = useRef<HTMLDivElement>(null);
   const [activeImage, setActiveImage] = useState<string>(caseStudies[0].heroSrc);
   const [surprises, setSurprises] = useState<number[]>([]);
-  const [canAnimate, setCanAnimate] = useState(false);
+  const [canAnimate, setCanAnimate] = useState(true);
   const [hoveredSlug, setHoveredSlug] = useState<string | null>(caseStudies[0]?.slug ?? null);
 
   useEffect(() => {
@@ -33,11 +33,11 @@ export default function Home() {
   }, []);
 
   const containerVariants: Variants = {
-    hidden: { opacity: 0, scale: 0.98 },
+    hidden: { opacity: 1, scale: 1 },
     show: {
       opacity: 1,
       scale: 1,
-      transition: { staggerChildren: 0.05, delayChildren: 0.1, duration: 0.4, ease: [0.16, 1, 0.3, 1] },
+      transition: { staggerChildren: 0.05, delayChildren: 0, duration: 0.4, ease: [0.16, 1, 0.3, 1] },
     },
   };
 

@@ -65,21 +65,7 @@ export default function TransitionProvider({ children }: { children: ReactNode }
     useEffect(() => {
         // @ts-expect-error global flag
         if (globalThis.appLoaded) return;
-
-        // Hide content initially during first-time load
-        gsap.set(contentRef.current, { autoAlpha: 0 });
-
-        const revealHandler = () => {
-            gsap.to(contentRef.current, {
-                autoAlpha: 1,
-                duration: 1.2,
-                ease: "power3.out",
-                delay: 0.2
-            });
-        };
-
-        window.addEventListener("apps-loaded", revealHandler);
-        return () => window.removeEventListener("apps-loaded", revealHandler);
+        // Content is visible by default to avoid delayed opacity
     }, []);
 
     const navigate = (href: string, label: string, _color?: string) => {
@@ -270,7 +256,7 @@ export default function TransitionProvider({ children }: { children: ReactNode }
                 id="smooth-wrapper"
                 ref={contentRef}
                 className={`w-full origin-top relative z-10 transition-all duration-700 ${isMaskActive ? 'case-study-mask' : ''}`}
-                style={{ opacity: 0 }}
+                style={{ opacity: 1 }}
             >
                 <div id="smooth-content" className="w-full">
                     {children}
