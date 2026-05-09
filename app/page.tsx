@@ -55,7 +55,7 @@ export default function Home() {
   return (
     <div
       ref={pageRef}
-      className="bg-background min-h-screen pt-40 md:pt-56 pb-[var(--page-pt)] lg:pb-[8vh] w-full selection:bg-primary selection:text-primary-foreground flex flex-col"
+      className="bg-background min-h-screen pt-[128px] md:pt-56 pb-[var(--page-pt)] lg:pb-[8vh] w-full selection:bg-primary selection:text-primary-foreground flex flex-col"
     >
       {/* Main Content */}
       <div className="w-full flex-1 flex flex-col lg:flex-row lg:items-stretch lg:justify-start gap-12 lg:gap-16 px-[var(--page-px)]">
@@ -115,8 +115,8 @@ export default function Home() {
             </MaskReveal>
 
             {/* Mobile Preview */}
-            <div className="lg:hidden w-full my-4">
-              <PreviewCard activeImage={activeImage} />
+            <div className="lg:hidden w-full my-4 relative">
+              <PreviewCard activeImage={activeImage} className="w-full border border-foreground/5 rounded-xl shadow-sm" />
             </div>
           </div>
 
@@ -128,7 +128,7 @@ export default function Home() {
               </MaskReveal>
               <div className="flex flex-col justify-start items-start gap-4 w-full">
                 {caseStudies.slice(0, 2).map((study, idx) => (
-                  <MaskReveal key={study.slug} delay={0.5 + idx * 0.05} className="w-full -mx-8 px-8 -my-6 py-6">
+                  <MaskReveal key={study.slug} delay={0.5 + idx * 0.05} className="w-[calc(100%+4rem)] -mx-8 px-8 -my-6 py-6">
                     <motion.div
                       className="w-full"
                       onMouseEnter={() => {
@@ -160,6 +160,26 @@ export default function Home() {
                     </motion.div>
                   </MaskReveal>
                 ))}
+              </div>
+              <div className="lg:hidden w-full pt-2">
+                <MaskReveal delay={0.6}>
+                  <a
+                    href="https://drive.google.com/file/d/1EJm5aBA3I95pPkgT-4PDKTlOZe7ChLH9/view?usp=sharing"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between w-full p-4 -mx-4 rounded-2xl transition-[transform,background-color,opacity] duration-300 cursor-pointer bg-transparent hover:bg-foreground/[0.02]"
+                  >
+                    <div className="flex items-center gap-5">
+                      <div className="w-16 h-16 rounded-xl flex items-center justify-center shrink-0 bg-foreground/5 border border-foreground/10">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-foreground/60"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                      </div>
+                      <div className="flex flex-col justify-center items-start">
+                        <h3 className="text-foreground text-lg font-normal">View Resume</h3>
+                      </div>
+                    </div>
+                    <ArrowRight size={20} className="text-foreground opacity-100" />
+                  </a>
+                </MaskReveal>
               </div>
             </section>
           </div>

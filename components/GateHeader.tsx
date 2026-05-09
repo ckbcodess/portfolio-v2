@@ -12,7 +12,7 @@ export default function GateHeader() {
   const isCaseStudy = pathname.startsWith("/work/");
 
   return (
-    <header className="w-full fixed top-0 left-0 z-50 pointer-events-none pt-[48px]">
+    <header className="w-full fixed top-0 left-0 z-[1000] pointer-events-none pt-6 md:pt-[48px]">
       <div className="w-full px-[var(--page-px)] flex items-center relative h-20">
         <div className="flex-1 flex justify-start pointer-events-auto">
           <TransitionLink

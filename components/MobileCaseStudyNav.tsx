@@ -159,14 +159,14 @@ export default function MobileCaseStudyNav({ links, visible }: { links: SectionL
             }}
           >
             {/* Simple CSS Glass */}
-            <div className="absolute inset-0 backdrop-blur-[24px] backdrop-saturate-[1.5] bg-black/60 rounded-[inherit] border border-white/10 pointer-events-none" />
+            <div className="absolute inset-0 backdrop-blur-[24px] backdrop-saturate-[1.5] bg-background/80 rounded-[inherit] border border-foreground/10 pointer-events-none" />
 
             <div className="relative z-50 flex items-center justify-center w-full h-full">
               {/* Circle Indicator (Visually 16px) */}
-              <div className="relative flex h-[18px] w-[18px] shrink-0 items-center justify-center">
+              <div className="relative flex h-[18px] w-[18px] shrink-0 items-center justify-center text-foreground">
                 <svg className="-rotate-90 h-full w-full" viewBox="0 0 36 36" aria-hidden="true">
-                  <circle cx="18" cy="18" r={radius} stroke="white" strokeWidth="4" fill="transparent" className="opacity-20" />
-                  <circle cx="18" cy="18" r={radius} stroke="white" strokeWidth="4" fill="transparent" strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} className="opacity-90" strokeLinecap="round" />
+                  <circle cx="18" cy="18" r={radius} stroke="currentColor" strokeWidth="4" fill="transparent" className="opacity-20" />
+                  <circle cx="18" cy="18" r={radius} stroke="currentColor" strokeWidth="4" fill="transparent" strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} className="opacity-90" strokeLinecap="round" />
                 </svg>
               </div>
 
@@ -179,13 +179,13 @@ export default function MobileCaseStudyNav({ links, visible }: { links: SectionL
                     animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                     exit={{ opacity: 0, y: -5, filter: "blur(4px)" }}
                     transition={{ duration: 0.25, ease: "easeOut" }}
-                    className="text-[1.1rem] font-medium tracking-tight text-white/90 truncate max-w-[50vw]"
+                    className="text-[1.1rem] font-medium tracking-tight text-foreground/90 truncate max-w-[50vw]"
                   >
                     {activeLink?.label}
                   </motion.span>
                 </AnimatePresence>
 
-                <motion.svg className="text-white/80" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <motion.svg className="text-foreground/80" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="18 15 12 9 6 15"></polyline>
                 </motion.svg>
               </div>
@@ -204,12 +204,12 @@ export default function MobileCaseStudyNav({ links, visible }: { links: SectionL
             className="relative overflow-hidden w-[320px] rounded-[24px] shadow-[0_24px_56px_rgba(0,0,0,0.5)] pointer-events-auto flex flex-col"
           >
             {/* Simple CSS Glass */}
-            <div className="absolute inset-0 backdrop-blur-[24px] backdrop-saturate-[1.5] bg-black/60 rounded-[inherit] border border-white/10 pointer-events-none" />
+            <div className="absolute inset-0 backdrop-blur-[24px] backdrop-saturate-[1.5] bg-background/80 rounded-[inherit] border border-foreground/10 pointer-events-none" />
             
             <div className="relative z-50 flex flex-col w-full p-2">
-              <div className="flex items-center justify-between px-4 py-3 mb-2 border-b border-white/10">
-                <span className="text-[0.95rem] font-medium text-white/50">Navigation</span>
-                <button onClick={() => setIsOpen(false)} aria-label="Close menu" className="text-white/50 hover:text-white p-2 -mr-2 rounded-full hover:bg-white/10 transition-colors">
+              <div className="flex items-center justify-between px-4 py-3 mb-2 border-b border-foreground/10">
+                <span className="text-[0.95rem] font-medium text-foreground/50">Navigation</span>
+                <button onClick={() => setIsOpen(false)} aria-label="Close menu" className="text-foreground/50 hover:text-foreground p-2 -mr-2 rounded-full hover:bg-foreground/10 transition-colors">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
                 </button>
               </div>
@@ -224,8 +224,8 @@ export default function MobileCaseStudyNav({ links, visible }: { links: SectionL
                       onClick={() => scrollToSection(link.id)}
                       className={`w-full justify-start rounded-2xl px-4 py-6 text-left text-[1rem] transition-all font-medium h-auto whitespace-normal break-words ${
                         isActive
-                          ? "bg-white/10 text-white"
-                          : "text-white/40 hover:text-white hover:bg-white/5"
+                          ? "bg-foreground/10 text-foreground"
+                          : "text-foreground/40 hover:text-foreground hover:bg-foreground/5"
                       }`}
                     >
                       {link.label}

@@ -82,7 +82,7 @@
   --text-4xl: clamp(2.8rem, 2.5vw + 2rem, 4.5rem);
 
   /* --- Layout Tokens (Compact for One-Pager) --- */
-  --page-px: clamp(1.5rem, 6vw, 5.71rem);
+  --page-px: clamp(1rem, 6vw, 5.71rem);
   /* 80px / 14px */
   --page-pt: clamp(1.5rem, 6vh, 5.71rem);
   /* 80px / 14px */

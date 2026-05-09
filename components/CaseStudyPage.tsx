@@ -19,7 +19,7 @@ interface CaseStudyPageProps {
 }
 
 export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
-  const { setHeaderProps, setMaskActive } = useTransition();
+  const { setHeaderProps } = useTransition();
   const introRef = useRef<HTMLElement>(null);
   const missionEndRef = useRef<HTMLDivElement>(null);
   const [showSidebar, setShowSidebar] = useState(false);
@@ -27,7 +27,7 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
   
   const isActuallyLocked = caseStudy.isLocked && !isUnlocked;
   
-  // Mask and Sidebar logic: Trigger sidebar and top mask based on scroll
+  // Sidebar logic: Trigger sidebar based on scroll
   useEffect(() => {
     let ticking = false;
     const handleScroll = () => {
@@ -35,9 +35,6 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
         window.requestAnimationFrame(() => {
           const isScrolled = window.scrollY > 120;
           
-          // Toggle top mask
-          setMaskActive(isScrolled);
-
           // Sync header scroll state
           setHeaderProps(prev => ({
             ...prev,
@@ -60,9 +57,8 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
     handleScroll();
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      setMaskActive(false); // Cleanup mask on unmount
     };
-  }, [setMaskActive, setHeaderProps]);
+  }, [setHeaderProps]);
 
   // Hide scrollbar on mount, restore on unmount
   useEffect(() => {
@@ -123,7 +119,7 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
         links={sidebarLinks}
       />
       
-      <div className="pt-[220px] pb-20 px-[var(--page-px)] w-full overflow-x-hidden relative z-10">
+      <div className="pt-[128px] md:pt-[220px] pb-20 px-[var(--page-px)] w-full overflow-x-hidden relative z-10">
         {/* Prominent Hero Section */}
         <section ref={introRef} id="intro" aria-labelledby="case-study-title" className="text-white">
           <div className="flex flex-col gap-8">

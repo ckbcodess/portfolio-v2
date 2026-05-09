@@ -61,12 +61,21 @@ export default function TransitionProvider({ children }: { children: ReactNode }
         setIsMaskActive(active);
     }, []);
 
-    // 1. Initial Load Synchronization
+    // 1. Initial Load Synchronization & Global Scroll Mask
     useEffect(() => {
         // @ts-expect-error global flag
         if (globalThis.appLoaded) return;
         // Content is visible by default to avoid delayed opacity
     }, []);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setMaskActive(window.scrollY > 50);
+        };
+        window.addEventListener("scroll", handleScroll, { passive: true });
+        handleScroll(); // Check initial scroll
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, [setMaskActive]);
 
     const navigate = (href: string, label: string, _color?: string) => {
         if (pathname === href) return;

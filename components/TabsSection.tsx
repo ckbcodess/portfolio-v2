@@ -215,46 +215,44 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
         </AnimatePresence>
       </div>
 
-      <div className="w-full mx-[calc(var(--page-px)*-1)] px-[var(--page-px)] lg:mx-0 lg:px-0">
-        <div
-          ref={scrollRef}
-          onScroll={handleScroll}
-          role="tablist"
-          aria-label="Content filters"
-          style={{
-            maskImage: isScrolled
-              ? 'linear-gradient(to right, transparent, black 40px, black calc(100% - 40px), transparent)'
-              : 'linear-gradient(to right, black calc(100% - 40px), transparent)',
-            WebkitMaskImage: isScrolled
-              ? 'linear-gradient(to right, transparent, black 40px, black calc(100% - 40px), transparent)'
-              : 'linear-gradient(to right, black calc(100% - 40px), transparent)',
-          }}
-          className="flex flex-row items-center w-full overflow-x-auto lg:overflow-x-visible justify-start gap-4 pb-2 md:pb-0 scrollbar-hide [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden mx-[calc(var(--page-px)*-1)] px-[var(--page-px)] lg:!mask-none lg:mx-0 lg:px-0"
-        >
-          {tabsData.map((tab, i) => (
-            <MaskReveal 
-              key={tab.name} 
-              delay={0.6 + i * 0.08} 
-              duration={0.6}
-              className="shrink-0"
+      <div
+        ref={scrollRef}
+        onScroll={handleScroll}
+        role="tablist"
+        aria-label="Content filters"
+        style={{
+          maskImage: isScrolled
+            ? 'linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent)'
+            : 'linear-gradient(to right, black calc(100% - 16px), transparent)',
+          WebkitMaskImage: isScrolled
+            ? 'linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent)'
+            : 'linear-gradient(to right, black calc(100% - 16px), transparent)',
+        }}
+        className="flex flex-row items-center self-stretch overflow-x-auto lg:overflow-x-visible justify-start gap-4 pb-2 md:pb-0 scrollbar-hide [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-[var(--page-px)] px-[var(--page-px)] lg:!mask-none lg:mx-0 lg:px-0"
+      >
+        {tabsData.map((tab, i) => (
+          <MaskReveal 
+            key={tab.name} 
+            delay={0.6 + i * 0.08} 
+            duration={0.6}
+            className="shrink-0"
+          >
+            <button
+              id={`tab-${i}`}
+              role="tab"
+              aria-selected={active === i}
+              aria-controls="tabs-content"
+              onClick={() => handleTabClick(i)}
+              data-cursor="pointer"
+              className={`text-center shrink-0 whitespace-nowrap justify-start text-[1rem] font-normal font-sans leading-5 transition-all duration-300 outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-sm ${active === i
+                ? "text-foreground opacity-100"
+                : "text-foreground opacity-35 hover:opacity-60"
+                }`}
             >
-              <button
-                id={`tab-${i}`}
-                role="tab"
-                aria-selected={active === i}
-                aria-controls="tabs-content"
-                onClick={() => handleTabClick(i)}
-                data-cursor="pointer"
-                className={`text-center shrink-0 whitespace-nowrap justify-start text-[1rem] font-normal font-sans leading-5 transition-all duration-300 outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-sm ${active === i
-                  ? "text-foreground opacity-100"
-                  : "text-foreground opacity-35 hover:opacity-60"
-                  }`}
-              >
-                {tab.name}
-              </button>
-            </MaskReveal>
-          ))}
-        </div>
+              {tab.name}
+            </button>
+          </MaskReveal>
+        ))}
       </div>
     </div>
   );

@@ -3,11 +3,9 @@
 import TransitionLink from "./TransitionLink";
 import { useEffect, useState, useRef } from "react";
 import { usePathname } from "next/navigation";
-import ThemeControls from "./ThemeControls";
-import { useSound } from "@/components/SoundProvider";
 import { useTransition } from "./TransitionProvider";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
-import { Menu, X, Volume2, VolumeX } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { animate, spring } from "animejs";
 import dynamic from "next/dynamic";
@@ -37,7 +35,6 @@ const customSpringEase = (t: number) => {
 
 export default function Header({ backLink = "/", scrolled: scrolledProp }: HeaderProps) {
   const pathname = usePathname();
-  const { isSoundEnabled, toggleSound } = useSound();
   const { pendingHref, isTransitioning } = useTransition();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [internalScrolled, setInternalScrolled] = useState(false);
@@ -89,10 +86,10 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
   const activeHref = pendingHref || pathname;
 
   return (
-    <header className="w-full fixed top-0 left-0 z-50 pointer-events-none pt-[48px]">
+    <header className="w-full fixed top-0 left-0 z-[1000] pointer-events-none pt-6 md:pt-[48px]">
       <div className="w-full px-[var(--page-px)] flex items-center relative h-20">
         {/* Left Section: Logo */}
-        <div className="flex-1 flex justify-start pointer-events-auto">
+        <div className="flex-1 flex justify-start pointer-events-auto relative z-[1000]">
           <TransitionLink
             href="/"
             label="Home"
@@ -177,7 +174,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
         </div>
 
         {/* Right Section — Time, Theme, Sound (Hidden on case study scroll) */}
-        <div className="flex-1 flex justify-end">
+        <div className="flex-1 flex justify-end relative z-[1000]">
           <AnimatePresence mode="wait">
             {(!isCaseStudy || !scrolled) && (
               <motion.div 
@@ -192,12 +189,6 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
                 }`}>
                   <Clock />
                 </div>
-                <ThemeControls isHero={isCaseStudy && !scrolled} />
-                <SoundToggle 
-                  isSoundEnabled={isSoundEnabled} 
-                  toggleSound={toggleSound} 
-                  isCaseStudy={isCaseStudy && !scrolled}
-                />
               </motion.div>
             )}
           </AnimatePresence>
@@ -205,12 +196,23 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
           <div className="lg:hidden pointer-events-auto">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className={`p-2 -mr-2 transition-colors ${
-                isCaseStudy && !scrolled ? "text-white" : "text-black dark:text-white"
+              className={`p-2 -mr-2 transition-colors relative w-10 h-10 flex items-center justify-center ${
+                (isCaseStudy && !scrolled && !isMenuOpen) ? "text-white" : "text-black dark:text-white"
               }`}
               aria-label="Toggle menu"
             >
-              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={isMenuOpen ? "close" : "menu"}
+                  initial={{ opacity: 0, rotate: -90, scale: 0.8 }}
+                  animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                  exit={{ opacity: 0, rotate: 90, scale: 0.8 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute inset-0 flex items-center justify-center"
+                >
+                  {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                </motion.div>
+              </AnimatePresence>
             </button>
           </div>
         </div>
@@ -222,18 +224,9 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="lg:hidden fixed inset-0 z-[1000] bg-background/40 backdrop-blur-xl flex flex-col pt-8 px-6 pointer-events-auto"
+              className="lg:hidden fixed inset-0 z-[999] bg-background/80 backdrop-blur-3xl flex flex-col pt-32 px-[var(--page-px)] pointer-events-auto"
             >
-              <div className="flex justify-end items-center w-full mb-12">
-                <button
-                  onClick={() => setIsMenuOpen(false)}
-                  className="p-2 -mr-2 text-black dark:text-white transition-colors"
-                  aria-label="Close menu"
-                >
-                  <X size={28} />
-                </button>
-              </div>
-              <nav className="flex flex-col gap-8">
+              <nav className="flex flex-col gap-8 flex-1">
                 {NAV_ITEMS.map((item) => {
                   const isActive = activeHref === item.href;
                   if (item.isExternal) {
@@ -265,43 +258,11 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
                   );
                 })}
               </nav>
+
             </motion.div>
           )}
         </AnimatePresence>
       </div>
     </header>
-  );
-}
-
-function SoundToggle({ 
-  isSoundEnabled, 
-  toggleSound,
-  isCaseStudy
-}: { 
-  isSoundEnabled: boolean; 
-  toggleSound: () => void; 
-  isCaseStudy: boolean;
-}) {
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger
-          onClick={toggleSound}
-          className={`${
-            isCaseStudy ? "text-white" : "text-foreground/60 hover:text-foreground"
-          } transition-colors flex items-center justify-center cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-sm p-4 -m-4`}
-          aria-label={isSoundEnabled ? "Disable sound" : "Enable sound"}
-        >
-          {isSoundEnabled ? (
-            <Volume2 size={16} />
-          ) : (
-            <VolumeX size={16} />
-          )}
-        </TooltipTrigger>
-        <TooltipContent side="bottom" sideOffset={8}>
-          {isSoundEnabled ? "Mute" : "Unmute"}
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
   );
 }

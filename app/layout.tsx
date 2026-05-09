@@ -7,8 +7,7 @@ import TransitionProvider from "@/components/TransitionProvider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SoundProvider } from "@/components/SoundProvider";
 import ClickFeedback from "@/components/ClickFeedback";
-
-
+import FloatingControls from "@/components/FloatingControls";
 const geist = Geist({
   variable: "--font-sans",
   subsets: ["latin"],
@@ -46,6 +45,7 @@ export default function RootLayout({
                   <div id="main-content" className="outline-none" tabIndex={-1}>
                     {children}
                   </div>
+                  <FloatingControls />
                 </TransitionProvider>
               </TooltipProvider>
             </SoundProvider>
