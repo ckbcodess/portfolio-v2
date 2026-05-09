@@ -6,9 +6,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useTransition } from "@/components/TransitionProvider";
 import CaseStudyBackground from "@/components/CaseStudyBackground";
 import CaseStudySidebar from "@/components/CaseStudySidebar";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence } from "motion/react";
 import { MaskReveal } from "@/components/MaskReveal";
 import LockedCaseStudy from "@/components/LockedCaseStudy";
+import MobileCaseStudyNav from "@/components/MobileCaseStudyNav";
 
 
 
@@ -117,6 +118,9 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
       <CaseStudySidebar 
         visible={showSidebar}
         links={sidebarLinks} 
+      />
+      <MobileCaseStudyNav 
+        links={sidebarLinks}
       />
       
       <div className="pt-[220px] pb-20 px-[var(--page-px)] w-full overflow-x-hidden relative z-10">

@@ -205,7 +205,9 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
           <div className="lg:hidden pointer-events-auto">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 -mr-2 text-foreground/60 hover:text-foreground transition-colors"
+              className={`p-2 -mr-2 transition-colors ${
+                isCaseStudy && !scrolled ? "text-white" : "text-black dark:text-white"
+              }`}
               aria-label="Toggle menu"
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -225,7 +227,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
               <div className="flex justify-end items-center w-full mb-12">
                 <button
                   onClick={() => setIsMenuOpen(false)}
-                  className="p-2 -mr-2 text-foreground/60 hover:text-foreground transition-colors"
+                  className="p-2 -mr-2 text-black dark:text-white transition-colors"
                   aria-label="Close menu"
                 >
                   <X size={28} />
