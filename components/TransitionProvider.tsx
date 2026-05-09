@@ -61,7 +61,7 @@ export default function TransitionProvider({ children }: { children: ReactNode }
         setIsMaskActive(active);
     }, []);
 
-    // ─── 1. Initial Load Synchronization ────────────────────────────────────
+    // 1. Initial Load Synchronization
     useEffect(() => {
         // @ts-expect-error global flag
         if (globalThis.appLoaded) return;
@@ -74,7 +74,6 @@ export default function TransitionProvider({ children }: { children: ReactNode }
         setPendingHref(href);
         setCurrentLabel(label);
 
-        // Reset text position and visibility for consistent upward motion
         gsap.set(".curtain-text", { y: "110%", autoAlpha: 1 });
 
         const tl = gsap.timeline({
@@ -132,7 +131,7 @@ export default function TransitionProvider({ children }: { children: ReactNode }
         return "Navigating";
     };
 
-    // ─── 2. Route Change Listener ──────────────────────────────────────────
+    // 2. Route Change Listener
     useEffect(() => {
         // Reset state on path change
         setPendingHref(null);
@@ -155,7 +154,7 @@ export default function TransitionProvider({ children }: { children: ReactNode }
             return;
         }
 
-        // B. Handle Browser Back/Forward (when isTransitioning is false)
+        // B. Handle Browser Back/Forward
         if (!isTransitioning) {
             const label = getLabelFromPath(pathname);
             setCurrentLabel(label);
@@ -219,7 +218,7 @@ export default function TransitionProvider({ children }: { children: ReactNode }
             return;
         }
 
-        // C. Handle Manual Navigation (Completion stage)
+        // C. Handle Manual Navigation
         const tl = gsap.timeline({
             delay: 0.05,
             onComplete: () => {

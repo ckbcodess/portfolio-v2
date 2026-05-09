@@ -68,7 +68,6 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
   useEffect(() => {
     if (!navRef.current || !navInnerRef.current) return;
 
-    // Get current dimensions
     const currentWidth = navRef.current.offsetWidth;
     const currentHeight = navRef.current.offsetHeight;
 
@@ -79,7 +78,6 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
     const targetWidth = navInnerRef.current.offsetWidth;
     const targetHeight = navInnerRef.current.offsetHeight;
 
-    // Animate from current to target
     animate(navRef.current, {
       width: [currentWidth, targetWidth],
       height: [currentHeight, targetHeight],
@@ -106,13 +104,12 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
           </TransitionLink>
         </div>
 
-        {/* Middle Section: Refractive Morphing Navigation Pill */}
         <div className="flex-none hidden lg:flex items-center justify-center pointer-events-auto">
           <RefractiveNav 
             ref={navRef}
             isScrolled={scrolled}
             isCaseStudyHero={isCaseStudy && !scrolled}
-            className={`relative rounded-full backdrop-blur-[40px] will-change-[width,height] overflow-hidden ${
+            className={`relative rounded-full will-change-[width,height] overflow-hidden ${
               isCaseStudy && !scrolled
                 ? "text-white" 
                 : "text-foreground"
@@ -205,7 +202,6 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
             )}
           </AnimatePresence>
 
-          {/* Mobile Menu Toggle (Always show if not transitioning) */}
           <div className="lg:hidden pointer-events-auto">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}

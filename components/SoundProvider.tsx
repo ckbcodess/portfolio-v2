@@ -128,6 +128,8 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
         if (!disposed) {
           audioBufferRef.current = decoded;
           setSoundLoaded(true);
+          // @ts-expect-error global flag
+          if (typeof window !== 'undefined') window.soundsLoaded = true;
         }
       } catch (error) {
         console.warn("Failed to load sound sprite:", error);

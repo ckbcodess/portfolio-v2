@@ -3,6 +3,7 @@
 import { useRef, useState, useLayoutEffect, useEffect } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import RefractiveNav from "./RefractiveNav";
 
 const SESSION_KEY = "rg_portfolio_loaded";
 
@@ -15,24 +16,13 @@ const PATHS = {
 // Comprehensive list of critical assets for the "best experience"
 const CRITICAL_ASSETS = [
   "/avatar.webp",
-  "/allex-card.png",
   "/allex-hero.webp",
-  "/gcb-card-v4.png",
-  "/cs-img-0.webp",
-  "/cs-img-1.webp",
   "/cs-img-6.webp",
-  "/cs-img-7.webp",
-  "/img-60.webp",
-  "/img-61.webp",
-  "/lp-img-0.webp",
-  "/lp-img-1.webp",
-  "/sounds/click-1.wav",
-  "/sounds/click-2.wav",
-  "/sounds/click-3.wav",
-  "/sounds/click-4.wav",
-  "/sounds/pop-1.wav",
-  "/sounds/pop-2.wav",
-  "/sounds/pop-3.wav",
+  "/gcb-card-v4.png",
+  "/noise.svg",
+  "/globe.svg",
+  "/file.svg",
+  "/window.svg"
 ];
 
 const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
@@ -62,37 +52,49 @@ export default function LoadingScreen() {
 
     // ─── 1. Asset Preloading ────────────────────────────────────────────────
     let loadedCount = 0;
-    const totalCount = CRITICAL_ASSETS.length;
+    const totalCount = CRITICAL_ASSETS.length + 2; // +1 for fonts, +1 for sounds
 
     const onAssetLoaded = () => {
       loadedCount++;
-      if (loadedCount === totalCount) {
+      if (loadedCount >= totalCount) {
         setAssetsLoaded(true);
       }
     };
 
-    CRITICAL_ASSETS.forEach(src => {
-      if (src.endsWith('.wav')) {
-        const audio = new Audio();
-        audio.addEventListener('canplaythrough', onAssetLoaded, { once: true });
-        audio.src = src;
-        audio.load();
+    // Fonts
+    if (typeof document !== 'undefined' && 'fonts' in document) {
+      document.fonts.ready.then(onAssetLoaded).catch(onAssetLoaded);
+    } else {
+      onAssetLoaded();
+    }
+
+    // Sounds (Synchronization with SoundProvider)
+    const checkSounds = () => {
+      // @ts-expect-error global flag
+      if (window.soundsLoaded) {
+        onAssetLoaded();
       } else {
-        const img = new Image();
-        img.onload = onAssetLoaded;
-        img.onerror = onAssetLoaded; 
-        img.src = src;
+        setTimeout(checkSounds, 100);
       }
+    };
+    checkSounds();
+
+    // Images & SVG
+    CRITICAL_ASSETS.forEach(src => {
+      const img = new Image();
+      img.onload = onAssetLoaded;
+      img.onerror = onAssetLoaded; 
+      img.src = src;
     });
 
     // Fallback for asset loading
-    const assetTimeout = setTimeout(() => setAssetsLoaded(true), 4000);
+    const assetTimeout = setTimeout(() => setAssetsLoaded(true), 6000);
 
     // ─── 2. Buttery Counter ────────────────────────────────────────────────
     const counterObj = { value: 0 };
     gsap.to(counterObj, {
       value: 100,
-      duration: 2.2,
+      duration: 2.8, // Slightly slower for more "bracing" time
       ease: "power2.inOut",
       onUpdate: () => {
         const val = Math.round(counterObj.value);
@@ -116,7 +118,7 @@ export default function LoadingScreen() {
     const greet = greetRef.current!;
 
     const tl = gsap.timeline({
-      delay: 0.3,
+      delay: 0.5, // Hold for a beat to let browser breathe
       onComplete: () => {
         gsap.set(overlay, { display: "none", pointerEvents: "none" });
         // @ts-expect-error global flag
@@ -135,7 +137,7 @@ export default function LoadingScreen() {
     );
 
     // Hold greeting
-    tl.to({}, { duration: 0.8 }); 
+    tl.to({}, { duration: 1.0 }); 
 
     // Morph path and slide up
     tl.set(path, { attr: { d: "M 0 0 Q 50 0 100 0 L 100 100 Q 50 100 0 100 Z" } });
@@ -156,47 +158,60 @@ export default function LoadingScreen() {
   }, [shouldAnimate, assetsLoaded, counterFinished]);
 
   return (
-    <div
-      ref={overlayRef}
-      className="fixed inset-0 w-full h-[100dvh] flex items-center justify-center pointer-events-auto"
-      style={{ zIndex: 9999999, background: "var(--foreground)" }}
-    >
-      <svg
-        className="absolute inset-0 w-full h-full"
-        viewBox="0 0 100 100"
-        preserveAspectRatio="none"
-        aria-hidden
+    <>
+      {/* Warm-up Container: Renders off-screen to trigger GPU/Shader compilation */}
+      <div 
+        className="fixed opacity-0 pointer-events-none -z-[9999]" 
+        aria-hidden="true"
+        style={{ left: '-9999px', top: '-9999px' }}
       >
-        <path
-          ref={pathRef}
-          d="M 0 0 Q 50 0 100 0 L 100 100 Q 50 100 0 100 Z"
-          fill="var(--foreground)"
-        />
-      </svg>
-
-      <span
-        ref={countRef}
-        className="relative z-10 text-background font-light tabular-nums select-none tracking-tighter"
-        style={{ fontSize: "clamp(3rem, 10vw, 7rem)", lineHeight: 1 }}
-        aria-live="polite"
-      >
-        {progress}
-      </span>
+        <RefractiveNav settings={{ radius: 24, blur: 2 }}>
+          <div className="w-10 h-10" />
+        </RefractiveNav>
+      </div>
 
       <div
-        ref={greetRef}
-        className="absolute inset-0 flex items-center justify-center z-10 opacity-0 select-none"
-        aria-hidden="true"
+        ref={overlayRef}
+        className="fixed inset-0 w-full h-[100dvh] flex items-center justify-center pointer-events-auto"
+        style={{ zIndex: 9999999, background: "var(--foreground)" }}
       >
-        <p
-          className="text-background font-light text-center tracking-tight flex items-center gap-4"
-          style={{ fontSize: "clamp(2rem, 7vw, 4rem)", lineHeight: 1.1 }}
+        <svg
+          className="absolute inset-0 w-full h-full"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          aria-hidden
         >
-          hi there
-          <span className="inline-block w-2 h-2 rounded-full bg-background opacity-80 mt-2" />
-        </p>
+          <path
+            ref={pathRef}
+            d="M 0 0 Q 50 0 100 0 L 100 100 Q 50 100 0 100 Z"
+            fill="var(--foreground)"
+          />
+        </svg>
+
+        <span
+          ref={countRef}
+          className="relative z-10 text-background font-light tabular-nums select-none tracking-tighter"
+          style={{ fontSize: "clamp(3rem, 10vw, 7rem)", lineHeight: 1 }}
+          aria-live="polite"
+        >
+          {progress}
+        </span>
+
+        <div
+          ref={greetRef}
+          className="absolute inset-0 flex items-center justify-center z-10 opacity-0 select-none"
+          aria-hidden="true"
+        >
+          <p
+            className="text-background font-light text-center tracking-tight flex items-center gap-4"
+            style={{ fontSize: "clamp(2rem, 7vw, 4rem)", lineHeight: 1.1 }}
+          >
+            hi there
+            <span className="inline-block w-2 h-2 rounded-full bg-background opacity-80 mt-2" />
+          </p>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

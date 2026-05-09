@@ -1,6 +1,6 @@
 "use client";
 
-import { refractive, convex } from "@hashintel/refractive";
+import { refractive, convex, concave, convexCircle } from "@hashintel/refractive";
 import React, { forwardRef, useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 
@@ -15,15 +15,15 @@ export interface RefractionSettings {
   specularAngle?: number;
 }
 
-const RefractiveNav = forwardRef<HTMLElement, { 
+const RefractiveNav = forwardRef<HTMLElement, {
   children: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
   settings?: RefractionSettings;
   isScrolled?: boolean;
   isCaseStudyHero?: boolean;
-}>(({ 
-  children, 
+}>(({
+  children,
   className,
   style,
   settings,
@@ -44,15 +44,15 @@ const RefractiveNav = forwardRef<HTMLElement, {
       ref={ref}
       refraction={{
         radius: settings?.radius ?? 24,
-        blur: settings?.blur ?? 40, // Increased for deep glass effect
+        blur: settings?.blur ?? 2, // Lowered to make refraction more distinct
         glassThickness: settings?.glassThickness ?? 24,
-        // Virtually invisible highlights for dark mode to ensure maximum integration
-        specularOpacity: settings?.specularOpacity ?? (isDark ? 0.03 : 0.18),
+        // Refined specular for more "catch" on the edges
+        specularOpacity: settings?.specularOpacity ?? (isDark ? 0.08 : 0.22),
         // @ts-expect-error - specularSaturation is supported by the engine but missing from types
-        specularSaturation: settings?.specularSaturation ?? 85,
-        bezelWidth: settings?.bezelWidth ?? 12,
+        specularSaturation: settings?.specularSaturation ?? 95,
+        bezelWidth: settings?.bezelWidth ?? 14,
         bezelHeightFn: convex,
-        refractiveIndex: settings?.refractiveIndex ?? 2.8,
+        refractiveIndex: settings?.refractiveIndex ?? 1.8, // Slightly lower for cleaner "glass" bend
         specularAngle: settings?.specularAngle ?? 135,
       }}
       className={className}
@@ -60,23 +60,32 @@ const RefractiveNav = forwardRef<HTMLElement, {
       role="navigation"
       aria-label="Main Floating Navigation"
     >
-      {/* Subtle Theme Tint Layer & Saturation Boost - Merged for performance */}
-      <div 
-        className={`absolute inset-0 backdrop-blur-[40px] backdrop-saturate-[1.8] pointer-events-none ${
-          isCaseStudyHero ? "bg-black/10" : "bg-background/10 dark:bg-black/10"
-        }`} 
+      {/* Core Glass Atmosphere Layer - Reduced blur to let refraction show */}
+      <div
+        className={`absolute inset-0 backdrop-blur-[12px] backdrop-saturate-[1.4] pointer-events-none ${isCaseStudyHero ? "bg-black/5" : "bg-background/5 dark:bg-black/5"
+          }`}
+      />
+
+      {/* Crisp Inner Rim / Specular Border */}
+      <div className="absolute inset-0 rounded-full border-[0.5px] border-white/10 dark:border-white/5 pointer-events-none z-30" />
+
+      {/* Specular Sheen Gradient */}
+      <div
+        className="absolute inset-0 rounded-full pointer-events-none z-20 opacity-40 mix-blend-soft-light"
+        style={{
+          background: 'linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 40%, rgba(255,255,255,0) 60%, rgba(255,255,255,0.05) 100%)'
+        }}
       />
 
       {/* Local noise texture overlay for high-fidelity glass */}
-      <div 
-        className={`absolute inset-0 rounded-full pointer-events-none mix-blend-overlay z-20 ${
-          isCaseStudyHero ? "opacity-[0.05]" : "opacity-[0.03] dark:opacity-[0.05]"
-        }`}
+      <div
+        className={`absolute inset-0 rounded-full pointer-events-none mix-blend-overlay z-40 ${isCaseStudyHero ? "opacity-[0.08]" : "opacity-[0.04] dark:opacity-[0.08]"
+          }`}
         style={{ backgroundImage: 'url(/noise.svg)' }}
       />
-      
+
       {/* Content Container */}
-      <div className="relative z-10 flex items-center gap-1 p-1 w-full h-full">
+      <div className="relative z-50 flex items-center gap-1 p-1 w-full h-full">
         {children}
       </div>
     </refractive.nav>

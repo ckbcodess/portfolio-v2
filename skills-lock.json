@@ -67,6 +67,12 @@
       "sourceType": "github",
       "computedHash": "bdac5fe466b079338fa498fedadfe087e6c4daf02bee41834f53656cc632ff93"
     },
+    "deslop-simplify-ai-code": {
+      "source": "adibfirman/dotfiles",
+      "sourceType": "github",
+      "skillPath": "claude/.claude/skills/productivity/deslop-simply-ai-code/SKILL.md",
+      "computedHash": "b5e123edaba07e7c0e3dcfdbcad0f34f2700855b25fbb51315b43b010de53164"
+    },
     "distill": {
       "source": "pbakaus/impeccable",
       "sourceType": "github",

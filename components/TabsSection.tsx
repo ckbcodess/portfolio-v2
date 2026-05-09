@@ -46,7 +46,6 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
   const soundTimerRef = useRef<any>(null);
 
   useEffect(() => {
-    // Lazy init audio context and timer for sound sync
     if (typeof window !== "undefined" && !audioCtxRef.current) {
       audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
     }
@@ -146,7 +145,6 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
 
   const handleTabClick = (i: number) => {
     setActive(i);
-    // Resume audio context on user interaction
     if (audioCtxRef.current && audioCtxRef.current.state === 'suspended') {
       audioCtxRef.current.resume();
     }
