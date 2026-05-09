@@ -2,7 +2,6 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { InputOTP } from "@heroui/react";
 import { AnimatePresence } from "framer-motion";
 import { CaseStudyContent } from "@/content/case-studies/types";
 import { useSound } from "@/components/SoundProvider";
@@ -13,30 +12,43 @@ interface LockedCaseStudyProps {
   onUnlock: () => void;
 }
 
+const CODE_LENGTH = 4;
+
+const createEmptyDigits = () => Array.from({ length: CODE_LENGTH }, () => "");
+
 /**
  * LockedCaseStudy component provides a PIN-entry gate for protected content.
- * Built with Hero UI's InputOTP for accessibility and high-fidelity interaction.
+ * The code input is implemented locally so focus, borders, and keyboard behavior
+ * are fully controlled by the project instead of a third-party OTP primitive.
  */
 export const LockedCaseStudy: React.FC<LockedCaseStudyProps> = ({ caseStudy, onUnlock }) => {
-  const [value, setValue] = useState("");
+  const [digits, setDigits] = useState<string[]>(createEmptyDigits);
   const [isInvalid, setIsInvalid] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const { playClick } = useSound();
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
+
+  const focusSlot = useCallback((index: number) => {
+    const clampedIndex = Math.max(0, Math.min(index, CODE_LENGTH - 1));
+    const input = inputRefs.current[clampedIndex];
+
+    if (input) {
+      input.focus();
+      input.select();
+    }
+  }, []);
 
   // Auto-refocus on failure to keep the flow frictionless
   useEffect(() => {
     if (!isSubmitting && isInvalid) {
       // Small delay to ensure the component is fully re-enabled before focusing
       const timer = setTimeout(() => {
-        if (inputRef.current) {
-          inputRef.current.focus();
-        }
+        focusSlot(0);
       }, 100);
       return () => clearTimeout(timer);
     }
-  }, [isSubmitting, isInvalid]);
+  }, [focusSlot, isSubmitting, isInvalid]);
 
   const handleVerify = useCallback(async (code: string) => {
     if (isSubmitting) return;
@@ -53,9 +65,9 @@ export const LockedCaseStudy: React.FC<LockedCaseStudyProps> = ({ caseStudy, onU
         onUnlock();
       } else {
         setIsInvalid(true);
-        setValue("");
+        setDigits(createEmptyDigits());
         setIsSubmitting(false);
-        
+
         // Auto-reset error state after a short duration for a cleaner UX
         setTimeout(() => {
           setIsInvalid(false);
@@ -67,15 +79,130 @@ export const LockedCaseStudy: React.FC<LockedCaseStudyProps> = ({ caseStudy, onU
     }
   }, [caseStudy.password, onUnlock, isSubmitting, playClick]);
 
-  const handleChange = useCallback((val: string) => {
-    setValue(val);
-    if (isInvalid) setIsInvalid(false);
-  }, [isInvalid]);
+  const handleCompletedCode = useCallback((nextDigits: string[]) => {
+    const code = nextDigits.join("");
+
+    if (code.length === CODE_LENGTH && !nextDigits.includes("")) {
+      void handleVerify(code);
+    }
+  }, [handleVerify]);
+
+  const handleChange = useCallback((index: number, rawValue: string) => {
+    if (isSubmitting) return;
+
+    const sanitized = rawValue.replace(/\D/g, "");
+
+    if (isInvalid) {
+      setIsInvalid(false);
+    }
+
+    if (!sanitized) {
+      setDigits((prev) => {
+        const next = [...prev];
+        next[index] = "";
+        return next;
+      });
+      return;
+    }
+
+    const nextDigits = [...digits];
+    let nextIndex = index;
+
+    for (const char of sanitized) {
+      if (nextIndex >= CODE_LENGTH) break;
+      nextDigits[nextIndex] = char;
+      nextIndex += 1;
+    }
+
+    setDigits(nextDigits);
+
+    if (nextIndex < CODE_LENGTH) {
+      focusSlot(nextIndex);
+    } else {
+      inputRefs.current[CODE_LENGTH - 1]?.blur();
+    }
+
+    handleCompletedCode(nextDigits);
+  }, [digits, focusSlot, handleCompletedCode, isInvalid, isSubmitting]);
+
+  const handleKeyDown = useCallback((index: number, event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (isSubmitting) return;
+
+    if (event.key === "Backspace") {
+      event.preventDefault();
+
+      if (isInvalid) {
+        setIsInvalid(false);
+      }
+
+      setDigits((prev) => {
+        const next = [...prev];
+
+        if (next[index]) {
+          next[index] = "";
+          return next;
+        }
+
+        if (index > 0) {
+          next[index - 1] = "";
+          queueMicrotask(() => focusSlot(index - 1));
+        }
+
+        return next;
+      });
+
+      return;
+    }
+
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      focusSlot(index - 1);
+      return;
+    }
+
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      focusSlot(index + 1);
+    }
+  }, [focusSlot, isInvalid, isSubmitting]);
+
+  const handlePaste = useCallback((index: number, event: React.ClipboardEvent<HTMLInputElement>) => {
+    if (isSubmitting) return;
+
+    const pasted = event.clipboardData.getData("text").replace(/\D/g, "");
+
+    if (!pasted) return;
+
+    event.preventDefault();
+
+    if (isInvalid) {
+      setIsInvalid(false);
+    }
+
+    const nextDigits = [...digits];
+    let nextIndex = index;
+
+    for (const char of pasted) {
+      if (nextIndex >= CODE_LENGTH) break;
+      nextDigits[nextIndex] = char;
+      nextIndex += 1;
+    }
+
+    setDigits(nextDigits);
+
+    if (nextIndex < CODE_LENGTH) {
+      focusSlot(nextIndex);
+    } else {
+      inputRefs.current[CODE_LENGTH - 1]?.blur();
+    }
+
+    handleCompletedCode(nextDigits);
+  }, [digits, focusSlot, handleCompletedCode, isInvalid, isSubmitting]);
 
   return (
     <div className="w-full min-h-[100dvh] bg-background flex flex-col items-center justify-center p-6 md:p-12 overflow-hidden selection:bg-primary/10">
       <GateHeader />
-      
+
       <motion.div 
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -108,25 +235,39 @@ export const LockedCaseStudy: React.FC<LockedCaseStudyProps> = ({ caseStudy, onU
             className="w-full flex flex-col items-center gap-8"
           >
             <div className="relative flex flex-col items-center gap-8">
-              <InputOTP
-                ref={inputRef}
-                autoFocus
-                isDisabled={isSubmitting}
-                isInvalid={isInvalid}
-                maxLength={4}
-                value={value}
-                onChange={handleChange}
-                onComplete={handleVerify}
-                variant="secondary"
-                className="gap-4"
+              <div
+                className="flex items-center gap-4"
+                aria-label="Case study access code"
+                role="group"
               >
-                <InputOTP.Group>
-                  <InputOTP.Slot index={0} className={`w-14 h-14 md:w-16 md:h-16 text-2xl transition-all duration-300 ease-in-out border-1.5 ${isInvalid ? "border-danger" : "border-transparent data-[active=true]:border-black data-[active=true]:dark:border-white"}`} />
-                  <InputOTP.Slot index={1} className={`w-14 h-14 md:w-16 md:h-16 text-2xl transition-all duration-300 ease-in-out border-1.5 ${isInvalid ? "border-danger" : "border-transparent data-[active=true]:border-black data-[active=true]:dark:border-white"}`} />
-                  <InputOTP.Slot index={2} className={`w-14 h-14 md:w-16 md:h-16 text-2xl transition-all duration-300 ease-in-out border-1.5 ${isInvalid ? "border-danger" : "border-transparent data-[active=true]:border-black data-[active=true]:dark:border-white"}`} />
-                  <InputOTP.Slot index={3} className={`w-14 h-14 md:w-16 md:h-16 text-2xl transition-all duration-300 ease-in-out border-1.5 ${isInvalid ? "border-danger" : "border-transparent data-[active=true]:border-black data-[active=true]:dark:border-white"}`} />
-                </InputOTP.Group>
-              </InputOTP>
+                {digits.map((digit, index) => (
+                  <input
+                    key={index}
+                    ref={(node) => {
+                      inputRefs.current[index] = node;
+                    }}
+                    autoComplete={index === 0 ? "one-time-code" : "off"}
+                    autoFocus={index === 0}
+                    className={[
+                      "w-14 h-14 md:w-16 md:h-16 rounded-[18px] border bg-muted text-center text-2xl text-foreground",
+                      "transition-all duration-300 ease-in-out outline-none ring-0 shadow-none",
+                      "placeholder:text-transparent focus:border-black focus:outline-none focus:ring-0",
+                      "disabled:cursor-not-allowed disabled:opacity-60",
+                      isInvalid ? "border-danger" : "border-border",
+                    ].join(" ")}
+                    disabled={isSubmitting}
+                    inputMode="numeric"
+                    maxLength={CODE_LENGTH}
+                    onChange={(event) => handleChange(index, event.target.value)}
+                    onFocus={(event) => event.target.select()}
+                    onKeyDown={(event) => handleKeyDown(index, event)}
+                    onPaste={(event) => handlePaste(index, event)}
+                    pattern="[0-9]*"
+                    type="text"
+                    value={digit}
+                  />
+                ))}
+              </div>
 
               <div className="h-6 flex items-center justify-center">
                 <AnimatePresence mode="wait">
