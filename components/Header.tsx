@@ -111,6 +111,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
           <RefractiveNav 
             ref={navRef}
             isScrolled={scrolled}
+            isCaseStudyHero={isCaseStudy && !scrolled}
             className={`relative rounded-full backdrop-blur-[40px] will-change-[width,height] overflow-hidden ${
               isCaseStudy && !scrolled
                 ? "text-white" 
@@ -131,7 +132,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
                     <TransitionLink
                       href={backLink}
                       label="Back"
-                      className="flex items-center gap-2 text-foreground transition-colors group p-4 -m-4"
+                      className="flex items-center gap-2 transition-colors group p-4 -m-4"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transform group-hover:-translate-x-1 transition-transform -ml-0.5">
                         <path d="m15 18-6-6 6-6" />
@@ -194,7 +195,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
                 }`}>
                   <Clock />
                 </div>
-                <ThemeControls />
+                <ThemeControls isHero={isCaseStudy && !scrolled} />
                 <SoundToggle 
                   isSoundEnabled={isSoundEnabled} 
                   toggleSound={toggleSound} 
@@ -223,7 +224,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="lg:hidden fixed inset-0 z-[1000] bg-background/80 backdrop-blur-xl flex flex-col pt-8 px-6 pointer-events-auto"
+              className="lg:hidden fixed inset-0 z-[1000] bg-background/40 backdrop-blur-xl flex flex-col pt-8 px-6 pointer-events-auto"
             >
               <div className="flex justify-end items-center w-full mb-12">
                 <button

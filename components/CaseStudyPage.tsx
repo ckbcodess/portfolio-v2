@@ -6,8 +6,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useTransition } from "@/components/TransitionProvider";
 import CaseStudyBackground from "@/components/CaseStudyBackground";
 import CaseStudySidebar from "@/components/CaseStudySidebar";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { MaskReveal } from "@/components/MaskReveal";
+import LockedCaseStudy from "@/components/LockedCaseStudy";
 
 
 
@@ -17,17 +18,31 @@ interface CaseStudyPageProps {
 }
 
 export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
-  const { setHeaderProps } = useTransition();
+  const { setHeaderProps, setMaskActive } = useTransition();
   const introRef = useRef<HTMLElement>(null);
   const missionEndRef = useRef<HTMLDivElement>(null);
   const [showSidebar, setShowSidebar] = useState(false);
+  const [isUnlocked, setIsUnlocked] = useState(false);
   
-  // Visibility logic: Trigger sidebar once the hero section is scrolled past
+  const isActuallyLocked = caseStudy.isLocked && !isUnlocked;
+  
+  // Mask and Sidebar logic: Trigger sidebar and top mask based on scroll
   useEffect(() => {
     let ticking = false;
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
+          const isScrolled = window.scrollY > 120;
+          
+          // Toggle top mask
+          setMaskActive(isScrolled);
+
+          // Sync header scroll state
+          setHeaderProps(prev => ({
+            ...prev,
+            scrolled: isScrolled
+          }));
+
           if (!introRef.current) {
             ticking = false;
             return;
@@ -42,8 +57,11 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      setMaskActive(false); // Cleanup mask on unmount
+    };
+  }, [setMaskActive, setHeaderProps]);
 
   // Hide scrollbar on mount, restore on unmount
   useEffect(() => {
@@ -53,13 +71,15 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
 
   // Simple header configuration
   useEffect(() => {
-    setHeaderProps({
+    setHeaderProps(prev => ({
+      ...prev,
       isCaseStudy: true,
-      scrolled: false,
+      scrolled: window.scrollY > 120,
       backLink: "/",
-      variant: "default"
-    });
-  }, [setHeaderProps]);
+      variant: "default",
+      hidden: isActuallyLocked
+    }));
+  }, [setHeaderProps, isActuallyLocked]);
 
   const sidebarLinks = useMemo(() => [
     { id: "intro", label: "Intro", targetIds: ["intro"] },
@@ -74,8 +94,25 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
     }, [] as { id: string, label: string, targetIds: string[] }[])
   ], [caseStudy.sections]);
 
+  if (isActuallyLocked) {
+    return (
+      <LockedCaseStudy 
+        key="locked"
+        caseStudy={caseStudy} 
+        onUnlock={() => setIsUnlocked(true)} 
+      />
+    );
+  }
+
   return (
-    <main className="min-h-screen text-foreground selection:bg-primary selection:text-primary-foreground" role="main">
+    <motion.main 
+      key="content"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      className="min-h-screen text-foreground selection:bg-primary selection:text-primary-foreground" 
+      role="main"
+    >
       <CaseStudyBackground colors={caseStudy.gradientColors} />
       <CaseStudySidebar 
         visible={showSidebar}
@@ -218,6 +255,6 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
           </footer>
         )}
       </div>
-    </main>
+    </motion.main>
   );
 }

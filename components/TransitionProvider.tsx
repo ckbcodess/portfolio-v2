@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useRef, ReactNode, useEffect } from "react";
+import { createContext, useContext, useState, useRef, ReactNode, useEffect, useCallback } from "react";
 import gsap from "gsap";
 import { animate } from 'animejs';
 import { scrambleText } from 'animejs/text';
@@ -19,13 +19,16 @@ interface HeaderProps {
     backLink?: string;
     isCaseStudy?: boolean;
     scrolled?: boolean;
+    hidden?: boolean;
 }
 
 interface TransitionContextType {
     navigate: (href: string, label: string, color?: string) => void;
     isTransitioning: boolean;
     pendingHref: string | null;
-    setHeaderProps: (props: HeaderProps) => void;
+    setHeaderProps: (props: HeaderProps | ((prev: HeaderProps) => HeaderProps)) => void;
+    setMaskActive: (active: boolean) => void;
+    isMaskActive: boolean;
 }
 
 const TransitionContext = createContext<TransitionContextType>({
@@ -33,6 +36,8 @@ const TransitionContext = createContext<TransitionContextType>({
     isTransitioning: false,
     pendingHref: null,
     setHeaderProps: () => { },
+    setMaskActive: () => { },
+    isMaskActive: false,
 });
 
 export const useTransition = () => useContext(TransitionContext);
@@ -44,12 +49,17 @@ export default function TransitionProvider({ children }: { children: ReactNode }
     const curtainRef = useRef<HTMLDivElement>(null);
 
     const [headerProps, setHeaderProps] = useState<HeaderProps>({ variant: "default" });
+    const [isMaskActive, setIsMaskActive] = useState(false);
     const [currentLabel, setCurrentLabel] = useState("");
 
     // Check if we are currently mid-navigation
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [pendingHref, setPendingHref] = useState<string | null>(null);
     const isFirstMount = useRef(true);
+
+    const setMaskActive = useCallback((active: boolean) => {
+        setIsMaskActive(active);
+    }, []);
 
     // ─── 1. Initial Load Synchronization ────────────────────────────────────
     useEffect(() => {
@@ -90,20 +100,20 @@ export default function TransitionProvider({ children }: { children: ReactNode }
 
         tl.to(contentRef.current, {
             autoAlpha: 0,
-            duration: 0.4,
+            duration: 0.3,
             ease: "power2.inOut",
         });
 
         tl.to(curtainRef.current, {
             autoAlpha: 1,
-            duration: 0.6,
+            duration: 0.4,
             ease: "power3.inOut",
-        });
+        }, "-=0.1");
 
         // Animate text reveal
         tl.to(".curtain-text", {
             y: 0,
-            duration: 0.8,
+            duration: 0.5,
             ease: "power4.out",
             onStart: () => {
                 const el = document.getElementById("curtain-text-el");
@@ -113,15 +123,15 @@ export default function TransitionProvider({ children }: { children: ReactNode }
                             text: label,
                             chars: '01<>[]{}_—=+*^?#&$!/\\|;:',
                             from: 'left',
-                            duration: 400,
-                            settleDuration: 80,
+                            duration: 300,
+                            settleDuration: 50,
                         })
                     });
                 }
             }
-        });
+        }, "-=0.2");
 
-        tl.to({}, { duration: 0.3 });
+        tl.to({}, { duration: 0.1 });
     };
 
     // Helper to get a label from the pathname for browser navigation
@@ -138,15 +148,20 @@ export default function TransitionProvider({ children }: { children: ReactNode }
 
     // ─── 2. Route Change Listener ──────────────────────────────────────────
     useEffect(() => {
-        // Handle header props
-        setTimeout(() => {
-            if (pathname.startsWith("/work/")) {
-                setHeaderProps({ variant: "default", isCaseStudy: true });
-            } else {
-                setHeaderProps({ variant: "default" });
-            }
-        }, 0);
-        setTimeout(() => setPendingHref(null), 0);
+        // Reset state on path change
+        setPendingHref(null);
+        setMaskActive(false);
+
+        // Update default header props for the new route
+        setHeaderProps((prev) => {
+            const isWork = pathname.startsWith("/work/");
+            return {
+                ...prev,
+                variant: "default",
+                isCaseStudy: isWork,
+                hidden: false
+            };
+        });
 
         // A. Skip everything on the very first mount (Refresh/Initial Landing)
         if (isFirstMount.current) {
@@ -170,13 +185,13 @@ export default function TransitionProvider({ children }: { children: ReactNode }
             
             browserTl.to(curtainRef.current, {
                 autoAlpha: 1,
-                duration: 0.6,
+                duration: 0.4,
                 ease: "power3.inOut",
             });
 
             browserTl.to(".curtain-text", {
                 y: 0,
-                duration: 0.8,
+                duration: 0.5,
                 ease: "power4.out",
                 onStart: () => {
                     const el = document.getElementById("curtain-text-el");
@@ -186,34 +201,34 @@ export default function TransitionProvider({ children }: { children: ReactNode }
                                 text: label,
                                 chars: '01<>[]{}_—=+*^?#&$!/\\|;:',
                                 from: 'left',
-                                duration: 400,
-                                settleDuration: 80,
+                                duration: 300,
+                                settleDuration: 50,
                             })
                         });
                     }
                 }
-            });
+            }, "-=0.2");
 
-            browserTl.to({}, { duration: 0.3 });
+            browserTl.to({}, { duration: 0.1 });
 
             browserTl.to(".curtain-text", {
                 autoAlpha: 0,
                 y: -10,
-                duration: 0.4,
+                duration: 0.3,
                 ease: "power2.in",
             });
 
             browserTl.to(curtainRef.current, {
                 autoAlpha: 0,
-                duration: 0.6,
+                duration: 0.4,
                 ease: "power3.inOut",
-            }, "+=0.05");
+            }, "+=0.02");
 
             browserTl.to(contentRef.current, {
                 autoAlpha: 1,
-                duration: 0.5,
+                duration: 0.4,
                 ease: "power2.out",
-            }, "-=0.4");
+            }, "-=0.3");
 
             return;
         }
@@ -229,32 +244,32 @@ export default function TransitionProvider({ children }: { children: ReactNode }
         tl.to(".curtain-text", {
             autoAlpha: 0,
             y: -10,
-            duration: 0.4,
+            duration: 0.3,
             ease: "power2.in",
         });
 
         tl.to(curtainRef.current, {
             autoAlpha: 0,
-            duration: 0.6,
+            duration: 0.4,
             ease: "power3.inOut",
-        }, "+=0.05");
+        }, "+=0.02");
 
         tl.to(contentRef.current, {
             autoAlpha: 1,
-            duration: 0.5,
+            duration: 0.4,
             ease: "power2.out",
-        }, "-=0.4");
+        }, "-=0.3");
 
-    }, [pathname]);
+    }, [pathname, setMaskActive]);
 
     return (
-        <TransitionContext.Provider value={{ navigate, isTransitioning, pendingHref, setHeaderProps }}>
+        <TransitionContext.Provider value={{ navigate, isTransitioning, pendingHref, setHeaderProps, setMaskActive, isMaskActive }}>
             <PageCurtain ref={curtainRef} label={currentLabel} />
             
             <div
                 id="smooth-wrapper"
                 ref={contentRef}
-                className="w-full origin-top relative z-10"
+                className={`w-full origin-top relative z-10 transition-all duration-700 ${isMaskActive ? 'case-study-mask' : ''}`}
                 style={{ opacity: 0 }}
             >
                 <div id="smooth-content" className="w-full">
@@ -264,8 +279,15 @@ export default function TransitionProvider({ children }: { children: ReactNode }
 
             <LoadingScreen />
             <SmoothScroll />
-            <CustomCursor />
-            <Header {...headerProps} />
+            <CustomCursor isTransitioning={isTransitioning} />
+            <div className={`transition-all duration-500 ease-in-out ${headerProps.hidden ? 'opacity-0 invisible pointer-events-none' : 'opacity-100 visible'}`}>
+                {/* Noise overlay for high-fidelity glass effect */}
+                <div 
+                    className="fixed top-0 left-0 w-full h-screen pointer-events-none z-[49] opacity-[0.02] mix-blend-overlay"
+                    style={{ backgroundImage: 'url(/noise.svg)' }}
+                />
+                <Header {...headerProps} />
+            </div>
         </TransitionContext.Provider>
     );
 }

@@ -5,7 +5,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { usePathname } from "next/navigation";
 
-export default function CustomCursor() {
+export default function CustomCursor({ isTransitioning }: { isTransitioning?: boolean }) {
     const pathname = usePathname();
     const cursorRef = useRef<HTMLDivElement>(null);
     const [cursorType, setCursorType] = useState<"default" | "copy" | "copied" | "pointer" | "case-study" | "confidential" | "none" | "wrap">("default");
@@ -75,6 +75,12 @@ export default function CustomCursor() {
             return;
         }
 
+        // Force hide during transition
+        if (isTransitioning) {
+            gsap.to(cursorRef.current, { autoAlpha: 0, duration: 0.2, overwrite: true });
+            return;
+        }
+
         gsap.set(cursorRef.current, { autoAlpha: 0, xPercent: -50, yPercent: -50 });
 
         const xTo = gsap.quickTo(cursorRef.current, "x", { duration: 0.15, ease: "power2.out" });
@@ -83,7 +89,7 @@ export default function CustomCursor() {
         let isVisible = false;
 
         const handleMouseMove = (e: MouseEvent) => {
-            if (!isVisible) {
+            if (!isVisible && !isTransitioning) {
                 gsap.to(cursorRef.current, { autoAlpha: 1, duration: 0.3 });
                 isVisible = true;
             }
@@ -202,7 +208,7 @@ export default function CustomCursor() {
             window.removeEventListener("mousedown", handleMouseDown);
             window.removeEventListener("mouseup", handleMouseUp);
         };
-    }, { scope: cursorRef, dependencies: [cursorType, targetPos] });
+    }, { scope: cursorRef, dependencies: [cursorType, targetPos, isTransitioning] });
 
     return (
         <div

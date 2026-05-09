@@ -405,13 +405,16 @@ body::-webkit-scrollbar,
   }
 }
 
-#smooth-wrapper[style*="--page-mask"] {
-  mask-image: var(--page-mask);
-  -webkit-mask-image: var(--page-mask);
+#smooth-wrapper {
+  transition: -webkit-mask-image 0.8s cubic-bezier(0.4, 0, 0.2, 1), mask-image 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  mask-image: none;
+  -webkit-mask-image: none;
 }
 
 .case-study-mask {
-  --page-mask: linear-gradient(to bottom, transparent, black 160px, black calc(100% - 160px), transparent);
+  --page-mask: linear-gradient(to bottom, transparent, black 120px);
+  mask-image: var(--page-mask) !important;
+  -webkit-mask-image: var(--page-mask) !important;
 }
 
 /* --- 3D Flip Navigation --- */

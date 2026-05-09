@@ -21,12 +21,14 @@ const RefractiveNav = forwardRef<HTMLElement, {
   style?: React.CSSProperties;
   settings?: RefractionSettings;
   isScrolled?: boolean;
+  isCaseStudyHero?: boolean;
 }>(({ 
   children, 
   className,
   style,
   settings,
-  isScrolled = false
+  isScrolled = false,
+  isCaseStudyHero = false
 }, ref) => {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
@@ -35,14 +37,14 @@ const RefractiveNav = forwardRef<HTMLElement, {
     setMounted(true);
   }, []);
 
-  const isDark = mounted && resolvedTheme === "dark";
+  const isDark = mounted && (resolvedTheme === "dark" || isCaseStudyHero);
 
   return (
     <refractive.nav
       ref={ref}
       refraction={{
         radius: settings?.radius ?? 24,
-        blur: settings?.blur ?? 2.5,
+        blur: settings?.blur ?? 40, // Increased for deep glass effect
         glassThickness: settings?.glassThickness ?? 24,
         // Virtually invisible highlights for dark mode to ensure maximum integration
         specularOpacity: settings?.specularOpacity ?? (isDark ? 0.03 : 0.18),
@@ -53,16 +55,24 @@ const RefractiveNav = forwardRef<HTMLElement, {
         refractiveIndex: settings?.refractiveIndex ?? 2.8,
         specularAngle: settings?.specularAngle ?? 135,
       }}
-      className={`shadow-[inset_0_1px_1px_rgba(255,255,255,0.1),0_8px_32px_rgba(0,0,0,0.1)] ${className}`}
+      className={className}
       style={style}
       role="navigation"
       aria-label="Main Floating Navigation"
     >
       {/* Subtle Theme Tint Layer & Saturation Boost - Merged for performance */}
       <div 
-        className={`absolute inset-0 bg-background/40 dark:bg-black/20 backdrop-saturate-[1.8] pointer-events-none transition-opacity duration-700 ${
-          isScrolled ? "opacity-100" : "opacity-0"
+        className={`absolute inset-0 backdrop-blur-[40px] backdrop-saturate-[1.8] pointer-events-none ${
+          isCaseStudyHero ? "bg-black/10" : "bg-background/10 dark:bg-black/10"
         }`} 
+      />
+
+      {/* Local noise texture overlay for high-fidelity glass */}
+      <div 
+        className={`absolute inset-0 rounded-full pointer-events-none mix-blend-overlay z-20 ${
+          isCaseStudyHero ? "opacity-[0.05]" : "opacity-[0.03] dark:opacity-[0.05]"
+        }`}
+        style={{ backgroundImage: 'url(/noise.svg)' }}
       />
       
       {/* Content Container */}
