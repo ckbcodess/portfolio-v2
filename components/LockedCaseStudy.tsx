@@ -241,35 +241,60 @@ export const LockedCaseStudy: React.FC<LockedCaseStudyProps> = ({ caseStudy, onU
                 role="group"
               >
                 {digits.map((digit, index) => (
-                  <input
+                  <div
                     key={index}
-                    ref={(node) => {
-                      inputRefs.current[index] = node;
-                    }}
-                    autoComplete={index === 0 ? "one-time-code" : "off"}
-                    autoFocus={index === 0}
                     className={[
-                      "w-14 h-14 md:w-16 md:h-16 rounded-[18px] border bg-muted text-center text-2xl text-foreground",
-                      "transition-all duration-300 ease-in-out outline-none ring-0 shadow-none",
-                      "placeholder:text-transparent focus:border-black focus:outline-none focus:ring-0",
-                      "disabled:cursor-not-allowed disabled:opacity-60",
+                      "relative w-14 h-14 md:w-16 md:h-16 rounded-[18px] border bg-muted flex items-center justify-center transition-all duration-300 ease-in-out overflow-hidden",
                       isInvalid ? "border-danger" : "border-border",
+                      isInvalid ? "focus-within:border-danger" : "focus-within:border-black",
+                      isSubmitting && "opacity-60 cursor-not-allowed"
                     ].join(" ")}
-                    disabled={isSubmitting}
-                    inputMode="numeric"
-                    maxLength={CODE_LENGTH}
-                    onChange={(event) => handleChange(index, event.target.value)}
-                    onFocus={(event) => event.target.select()}
-                    onKeyDown={(event) => handleKeyDown(index, event)}
-                    onPaste={(event) => handlePaste(index, event)}
-                    pattern="[0-9]*"
-                    type="text"
-                    value={digit}
-                  />
+                  >
+                    <input
+                      ref={(node) => {
+                        inputRefs.current[index] = node;
+                      }}
+                      autoComplete={index === 0 ? "one-time-code" : "off"}
+                      autoFocus={index === 0}
+                      className={[
+                        "absolute inset-0 w-full h-full text-center text-lg md:text-xl",
+                        "bg-transparent border-none outline-none ring-0 focus:ring-0 focus:outline-none",
+                        "text-transparent caret-foreground leading-none",
+                        "disabled:cursor-not-allowed",
+                      ].join(" ")}
+                      disabled={isSubmitting}
+                      inputMode="numeric"
+                      maxLength={CODE_LENGTH}
+                      onChange={(event) => handleChange(index, event.target.value)}
+                      onFocus={(event) => event.target.select()}
+                      onKeyDown={(event) => handleKeyDown(index, event)}
+                      onPaste={(event) => handlePaste(index, event)}
+                      pattern="[0-9]*"
+                      type="text"
+                      value={digit}
+                    />
+                    <AnimatePresence>
+                      {digit && (
+                        <motion.span
+                          key={`${index}-${digit}`}
+                          initial={{ scale: 0.4, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          transition={{ 
+                            type: "spring", 
+                            damping: 15, 
+                            stiffness: 400,
+                          }}
+                          className="text-lg md:text-xl font-medium text-foreground pointer-events-none select-none"
+                        >
+                          {digit}
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
+                  </div>
                 ))}
               </div>
 
-              <div className="h-6 flex items-center justify-center">
+              <div className="h-4 flex items-center justify-center">
                 <AnimatePresence mode="wait">
                   {isInvalid && (
                     <motion.p 
