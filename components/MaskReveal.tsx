@@ -2,6 +2,7 @@
 
 import { motion, Variants } from "motion/react";
 import { ReactNode } from "react";
+import { useTransition } from "./TransitionProvider";
 
 interface MaskRevealProps {
   children: ReactNode;
@@ -18,6 +19,7 @@ export function MaskReveal({
   direction = "up",
   className = "",
 }: MaskRevealProps) {
+  const { canAnimate } = useTransition();
   const variants: Variants = {
     hidden: {
       y: direction === "up" ? "100%" : direction === "down" ? "-100%" : 0,
@@ -40,7 +42,7 @@ export function MaskReveal({
     <div className={`relative overflow-hidden ${className}`}>
       <motion.div
         initial="hidden"
-        animate="show"
+        animate={canAnimate ? "show" : "hidden"}
         variants={variants}
       >
         {children}

@@ -197,7 +197,7 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
                     animate={{
                       opacity: canAnimate ? 1 : 0,
                       y: canAnimate ? 0 : 4.6,
-                      transition: { duration: 0.2, delay: (isInitialLoad ? 0.4 : 0.04) + i * 0.015, ease: "easeOut" }
+                      transition: { duration: 0.2, delay: (isInitialLoad ? 0.5 : 0.04) + i * 0.015, ease: "easeOut" }
                     }}
                     exit={{
                       opacity: 0,
@@ -233,7 +233,7 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
         {tabsData.map((tab, i) => (
           <MaskReveal 
             key={tab.name} 
-            delay={0.6 + i * 0.08} 
+            delay={0.8 + i * 0.08} 
             duration={0.6}
             className="shrink-0"
           >

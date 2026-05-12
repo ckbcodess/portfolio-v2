@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { AnimatePresence } from "framer-motion";
 import { CaseStudyContent } from "@/content/case-studies/types";
 import { useSound } from "@/components/SoundProvider";
+import { useTransition } from "@/components/TransitionProvider";
 import GateHeader from "./GateHeader";
 
 interface LockedCaseStudyProps {
@@ -22,6 +23,7 @@ const createEmptyDigits = () => Array.from({ length: CODE_LENGTH }, () => "");
  * are fully controlled by the project instead of a third-party OTP primitive.
  */
 export const LockedCaseStudy: React.FC<LockedCaseStudyProps> = ({ caseStudy, onUnlock }) => {
+  const { canAnimate } = useTransition();
   const [digits, setDigits] = useState<string[]>(createEmptyDigits);
   const [isInvalid, setIsInvalid] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -205,7 +207,7 @@ export const LockedCaseStudy: React.FC<LockedCaseStudyProps> = ({ caseStudy, onU
 
       <motion.div 
         initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
+        animate={canAnimate ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
         exit={{ opacity: 0, y: -30 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="w-full max-w-[480px] flex flex-col items-center justify-center gap-12 md:gap-16"
@@ -214,7 +216,7 @@ export const LockedCaseStudy: React.FC<LockedCaseStudyProps> = ({ caseStudy, onU
         <div className="flex flex-col gap-8 md:gap-10 items-center text-center">
           <motion.div 
             initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
+            animate={canAnimate ? { scale: 1, opacity: 1 } : { scale: 0.8, opacity: 0 }}
             transition={{ delay: 0.2 }}
             className="w-8 h-[38px] text-foreground opacity-60"
           >

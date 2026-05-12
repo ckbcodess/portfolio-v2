@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useRef, ReactNode, useEffect, useCallback } from "react";
+import { createContext, useContext, useState, useRef, ReactNode, useEffect, useCallback, useMemo } from "react";
 import gsap from "gsap";
 import { animate } from 'animejs';
 import { scrambleText } from 'animejs/text';
@@ -29,6 +29,7 @@ interface TransitionContextType {
     setHeaderProps: (props: HeaderProps | ((prev: HeaderProps) => HeaderProps)) => void;
     setMaskActive: (active: boolean) => void;
     isMaskActive: boolean;
+    canAnimate: boolean;
 }
 
 const TransitionContext = createContext<TransitionContextType>({
@@ -38,6 +39,7 @@ const TransitionContext = createContext<TransitionContextType>({
     setHeaderProps: () => { },
     setMaskActive: () => { },
     isMaskActive: false,
+    canAnimate: false,
 });
 
 export const useTransition = () => useContext(TransitionContext);
@@ -54,8 +56,11 @@ export default function TransitionProvider({ children }: { children: ReactNode }
 
     // Check if we are currently mid-navigation
     const [isTransitioning, setIsTransitioning] = useState(false);
+    const [initialLoadDone, setInitialLoadDone] = useState(false);
     const [pendingHref, setPendingHref] = useState<string | null>(null);
     const isFirstMount = useRef(true);
+
+    const navigateRef = useRef((href: string, label: string, color?: string) => {});
 
     const setMaskActive = useCallback((active: boolean) => {
         setIsMaskActive(active);
@@ -64,8 +69,13 @@ export default function TransitionProvider({ children }: { children: ReactNode }
     // 1. Initial Load Synchronization & Global Scroll Mask
     useEffect(() => {
         // @ts-expect-error global flag
-        if (globalThis.appLoaded) return;
-        // Content is visible by default to avoid delayed opacity
+        if (globalThis.appLoaded) {
+            setInitialLoadDone(true);
+            return;
+        }
+        const handler = () => setInitialLoadDone(true);
+        window.addEventListener("apps-loaded", handler);
+        return () => window.removeEventListener("apps-loaded", handler);
     }, []);
 
     useEffect(() => {
@@ -127,6 +137,12 @@ export default function TransitionProvider({ children }: { children: ReactNode }
 
         tl.to({}, { duration: 0.1 });
     };
+
+    // Update the ref so the context value doesn't need to depend on the function directly if it closes over changing state,
+    // although in this case navigate itself doesn't depend on much.
+    useEffect(() => {
+        navigateRef.current = navigate;
+    });
 
     // Helper to get a label from the pathname for browser navigation
     const getLabelFromPath = (path: string) => {
@@ -256,8 +272,20 @@ export default function TransitionProvider({ children }: { children: ReactNode }
 
     }, [pathname, setMaskActive]);
 
+    const canAnimate = initialLoadDone && !isTransitioning;
+
+    const contextValue = useMemo(() => ({
+        navigate: (...args: Parameters<typeof navigate>) => navigateRef.current(...args),
+        isTransitioning,
+        pendingHref,
+        setHeaderProps,
+        setMaskActive,
+        isMaskActive,
+        canAnimate
+    }), [isTransitioning, pendingHref, isMaskActive, canAnimate, setMaskActive]);
+
     return (
-        <TransitionContext.Provider value={{ navigate, isTransitioning, pendingHref, setHeaderProps, setMaskActive, isMaskActive }}>
+        <TransitionContext.Provider value={contextValue}>
             <PageCurtain ref={curtainRef} label={currentLabel} />
             
             <div
@@ -275,11 +303,6 @@ export default function TransitionProvider({ children }: { children: ReactNode }
             <SmoothScroll />
             <CustomCursor isTransitioning={isTransitioning} />
             <div className={`transition-all duration-500 ease-in-out ${headerProps.hidden ? 'opacity-0 invisible pointer-events-none' : 'opacity-100 visible'}`}>
-                {/* Noise overlay for high-fidelity glass effect */}
-                <div 
-                    className="fixed top-0 left-0 w-full h-screen pointer-events-none z-[49] opacity-[0.02] mix-blend-overlay"
-                    style={{ backgroundImage: 'url(/noise.svg)' }}
-                />
                 <Header {...headerProps} />
             </div>
         </TransitionContext.Provider>

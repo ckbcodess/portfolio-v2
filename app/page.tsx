@@ -7,6 +7,7 @@ import TransitionLink from "@/components/TransitionLink";
 import TabsSection from "@/components/TabsSection";
 import React, { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence, Variants } from "motion/react";
+import { useTransition } from "@/components/TransitionProvider";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { ArrowRight, Lock } from "lucide-react";
 import PreviewCard from "@/components/PreviewCard";
@@ -17,20 +18,12 @@ import FixedPreview from "@/components/FixedPreview";
 export default function Home() {
   const pageRef = useRef<HTMLDivElement>(null);
   const [activeImage, setActiveImage] = useState<string>(caseStudies[0].heroSrc);
-  const [surprises, setSurprises] = useState<number[]>([]);
-  const [canAnimate, setCanAnimate] = useState(true);
-  const [hoveredSlug, setHoveredSlug] = useState<string | null>(caseStudies[0]?.slug ?? null);
+  const [clickCount, setClickCount] = useState(0);
+  const [isDisabled, setIsDisabled] = useState(false);
+  const comboTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { canAnimate } = useTransition();
+  const [hoveredSlug, setHoveredSlug] = useState<string | null>(null);
 
-  useEffect(() => {
-    // @ts-expect-error global appLoaded flag
-    if (globalThis.appLoaded) {
-      setTimeout(() => setCanAnimate(true), 0);
-    } else {
-      const handler = () => setCanAnimate(true);
-      window.addEventListener("apps-loaded", handler);
-      return () => window.removeEventListener("apps-loaded", handler);
-    }
-  }, []);
 
   const containerVariants: Variants = {
     hidden: { opacity: 1, scale: 1 },
@@ -41,21 +34,53 @@ export default function Home() {
     },
   };
 
+  const messages = [
+    <React.Fragment key="msg-0">Hey, I'm Ransford :)</React.Fragment>,
+    <React.Fragment key="msg-1">Boop! <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f446.png" alt="👆" className="inline-block w-5 h-5 align-text-bottom ml-1 drop-shadow-sm" draggable={false} /></React.Fragment>,
+    <React.Fragment key="msg-2">That tickles! <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f602.png" alt="😂" className="inline-block w-5 h-5 align-text-bottom ml-1 drop-shadow-sm" draggable={false} /></React.Fragment>,
+    <React.Fragment key="msg-3">Okay, you can stop now...</React.Fragment>,
+    <React.Fragment key="msg-4">Seriously. <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f610.png" alt="😐" className="inline-block w-5 h-5 align-text-bottom ml-1 drop-shadow-sm" draggable={false} /></React.Fragment>,
+    <React.Fragment key="msg-5">Fine, I'm leaving. <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f4a8.png" alt="💨" className="inline-block w-[22px] h-[22px] align-text-bottom ml-1 drop-shadow-sm" draggable={false} /></React.Fragment>,
+  ];
+
   const handleAvatarClick = () => {
+    if (isDisabled) return;
+
+    if (comboTimeoutRef.current) {
+      clearTimeout(comboTimeoutRef.current);
+    }
+
+    // Play satisfying sound with escalating pitch
     const sounds = ["/sounds/pop-1.wav", "/sounds/pop-2.wav", "/sounds/pop-3.wav"];
     const audio = new Audio(sounds[Math.floor(Math.random() * sounds.length)]);
     audio.volume = 0.4;
+    audio.preservesPitch = false;
+    // Pitch goes up slightly with each click
+    audio.playbackRate = 1 + (clickCount * 0.15); 
     audio.play().catch(() => { });
 
-    const id = Date.now();
-    setSurprises((prev) => [...prev, id]);
-    setTimeout(() => setSurprises((prev) => prev.filter((s) => s !== id)), 1000);
+    const nextCount = clickCount + 1;
+    setClickCount(nextCount);
+
+    if (nextCount >= messages.length - 1) {
+      setIsDisabled(true);
+      // Reset after 4 seconds
+      setTimeout(() => {
+        setClickCount(0);
+        setIsDisabled(false);
+      }, 4000);
+    } else {
+      // Revert if they stop clicking within the combo window
+      comboTimeoutRef.current = setTimeout(() => {
+        setClickCount(0);
+      }, 1200);
+    }
   };
 
   return (
     <div
       ref={pageRef}
-      className="bg-background min-h-screen pt-[128px] md:pt-56 pb-[var(--page-pt)] lg:pb-[8vh] w-full selection:bg-primary selection:text-primary-foreground flex flex-col"
+      className="bg-background min-h-screen lg:h-screen lg:overflow-hidden pt-[80px] md:pt-[120px] lg:pt-[151px] pb-[var(--page-pt)] lg:pb-[6vh] w-full selection:bg-primary selection:text-primary-foreground flex flex-col"
     >
       {/* Main Content */}
       <div className="w-full flex-1 flex flex-col lg:flex-row lg:items-stretch lg:justify-start gap-12 lg:gap-16 px-[var(--page-px)]">
@@ -64,43 +89,63 @@ export default function Home() {
           variants={containerVariants}
           initial="hidden"
           animate={canAnimate ? "show" : "hidden"}
-          className="flex flex-col gap-16 w-full max-w-[38.5rem] lg:flex-1 lg:justify-between items-start origin-top-left"
+          className="flex flex-col gap-10 lg:gap-12 w-full max-w-[38.5rem] lg:flex-1 lg:justify-between items-start origin-top-left"
         >
           {/* Hero Section */}
           <div className="self-stretch flex flex-col justify-start items-start gap-10">
             {/* Profile */}
             <MaskReveal delay={0.1} className="rounded-full">
               <motion.div
-                className="inline-flex items-center gap-3 group rounded-full cursor-pointer"
+                className="inline-flex items-center gap-3 group rounded-full cursor-pointer select-none"
                 onClick={handleAvatarClick}
-                whileTap={{ scale: 0.95 }}
               >
                 <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger>
+                    <TooltipTrigger asChild>
                       <motion.div
-                        className="relative"
-                        animate={surprises.length > 0 ? { rotate: 360 } : { rotate: 0 }}
-                        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                        className="relative origin-center"
+                        animate={
+                          clickCount >= 5 ? { scale: 0, rotate: 1080, opacity: 0 } :
+                          { scale: 1, rotate: 0, opacity: 1 }
+                        }
+                        whileTap={!isDisabled ? { scale: 0.7, rotate: -15 } : {}}
+                        transition={
+                          clickCount >= 5 
+                            ? { duration: 0.8, ease: "backIn" } 
+                            : { type: "spring", stiffness: 400, damping: 17 }
+                        }
                       >
                         <Image
-                          className="w-8 h-8 rounded-full shadow-sm group-hover:shadow-md transition-shadow"
+                          className="w-8 h-8 rounded-full group-hover:shadow-md transition-shadow"
                           src="/avatar.webp"
                           alt="Ransford Gyasi"
                           width={32}
                           height={32}
                           priority
                           decoding="async"
+                          draggable={false}
                         />
-                        <SurpriseParticles ids={surprises} />
                       </motion.div>
                     </TooltipTrigger>
                     <TooltipContent side="bottom" className="text-[10px] font-normal tracking-tight">
-                      {surprises.length > 0 ? "You found me! ✨" : "Hey, I'm Ransford"}
+                      {clickCount > 0 ? "Ouch!" : "Hey, I'm Ransford"}
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
-                <p className="text-foreground text-base font-normal">Hey, I'm Ransford :)</p>
+                <div className="relative overflow-hidden h-6 flex items-center min-w-[200px]">
+                  <AnimatePresence mode="popLayout">
+                    <motion.p
+                      key={clickCount}
+                      initial={{ opacity: 0, y: 15, filter: "blur(4px)" }}
+                      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                      exit={{ opacity: 0, y: -15, filter: "blur(4px)" }}
+                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                      className="text-foreground text-base font-normal whitespace-nowrap absolute"
+                    >
+                      {messages[clickCount]}
+                    </motion.p>
+                  </AnimatePresence>
+                </div>
               </motion.div>
             </MaskReveal>
 
@@ -116,7 +161,7 @@ export default function Home() {
 
             {/* Mobile Preview */}
             <div className="lg:hidden w-full my-4 relative">
-              <PreviewCard activeImage={activeImage} className="w-full border border-foreground/5 rounded-xl shadow-sm" />
+              <PreviewCard activeImage={activeImage} className="w-full rounded-xl" />
             </div>
           </div>
 
@@ -128,7 +173,7 @@ export default function Home() {
               </MaskReveal>
               <div className="flex flex-col justify-start items-start gap-4 w-full">
                 {caseStudies.slice(0, 2).map((study, idx) => (
-                  <MaskReveal key={study.slug} delay={0.5 + idx * 0.05} className="w-[calc(100%+4rem)] -mx-8 px-8 -my-6 py-6">
+                  <MaskReveal key={study.slug} delay={0.5 + idx * 0.05} className="w-[calc(100%+2rem)] -mx-4 md:w-[calc(100%+4rem)] md:-mx-8 -my-2 py-2">
                     <motion.div
                       className="w-full"
                       onMouseEnter={() => {
@@ -139,8 +184,8 @@ export default function Home() {
                         setActiveImage(study.heroSrc);
                         setHoveredSlug(study.slug);
                       }}
-                      onMouseLeave={() => setHoveredSlug(caseStudies[0]?.slug ?? null)}
-                      onBlur={() => setHoveredSlug(caseStudies[0]?.slug ?? null)}
+                      onMouseLeave={() => setHoveredSlug(null)}
+                      onBlur={() => setHoveredSlug(null)}
                       animate={{
                         opacity: hoveredSlug && hoveredSlug !== study.slug ? 0.5 : 1,
                         y: hoveredSlug === study.slug ? -2 : 0,
@@ -162,15 +207,15 @@ export default function Home() {
                 ))}
               </div>
               <div className="lg:hidden w-full pt-2">
-                <MaskReveal delay={0.6}>
+                <MaskReveal delay={0.6} className="w-[calc(100%+2rem)] -mx-4 md:w-[calc(100%+4rem)] md:-mx-8 -my-2 py-2">
                   <a
                     href="https://drive.google.com/file/d/1EJm5aBA3I95pPkgT-4PDKTlOZe7ChLH9/view?usp=sharing"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-between w-full p-4 -mx-4 rounded-2xl transition-[transform,background-color,opacity] duration-300 cursor-pointer bg-transparent hover:bg-foreground/[0.02]"
+                    className="flex items-center justify-between w-full p-4 md:p-6 rounded-2xl transition-[transform,background-color,opacity] duration-300 cursor-pointer bg-transparent hover:bg-foreground/[0.02]"
                   >
                     <div className="flex items-center gap-5">
-                      <div className="w-16 h-16 rounded-xl flex items-center justify-center shrink-0 bg-foreground/5 border border-foreground/10">
+                      <div className="w-16 h-16 rounded-xl flex items-center justify-center shrink-0 bg-foreground/5">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-foreground/60"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                       </div>
                       <div className="flex flex-col justify-center items-start">
@@ -187,42 +232,11 @@ export default function Home() {
       </div>
 
       {/* Desktop Preview — Fixed Position */}
-      <FixedPreview activeImage={activeImage} isVisible={canAnimate} />
+      <FixedPreview activeImage={activeImage} isVisible={canAnimate} hoveredSlug={hoveredSlug} />
     </div>
   );
 }
 
-function SurpriseParticles({ ids }: { ids: number[] }) {
-  const colors = ["#ff4d4d", "#4d79ff", "#4dff88", "#ffcc4d"];
-
-  return (
-    <AnimatePresence>
-      {ids.map((id) => (
-        <div key={id} className="absolute inset-0 pointer-events-none">
-          {[...Array(8)].map((_, i) => (
-            <motion.div
-              key={i}
-              initial={{ scale: 0, x: 0, y: 0, opacity: 1 }}
-              animate={{
-                scale: [0, 1.5, 0],
-                x: (Math.random() - 0.5) * 80,
-                y: -40 - Math.random() * 60,
-                opacity: 0,
-              }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              className="absolute w-2 h-2 rounded-full"
-              style={{
-                backgroundColor: colors[i % colors.length],
-                left: "50%",
-                top: "50%",
-              }}
-            />
-          ))}
-        </div>
-      ))}
-    </AnimatePresence>
-  );
-}
 
 const SocialLinks = React.memo(function SocialLinks() {
   return (
@@ -287,7 +301,7 @@ const ProjectItem = React.memo(function ProjectItem({
   const content = (
     <div
       data-cursor={isLocked ? "confidential" : "case-study"}
-      className={`group flex items-center justify-between w-full p-4 -mx-4 rounded-2xl transition-[transform,background-color,opacity] duration-300 cursor-pointer ${isActive
+      className={`group flex items-center justify-between w-full p-4 md:p-6 rounded-2xl transition-[transform,background-color,opacity] duration-300 cursor-pointer ${isActive
         ? "bg-foreground/[0.03]"
         : "bg-transparent hover:bg-foreground/[0.02]"
         } ${isDimmed ? "opacity-55" : "opacity-100"}`}

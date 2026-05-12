@@ -1,12 +1,14 @@
 "use client";
 
 import { motion } from "motion/react";
+import { useTransition } from "./TransitionProvider";
 
 /**
  * Signature component using a refined expo ease-out curve 
  * for a more "impeccable" and smooth writing experience.
  */
 export function Signature({ className }: { className?: string }) {
+  const { canAnimate } = useTransition();
   // Expo curve recommended by the /animate workflow for decisive, premium motion
   const easeExpo = [0.16, 1, 0.3, 1] as const;
 
@@ -44,7 +46,7 @@ export function Signature({ className }: { className?: string }) {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         initial="hidden"
-        whileInView="visible"
+        animate={canAnimate ? "visible" : "hidden"}
         viewport={{ once: true }}
       >
         {/* Ransford (Main Body) */}

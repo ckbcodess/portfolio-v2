@@ -4,9 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { usePathname } from "next/navigation";
+import { useTheme } from "next-themes";
 
 export default function CustomCursor({ isTransitioning }: { isTransitioning?: boolean }) {
     const pathname = usePathname();
+    const { resolvedTheme } = useTheme();
     const cursorRef = useRef<HTMLDivElement>(null);
     const [cursorType, setCursorType] = useState<"default" | "copy" | "copied" | "pointer" | "case-study" | "confidential" | "none" | "wrap">("default");
     const isMobile = useRef(false);
@@ -152,13 +154,14 @@ export default function CustomCursor({ isTransitioning }: { isTransitioning?: bo
                 repeat: 1
             });
         } else if (cursorType === "case-study" || cursorType === "confidential") {
+            const isLight = resolvedTheme === "light";
             gsap.to(cursorRef.current, {
                 mixBlendMode: "normal",
                 width: cursorType === "case-study" ? 160 : 120,
                 height: 40,
                 borderRadius: "20px",
-                backgroundColor: "#ffffff",
-                color: "#000000",
+                backgroundColor: isLight ? "#000000" : "#ffffff",
+                color: isLight ? "#ffffff" : "#000000",
                 border: "0px solid transparent",
                 duration: 0.4,
                 ease: "elastic.out(1, 0.82)"

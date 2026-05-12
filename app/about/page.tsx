@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import { motion, Variants } from "motion/react";
+import { useTransition } from "@/components/TransitionProvider";
 import { MaskReveal } from "@/components/MaskReveal";
 import { caseStudies } from "@/content/case-studies";
 import { Signature } from "@/components/Signature";
@@ -22,20 +23,10 @@ const BIO_TEXT =
 
 export default function AboutPage() {
   const pageRef = useRef<HTMLDivElement>(null);
-  const [canAnimate, setCanAnimate] = useState(false);
+  const { canAnimate } = useTransition();
   const [activeTab, setActiveTab] = useState<Tab>("Bio");
   const previewImage = caseStudies[0].heroSrc;
 
-  useEffect(() => {
-    // @ts-expect-error global appLoaded flag
-    if (globalThis.appLoaded) {
-      setTimeout(() => setCanAnimate(true), 0);
-    } else {
-      const handler = () => setCanAnimate(true);
-      window.addEventListener("apps-loaded", handler);
-      return () => window.removeEventListener("apps-loaded", handler);
-    }
-  }, []);
 
   const containerVariants: Variants = {
     hidden: { opacity: 0, scale: 0.98, filter: "blur(4px)" },

@@ -95,15 +95,26 @@ export default function Lightbox({ src, alt = "", layoutId, onClose, onNext, onP
               }}
               onClick={(e) => e.stopPropagation()}
             >
-              <Image
-                src={src}
-                alt={alt}
-                width={1920}
-                height={1080}
-                className="w-full h-full object-contain"
-                quality={95}
-                priority
-              />
+              {src.endsWith(".mp4") ? (
+                <video
+                  src={src}
+                  controls
+                  autoPlay
+                  loop
+                  playsInline
+                  className="w-full h-full object-contain max-h-[85vh]"
+                />
+              ) : (
+                <Image
+                  src={src}
+                  alt={alt}
+                  width={1920}
+                  height={1080}
+                  className="w-full h-full object-contain"
+                  quality={95}
+                  priority
+                />
+              )}
             </motion.div>
 
             {/* Navigation buttons */}

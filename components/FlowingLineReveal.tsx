@@ -3,6 +3,7 @@
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
+import { useTransition } from "./TransitionProvider";
 
 interface FlowingLineRevealProps {
   text: string;
@@ -19,6 +20,7 @@ export function FlowingLineReveal({
   delay = 0,
   lineDelay = 0.06,
 }: FlowingLineRevealProps) {
+  const { canAnimate } = useTransition();
   const containerRef = useRef<HTMLDivElement>(null);
   const measureRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const [lines, setLines] = useState<string[][]>([]);
@@ -92,7 +94,7 @@ export function FlowingLineReveal({
           <div key={`${lineIndex}-${line.join("")}`} className="overflow-hidden">
             <motion.div
               initial={{ opacity: 0, y: "100%" }}
-              animate={{ opacity: 1, y: 0 }}
+              animate={canAnimate ? { opacity: 1, y: 0 } : { opacity: 0, y: "100%" }}
               transition={{
                 duration: 0.45,
                 delay: delay + lineIndex * lineDelay,

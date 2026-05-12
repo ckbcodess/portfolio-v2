@@ -52,7 +52,7 @@ const RefractiveNav = forwardRef<HTMLElement, {
         specularSaturation: settings?.specularSaturation ?? 95,
         bezelWidth: settings?.bezelWidth ?? 14,
         bezelHeightFn: convex,
-        refractiveIndex: settings?.refractiveIndex ?? 1.8, // Slightly lower for cleaner "glass" bend
+        refractiveIndex: settings?.refractiveIndex ?? 3.8, // Slightly lower for cleaner "glass" bend
         specularAngle: settings?.specularAngle ?? 135,
       }}
       className={className}
@@ -62,20 +62,13 @@ const RefractiveNav = forwardRef<HTMLElement, {
     >
       {/* Core Glass Atmosphere Layer - Reduced blur to let refraction show */}
       <div
-        className={`absolute inset-0 backdrop-blur-[12px] backdrop-saturate-[1.4] pointer-events-none ${isCaseStudyHero ? "bg-black/5" : "bg-background/5 dark:bg-black/5"
+        className={`absolute inset-0 backdrop-blur-[12px] backdrop-saturate-[1.4] pointer-events-none ${isCaseStudyHero ? "bg-black/5" : "bg-[#f9f9f9]/80 dark:bg-[#111111]/80"
           }`}
       />
 
       {/* Crisp Inner Rim / Specular Border */}
       <div className="absolute inset-0 rounded-full border-[0.5px] border-white/10 dark:border-white/5 pointer-events-none z-30" />
 
-      {/* Specular Sheen Gradient */}
-      <div
-        className="absolute inset-0 rounded-full pointer-events-none z-20 opacity-40 mix-blend-soft-light"
-        style={{
-          background: 'linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 40%, rgba(255,255,255,0) 60%, rgba(255,255,255,0.05) 100%)'
-        }}
-      />
 
       {/* Local noise texture overlay for high-fidelity glass */}
       <div

@@ -12,28 +12,40 @@ interface PreviewCardProps {
 export default function PreviewCard({ activeImage, className, aspectRatio = "aspect-video" }: PreviewCardProps) {
   const hasHeightClass = className?.includes("h-");
   const aspectClass = hasHeightClass ? "" : aspectRatio;
+  const isVideo = activeImage?.endsWith(".mp4");
 
   return (
     <div className={`w-full ${aspectClass} rounded-lg overflow-hidden bg-neutral-900 relative ${className}`}>
-      <AnimatePresence mode="sync" initial={false}>
+      <AnimatePresence mode="wait" initial={false}>
         {activeImage && (
           <motion.div
             key={activeImage}
-            initial={{ opacity: 0, scale: 1.02 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.18, ease: [0.23, 1, 0.32, 1] }}
-            className="absolute inset-0"
+            initial={{ opacity: 0, filter: "blur(8px)" }}
+            animate={{ opacity: 1, filter: "blur(0px)" }}
+            exit={{ opacity: 0, filter: "blur(8px)" }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
+            className="absolute inset-0 transform-gpu"
           >
-            <Image
-              src={activeImage}
-              alt="Case study preview"
-              fill
-              sizes="(max-width: 768px) 100vw, 700px"
-              className="object-cover"
-              priority
-              decoding="async"
-            />
+            {isVideo ? (
+              <video
+                src={activeImage}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <Image
+                src={activeImage}
+                alt="Case study preview"
+                fill
+                sizes="(max-width: 768px) 100vw, 700px"
+                className="object-cover"
+                priority
+                decoding="async"
+              />
+            )}
             <div className="absolute inset-0 bg-black/5" />
           </motion.div>
         )}

@@ -19,7 +19,7 @@ interface CaseStudyPageProps {
 }
 
 export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
-  const { setHeaderProps } = useTransition();
+  const { setHeaderProps, canAnimate } = useTransition();
   const introRef = useRef<HTMLElement>(null);
   const missionEndRef = useRef<HTMLDivElement>(null);
   const [showSidebar, setShowSidebar] = useState(false);
@@ -30,23 +30,26 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
   // Sidebar logic: Trigger sidebar based on scroll
   useEffect(() => {
     let ticking = false;
+    
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
           const isScrolled = window.scrollY > 120;
           
-          // Sync header scroll state
-          setHeaderProps(prev => ({
-            ...prev,
-            scrolled: isScrolled
-          }));
+          // Sync header scroll state - only update if changed to prevent app-wide re-renders
+          setHeaderProps(prev => {
+            if (prev.scrolled === isScrolled) return prev;
+            return { ...prev, scrolled: isScrolled };
+          });
 
-          if (!introRef.current) {
-            ticking = false;
-            return;
+          if (introRef.current) {
+            const rect = introRef.current.getBoundingClientRect();
+            const shouldShowSidebar = rect.bottom < 200;
+            setShowSidebar(prev => {
+              if (prev === shouldShowSidebar) return prev;
+              return shouldShowSidebar;
+            });
           }
-          const rect = introRef.current.getBoundingClientRect();
-          setShowSidebar(rect.bottom < 200);
           ticking = false;
         });
         ticking = true;
@@ -105,7 +108,7 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
     <motion.main 
       key="content"
       initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      animate={canAnimate ? { opacity: 1 } : { opacity: 0 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
       className="min-h-screen text-foreground selection:bg-primary selection:text-primary-foreground" 
       role="main"

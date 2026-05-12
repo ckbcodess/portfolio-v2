@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { motion, useReducedMotion, AnimatePresence } from "motion/react";
+import { motion, useReducedMotion, AnimatePresence, useScroll, useTransform } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { refractive, convex } from "@hashintel/refractive";
 
@@ -15,7 +15,6 @@ interface SectionLink {
 export default function MobileCaseStudyNav({ links, visible }: { links: SectionLink[], visible?: boolean }) {
   const [activeId, setActiveId] = useState<string>("");
   const [isVisible, setIsVisible] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const visibleSections = useRef(new Map<string, number>());
@@ -27,19 +26,16 @@ export default function MobileCaseStudyNav({ links, visible }: { links: SectionL
 
     const handleScroll = () => {
       if (visible !== undefined) {
-        setIsVisible(visible);
+        setIsVisible(prev => prev === visible ? prev : visible);
         if (!visible) setIsOpen(false);
       } else {
         const scrolledPastThreshold = window.scrollY > 80;
-        setIsVisible(scrolledPastThreshold);
+        setIsVisible(prev => prev === scrolledPastThreshold ? prev : scrolledPastThreshold);
         if (!scrolledPastThreshold) setIsOpen(false);
       }
-
-      const maxScroll = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      setScrollProgress(maxScroll > 0 ? Math.min(100, (window.scrollY / maxScroll) * 100) : 0);
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, [visible]);
@@ -120,7 +116,9 @@ export default function MobileCaseStudyNav({ links, visible }: { links: SectionL
   const activeLink = links.find((link) => (link.targetIds || [link.id]).includes(activeId)) || links[0];
   const radius = 14;
   const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (scrollProgress / 100) * circumference;
+  
+  const { scrollYProgress } = useScroll();
+  const strokeDashoffset = useTransform(scrollYProgress, [0, 1], [circumference, 0]);
 
   // Replaced "squishy" loose spring with a premium, crisp, critically-damped spring
   const shellTransition = shouldReduceMotion
@@ -150,7 +148,7 @@ export default function MobileCaseStudyNav({ links, visible }: { links: SectionL
             transition={{ duration: 0.15 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => setIsOpen(true)}
-            className="relative overflow-hidden group min-w-[140px] min-h-[52px] flex items-center rounded-full shadow-[0_24px_56px_rgba(0,0,0,0.5)] pointer-events-auto"
+            className="relative overflow-hidden group min-w-[140px] min-h-[52px] flex items-center rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] pointer-events-auto"
             style={{
               paddingLeft: "16px",
               paddingRight: "24px",
@@ -166,7 +164,7 @@ export default function MobileCaseStudyNav({ links, visible }: { links: SectionL
               <div className="relative flex h-[18px] w-[18px] shrink-0 items-center justify-center text-foreground">
                 <svg className="-rotate-90 h-full w-full" viewBox="0 0 36 36" aria-hidden="true">
                   <circle cx="18" cy="18" r={radius} stroke="currentColor" strokeWidth="4" fill="transparent" className="opacity-20" />
-                  <circle cx="18" cy="18" r={radius} stroke="currentColor" strokeWidth="4" fill="transparent" strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} className="opacity-90" strokeLinecap="round" />
+                  <motion.circle cx="18" cy="18" r={radius} stroke="currentColor" strokeWidth="4" fill="transparent" strokeDasharray={circumference} style={{ strokeDashoffset }} className="opacity-90" strokeLinecap="round" />
                 </svg>
               </div>
 
@@ -201,7 +199,7 @@ export default function MobileCaseStudyNav({ links, visible }: { links: SectionL
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ duration: 0.2 }}
-            className="relative overflow-hidden w-[320px] rounded-[24px] shadow-[0_24px_56px_rgba(0,0,0,0.5)] pointer-events-auto flex flex-col"
+            className="relative overflow-hidden w-[320px] rounded-[24px] shadow-[0_8px_32px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] pointer-events-auto flex flex-col"
           >
             {/* Simple CSS Glass */}
             <div className="absolute inset-0 backdrop-blur-[24px] backdrop-saturate-[1.5] bg-background/80 rounded-[inherit] border border-foreground/10 pointer-events-none" />

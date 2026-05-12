@@ -8,12 +8,16 @@ import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/comp
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { animate, spring } from "animejs";
+import { scrambleText } from "animejs/text";
 import dynamic from "next/dynamic";
 const RefractiveNav = dynamic(() => import("./RefractiveNav"), { 
   ssr: false,
   loading: () => <div className="h-12 w-[300px] bg-black/5 dark:bg-black/40 rounded-full animate-pulse" />
 });
 import Clock from "./Clock";
+import ThemeControls from "./ThemeControls";
+import { useSound } from "@/components/SoundProvider";
+import { Volume2, VolumeX } from "lucide-react";
 
 interface HeaderProps {
   backLink?: string;
@@ -35,6 +39,7 @@ const customSpringEase = (t: number) => {
 
 export default function Header({ backLink = "/", scrolled: scrolledProp }: HeaderProps) {
   const pathname = usePathname();
+  const { isSoundEnabled, toggleSound } = useSound();
   const { pendingHref, isTransitioning } = useTransition();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [internalScrolled, setInternalScrolled] = useState(false);
@@ -84,6 +89,31 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
   }, [isCaseStudy, scrolled]);
 
   const activeHref = pendingHref || pathname;
+  const logoRef = useRef<HTMLSpanElement>(null);
+
+  const handleLogoEnter = () => {
+    if (!logoRef.current) return;
+    animate(logoRef.current, {
+      innerHTML: scrambleText({
+        text: "Home",
+        chars: "01<>[]{}_—=+*^?#&$!/\\|;:",
+        duration: 250,
+        settleDuration: 50,
+      })
+    });
+  };
+
+  const handleLogoLeave = () => {
+    if (!logoRef.current) return;
+    animate(logoRef.current, {
+      innerHTML: scrambleText({
+        text: "RG",
+        chars: "01<>[]{}_—=+*^?#&$!/\\|;:",
+        duration: 250,
+        settleDuration: 50,
+      })
+    });
+  };
 
   return (
     <header className="w-full fixed top-0 left-0 z-[1000] pointer-events-none pt-6 md:pt-[48px]">
@@ -93,11 +123,13 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
           <TransitionLink
             href="/"
             label="Home"
+            onMouseEnter={handleLogoEnter}
+            onMouseLeave={handleLogoLeave}
             className={`text-sm font-normal tracking-tight transition-colors p-4 -m-4 ${
               isCaseStudy && !scrolled ? "text-white" : "text-foreground"
             }`}
           >
-            RG
+            <span ref={logoRef} className="inline-block min-w-[2ch]">RG</span>
           </TransitionLink>
         </div>
 
@@ -189,9 +221,38 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
                 }`}>
                   <Clock />
                 </div>
+                <div className="hidden lg:flex items-center gap-6">
+                  <ThemeControls isHero={isCaseStudy && !scrolled} />
+                  <Tooltip>
+                    <TooltipTrigger
+                      onClick={toggleSound}
+                      className={`${
+                        isCaseStudy && !scrolled ? "text-white" : "text-foreground/60 hover:text-foreground"
+                      } transition-colors p-2 -m-2 flex items-center justify-center cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-sm`}
+                      aria-label={isSoundEnabled ? "Disable sound" : "Enable sound"}
+                    >
+                      {isSoundEnabled ? <Volume2 size={16} strokeWidth={2} /> : <VolumeX size={16} strokeWidth={2} />}
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" sideOffset={12}>
+                      {isSoundEnabled ? "Mute" : "Unmute"}
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
+          <div className="lg:hidden flex items-center gap-4 mr-8 pointer-events-auto">
+            <ThemeControls isHero={isCaseStudy && !scrolled && !isMenuOpen} />
+            <button
+              onClick={toggleSound}
+              className={`${
+                (isCaseStudy && !scrolled && !isMenuOpen) ? "text-white" : "text-foreground/60 hover:text-foreground"
+              } transition-colors p-2 -m-2 flex items-center justify-center cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-sm`}
+              aria-label={isSoundEnabled ? "Disable sound" : "Enable sound"}
+            >
+              {isSoundEnabled ? <Volume2 size={16} strokeWidth={2} /> : <VolumeX size={16} strokeWidth={2} />}
+            </button>
+          </div>
 
           <div className="lg:hidden pointer-events-auto">
             <button

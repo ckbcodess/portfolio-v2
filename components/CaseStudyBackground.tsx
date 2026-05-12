@@ -49,12 +49,6 @@ export default function CaseStudyBackground({ colors }: CaseStudyBackgroundProps
         className="absolute -top-[25%] -left-[15%] w-[130%] h-[150%]"
       />
       
-      {/* Subtle Texture Overlay */}
-      <div 
-        className="absolute -inset-[15%] opacity-[0.05] pointer-events-none mix-blend-overlay bg-[url('/noise.svg')]" 
-        style={{ transform: 'translateZ(0)' }}
-      />
-      
     </motion.div>,
     document.body
   );
