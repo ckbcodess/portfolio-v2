@@ -254,7 +254,7 @@ export const LockedCaseStudy: React.FC<LockedCaseStudyProps> = ({ caseStudy, onU
                   <div
                     key={index}
                     className={[
-                      "relative w-14 h-14 md:w-16 md:h-16 rounded-[18px] border bg-muted dark:bg-[#070709] flex items-center justify-center transition-all duration-300 ease-in-out overflow-hidden",
+                      "relative w-14 h-14 md:w-16 md:h-16 rounded-lg border bg-muted dark:bg-[#070709] flex items-center justify-center transition-all duration-300 ease-in-out overflow-hidden",
                       isInvalid ? "border-danger" : "border-transparent",
                       isInvalid ? "focus-within:border-danger" : "focus-within:border-primary",
                       isSubmitting && "opacity-60 cursor-not-allowed"

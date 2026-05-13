@@ -21,7 +21,7 @@ export function CodeBlockCommand({ mcp }: CodeBlockCommandProps) {
   }
 
   return (
-    <div className="relative group rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 p-4 font-mono text-sm overflow-hidden shadow-sm">
+    <div className="relative group rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 p-4 font-mono text-sm overflow-hidden shadow-sm">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2 text-muted-foreground">
           <Terminal size={14} />

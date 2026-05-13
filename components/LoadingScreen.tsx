@@ -49,6 +49,11 @@ export default function LoadingScreen() {
   const [realProgress, setRealProgress] = useState(0);
   const [assetsReady, setAssetsReady] = useState(false);
   const [barComplete, setBarComplete] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // ─── Asset Preloading Engine ───────────────────────────────────────────────
   const startPreload = useCallback(() => {
@@ -183,9 +188,11 @@ export default function LoadingScreen() {
         aria-hidden="true"
         style={{ left: "-9999px", top: "-9999px" }}
       >
-        <RefractiveNav settings={{ radius: 24, blur: 2 }}>
-          <div className="w-10 h-10" />
-        </RefractiveNav>
+        {mounted && (
+          <RefractiveNav settings={{ radius: 24, blur: 2 }}>
+            <div className="w-10 h-10" />
+          </RefractiveNav>
+        )}
       </div>
 
       {/* Loading Overlay */}

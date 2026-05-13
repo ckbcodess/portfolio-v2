@@ -163,7 +163,7 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
           </div>
 
           <div className="mt-20 mb-32">
-            <div className="relative overflow-hidden rounded-2xl bg-muted aspect-[21/9]">
+            <div className="relative overflow-hidden rounded-lg bg-muted aspect-[4/3] md:aspect-[21/9]">
               <Image 
                 src={caseStudy.heroSrc} 
                 alt={caseStudy.heroAlt || `Hero image for ${caseStudy.title}`} 
@@ -221,7 +221,7 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
 
               {section.imageSrc && (
                 <div className="w-full mt-8">
-                  <div className="relative overflow-hidden rounded-2xl bg-muted aspect-video">
+                  <div className="relative overflow-hidden rounded-lg bg-muted aspect-video">
                     <Image
                       src={section.imageSrc}
                       alt={section.heading}

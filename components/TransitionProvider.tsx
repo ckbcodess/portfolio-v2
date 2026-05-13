@@ -11,7 +11,7 @@ import PageCurtain from "@/components/PageCurtain";
 
 const SmoothScroll = dynamic(() => import("./SmoothScroll"), { ssr: false });
 const CustomCursor = dynamic(() => import("./CustomCursor"), { ssr: false });
-const LoadingScreen = dynamic(() => import("./LoadingScreen"), { ssr: false });
+import LoadingScreen from "./LoadingScreen";
 
 interface HeaderProps {
     variant?: "default" | "case-study";
@@ -291,8 +291,8 @@ export default function TransitionProvider({ children }: { children: ReactNode }
             <div
                 id="smooth-wrapper"
                 ref={contentRef}
-                className={`w-full origin-top relative z-10 transition-all duration-700 ${isMaskActive ? 'case-study-mask' : ''}`}
-                style={{ opacity: 1 }}
+                className={`w-full origin-top relative z-10 transition-opacity duration-700 ${isMaskActive ? 'case-study-mask' : ''}`}
+                style={{ opacity: initialLoadDone ? 1 : 0, visibility: initialLoadDone ? 'visible' : 'hidden' }}
             >
                 <div id="smooth-content" className="w-full">
                     {children}
@@ -302,7 +302,7 @@ export default function TransitionProvider({ children }: { children: ReactNode }
             <LoadingScreen />
             <SmoothScroll />
             <CustomCursor isTransitioning={isTransitioning} />
-            <div className={`transition-all duration-500 ease-in-out ${headerProps.hidden ? 'opacity-0 invisible pointer-events-none' : 'opacity-100 visible'}`}>
+            <div className={`transition-all duration-500 ease-in-out ${(!initialLoadDone || headerProps.hidden) ? 'opacity-0 invisible pointer-events-none' : 'opacity-100 visible'}`}>
                 <Header {...headerProps} />
             </div>
         </TransitionContext.Provider>

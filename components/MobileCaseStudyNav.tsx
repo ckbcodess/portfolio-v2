@@ -157,7 +157,7 @@ export default function MobileCaseStudyNav({ links, visible }: { links: SectionL
             }}
           >
             {/* Simple CSS Glass */}
-            <div className="absolute inset-0 backdrop-blur-[24px] backdrop-saturate-[1.5] bg-background/80 rounded-[inherit] border border-foreground/10 pointer-events-none" />
+            <div className="absolute inset-0 backdrop-blur-[24px] backdrop-saturate-[1.5] bg-background/30 rounded-[inherit] border border-foreground/5 pointer-events-none" />
 
             <div className="relative z-50 flex items-center justify-center w-full h-full">
               {/* Circle Indicator (Visually 16px) */}
@@ -173,9 +173,9 @@ export default function MobileCaseStudyNav({ links, visible }: { links: SectionL
                 <AnimatePresence mode="popLayout">
                   <motion.span
                     key={activeLink?.label}
-                    initial={{ opacity: 0, y: 5, filter: "blur(4px)" }}
-                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                    exit={{ opacity: 0, y: -5, filter: "blur(4px)" }}
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -5 }}
                     transition={{ duration: 0.25, ease: "easeOut" }}
                     className="text-[1.1rem] font-medium tracking-tight text-foreground/90 truncate max-w-[50vw]"
                   >
@@ -202,7 +202,7 @@ export default function MobileCaseStudyNav({ links, visible }: { links: SectionL
             className="relative overflow-hidden w-[320px] rounded-[24px] shadow-[0_8px_32px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)] pointer-events-auto flex flex-col"
           >
             {/* Simple CSS Glass */}
-            <div className="absolute inset-0 backdrop-blur-[24px] backdrop-saturate-[1.5] bg-background/80 rounded-[inherit] border border-foreground/10 pointer-events-none" />
+            <div className="absolute inset-0 backdrop-blur-[24px] backdrop-saturate-[1.5] bg-background/30 rounded-[inherit] border border-foreground/5 pointer-events-none" />
             
             <div className="relative z-50 flex flex-col w-full p-2">
               <div className="flex items-center justify-between px-4 py-3 mb-2 border-b border-foreground/10">
@@ -220,9 +220,9 @@ export default function MobileCaseStudyNav({ links, visible }: { links: SectionL
                       variant="ghost"
                       type="button"
                       onClick={() => scrollToSection(link.id)}
-                      className={`w-full justify-start rounded-2xl px-4 py-6 text-left text-[1rem] transition-all font-medium h-auto whitespace-normal break-words ${
+                      className={`w-full justify-start rounded-lg px-4 py-6 text-left text-[1rem] transition-all font-medium h-auto whitespace-normal break-words ${
                         isActive
-                          ? "bg-foreground/10 text-foreground"
+                          ? "bg-foreground/[0.03] text-foreground border border-foreground/5 backdrop-blur-md"
                           : "text-foreground/40 hover:text-foreground hover:bg-foreground/5"
                       }`}
                     >
