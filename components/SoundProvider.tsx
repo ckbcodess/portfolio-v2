@@ -144,7 +144,7 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  // ── Core sprite playback ────────────────────────────────────────────
+  // ── Core sprite playback (sound-engineered chain) ────────────────────
   const playSprite = useCallback(
     (startMs: number, durationMs: number) => {
       const ctx = audioContextRef.current;
@@ -154,13 +154,49 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
       // Resume if suspended (browser autoplay policy)
       if (ctx.state === "suspended") ctx.resume();
 
+      const now = ctx.currentTime;
       const source = ctx.createBufferSource();
       source.buffer = buffer;
 
-      // Reduced volume for a more subtle mechanical feel
+      // ── 1. High-pass filter — cut low-end rumble below 800 Hz ──────
+      const hpf = ctx.createBiquadFilter();
+      hpf.type = "highpass";
+      hpf.frequency.value = 800;
+      hpf.Q.value = 0.7;
+
+      // ── 2. Presence peak — boost 3–4 kHz for transient "crack" ─────
+      const presence = ctx.createBiquadFilter();
+      presence.type = "peaking";
+      presence.frequency.value = 3500;
+      presence.gain.value = 6;
+      presence.Q.value = 1.2;
+
+      // ── 3. High-shelf sparkle — air above 8 kHz ───────────────────
+      const airShelf = ctx.createBiquadFilter();
+      airShelf.type = "highshelf";
+      airShelf.frequency.value = 8000;
+      airShelf.gain.value = 3;
+
+      // ── 4. Compressor — even out dynamics across sprite variants ───
+      const compressor = ctx.createDynamicsCompressor();
+      compressor.threshold.value = -24;
+      compressor.knee.value = 6;
+      compressor.ratio.value = 4;
+      compressor.attack.value = 0.001;   // 1 ms — preserve the transient
+      compressor.release.value = 0.05;   // 50 ms — fast release for clicks
+
+      // ── 5. Output gain — tight transient envelope ─────────────────
       const gain = ctx.createGain();
-      gain.gain.value = 0.15;
-      source.connect(gain);
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.22, now + 0.002);  // 2 ms snap attack
+      gain.gain.setTargetAtTime(0, now + 0.002, 0.025);      // ~80 ms exp decay
+
+      // ── Signal chain: source → HPF → presence → air → comp → gain → out
+      source.connect(hpf);
+      hpf.connect(presence);
+      presence.connect(airShelf);
+      airShelf.connect(compressor);
+      compressor.connect(gain);
       gain.connect(ctx.destination);
 
       source.start(0, startMs / 1000, durationMs / 1000);
