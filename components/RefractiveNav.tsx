@@ -62,7 +62,7 @@ const RefractiveNav = forwardRef<HTMLElement, {
     >
       {/* Core Glass Atmosphere Layer - Reduced blur to let refraction show */}
       <div
-        className={`absolute inset-0 backdrop-blur-[12px] backdrop-saturate-[1.4] pointer-events-none ${isCaseStudyHero ? "bg-black/5" : "bg-[#f9f9f9]/80 dark:bg-[#111111]/80"
+        className={`absolute inset-0 backdrop-blur-[12px] backdrop-saturate-[1.4] pointer-events-none ${isCaseStudyHero ? "bg-black/5" : "bg-[#f9f9f9]/80 dark:bg-[#0f1014]/80"
           }`}
       />
 

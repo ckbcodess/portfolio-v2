@@ -10,6 +10,8 @@ import { motion, AnimatePresence } from "motion/react";
 import { MaskReveal } from "@/components/MaskReveal";
 import LockedCaseStudy from "@/components/LockedCaseStudy";
 import MobileCaseStudyNav from "@/components/MobileCaseStudyNav";
+import TransitionLink from "@/components/TransitionLink";
+
 
 
 
@@ -238,22 +240,48 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
           ))}
         </div>
 
-        {/* Next Project Footer - Hardened Navigation */}
+        {/* Next Project Footer - Impeccable Design */}
         {caseStudy.nextProject && (
-          <footer className="mt-48 lg:mt-64 pt-32 border-t border-border/50 max-w-4xl mx-auto text-center pb-32 relative z-10">
-            <div className="flex flex-col items-center gap-6 group">
-              <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground/60">
-                {caseStudy.nextProject.eyebrow || "Next Project"}
-              </span>
-              <div className="flex flex-col items-center gap-2">
-                <p className="text-sm text-muted-foreground/40">{caseStudy.nextProject.label}</p>
-                <a 
-                  href={caseStudy.nextProject.href}
-                  className="text-4xl md:text-6xl lg:text-7xl font-normal tracking-tighter hover:text-primary transition-colors duration-300"
-                >
-                  {caseStudy.nextProject.title}
-                </a>
-              </div>
+          <footer className="mt-64 pb-48 relative z-10 px-[var(--page-px)]">
+            <div className="max-w-7xl mx-auto">
+              <div className="h-px w-full bg-white/10 mb-24" />
+              
+              <TransitionLink 
+                href={caseStudy.nextProject.href}
+                label={caseStudy.nextProject.label}
+                className="group block"
+              >
+                <div className="flex flex-col gap-12 md:gap-20">
+                  <div className="flex items-center gap-6">
+                    <span className="text-[10px] md:text-xs uppercase tracking-[0.4em] text-white/30 font-medium whitespace-nowrap">
+                      {caseStudy.nextProject.eyebrow || "Next Case"}
+                    </span>
+                    <div className="h-px flex-1 bg-white/5 group-hover:bg-white/20 transition-colors duration-700" />
+                  </div>
+                  
+                  <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 lg:gap-24">
+                    <div className="flex flex-col gap-6 max-w-4xl">
+                      <h2 className="text-5xl md:text-7xl lg:text-[7vw] leading-[0.95] font-normal tracking-tighter text-white/80 group-hover:text-white transition-all duration-700 ease-out group-hover:translate-x-2">
+                        {caseStudy.nextProject.title}
+                      </h2>
+                    </div>
+                    
+                    <div className="flex flex-col gap-2 shrink-0 md:items-end lg:mb-4 transition-transform duration-700 group-hover:-translate-x-2">
+                      <p className="text-[10px] uppercase tracking-widest text-white/20 font-bold">Client / Project</p>
+                      <p className="text-xl md:text-2xl text-white/40 font-light group-hover:text-white transition-colors duration-500">
+                        {caseStudy.nextProject.label}
+                      </p>
+                      
+                      <div className="mt-4 flex items-center gap-2 text-white/0 group-hover:text-primary transition-all duration-500 transform translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100">
+                        <span className="text-xs uppercase tracking-widest font-medium">Explore</span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="transform group-hover:translate-x-1 transition-transform">
+                          <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </TransitionLink>
             </div>
           </footer>
         )}

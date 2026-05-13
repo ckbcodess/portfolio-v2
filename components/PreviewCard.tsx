@@ -15,7 +15,7 @@ export default function PreviewCard({ activeImage, className, aspectRatio = "asp
   const isVideo = activeImage?.endsWith(".mp4");
 
   return (
-    <div className={`w-full ${aspectClass} rounded-lg overflow-hidden bg-neutral-900 relative ${className}`}>
+    <div className={`w-full ${aspectClass} rounded-lg overflow-hidden bg-neutral-100 dark:bg-neutral-900 relative ${className}`}>
       <AnimatePresence mode="wait" initial={false}>
         {activeImage && (
           <motion.div
@@ -24,7 +24,7 @@ export default function PreviewCard({ activeImage, className, aspectRatio = "asp
             animate={{ opacity: 1, filter: "blur(0px)" }}
             exit={{ opacity: 0, filter: "blur(8px)" }}
             transition={{ duration: 0.15, ease: "easeOut" }}
-            className="absolute inset-0 transform-gpu"
+            className="absolute inset-0 transform-gpu scale-[1.01]"
           >
             {isVideo ? (
               <video

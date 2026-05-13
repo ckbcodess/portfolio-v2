@@ -7,12 +7,6 @@ import RefractiveNav from "./RefractiveNav";
 
 const SESSION_KEY = "rg_portfolio_loaded";
 
-const PATHS = {
-  hidden:    "M 0 100 Q 50 100 100 100 L 100 100 Q 50 100 0 100 Z",
-  curveDown: "M 0 0 Q 50 0 100 0 L 100 0 Q 50 50 0 0 Z",
-  end:       "M 0 0 Q 50 0 100 0 L 100 0 Q 50 0 0 0 Z",
-};
-
 // Comprehensive list of critical assets for the "best experience"
 const CRITICAL_ASSETS = [
   "/avatar.webp",
@@ -29,9 +23,7 @@ const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffec
 
 export default function LoadingScreen() {
   const overlayRef = useRef<HTMLDivElement>(null);
-  const pathRef = useRef<SVGPathElement>(null);
   const countRef = useRef<HTMLSpanElement>(null);
-  const greetRef = useRef<HTMLDivElement>(null);
 
   const [shouldAnimate, setShouldAnimate] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -94,7 +86,7 @@ export default function LoadingScreen() {
     const counterObj = { value: 0 };
     gsap.to(counterObj, {
       value: 100,
-      duration: 2.8, // Slightly slower for more "bracing" time
+      duration: 2.8, 
       ease: "power2.inOut",
       onUpdate: () => {
         const val = Math.round(counterObj.value);
@@ -113,12 +105,10 @@ export default function LoadingScreen() {
     if (!shouldAnimate || !assetsLoaded || !counterFinished) return;
 
     const overlay = overlayRef.current!;
-    const path = pathRef.current!;
     const counter = countRef.current!;
-    const greet = greetRef.current!;
 
     const tl = gsap.timeline({
-      delay: 0.5, // Hold for a beat to let browser breathe
+      delay: 0.3, // Brief hold at 100
       onComplete: () => {
         gsap.set(overlay, { display: "none", pointerEvents: "none" });
         // @ts-expect-error global flag
@@ -127,33 +117,20 @@ export default function LoadingScreen() {
       }
     });
 
-    // Fade out counter and slide in greeting
-    tl.to(counter, { autoAlpha: 0, y: -40, duration: 0.4, ease: "power3.in" });
-    tl.fromTo(
-      greet,
-      { autoAlpha: 0, y: 40 },
-      { autoAlpha: 1, y: 0, duration: 0.6, ease: "power4.out" },
-      "-=0.2"
-    );
-
-    // Hold greeting
-    tl.to({}, { duration: 1.0 }); 
-
-    // Morph path and slide up
-    tl.set(path, { attr: { d: "M 0 0 Q 50 0 100 0 L 100 100 Q 50 100 0 100 Z" } });
-    tl.to(path, {
-      duration: 0.8,
-      attr: { d: PATHS.curveDown },
-      ease: "power4.in",
-    });
-    tl.to(path, {
-      duration: 0.6,
-      attr: { d: PATHS.end },
-      ease: "power4.out",
+    // Slide the entire overlay up to reveal the content
+    tl.to(overlay, {
+      yPercent: -100,
+      duration: 1.1,
+      ease: "power4.inOut"
     });
 
-    // Final fade of greeting as path exits
-    tl.to(greet, { autoAlpha: 0, y: -20, duration: 0.3 }, "-=0.8");
+    // Fade and slide the counter up slightly faster
+    tl.to(counter, { 
+      autoAlpha: 0, 
+      y: -100, 
+      duration: 0.7, 
+      ease: "power3.in" 
+    }, 0);
 
   }, [shouldAnimate, assetsLoaded, counterFinished]);
 
@@ -172,44 +149,17 @@ export default function LoadingScreen() {
 
       <div
         ref={overlayRef}
-        className="fixed inset-0 w-full h-[100dvh] flex items-center justify-center pointer-events-auto"
-        style={{ zIndex: 9999999, background: "var(--foreground)" }}
+        className="fixed inset-0 w-full h-[100dvh] flex items-center justify-center pointer-events-auto overflow-hidden transform-gpu"
+        style={{ zIndex: 9999999, background: "var(--background)" }}
       >
-        <svg
-          className="absolute inset-0 w-full h-full"
-          viewBox="0 0 100 100"
-          preserveAspectRatio="none"
-          aria-hidden
-        >
-          <path
-            ref={pathRef}
-            d="M 0 0 Q 50 0 100 0 L 100 100 Q 50 100 0 100 Z"
-            fill="var(--foreground)"
-          />
-        </svg>
-
         <span
           ref={countRef}
-          className="relative z-10 text-background font-light tabular-nums select-none tracking-tighter"
+          className="relative z-10 text-foreground font-light tabular-nums select-none tracking-tighter"
           style={{ fontSize: "clamp(3rem, 10vw, 7rem)", lineHeight: 1 }}
           aria-live="polite"
         >
           {progress}
         </span>
-
-        <div
-          ref={greetRef}
-          className="absolute inset-0 flex items-center justify-center z-10 opacity-0 select-none"
-          aria-hidden="true"
-        >
-          <p
-            className="text-background font-light text-center tracking-tight flex items-center gap-4"
-            style={{ fontSize: "clamp(2rem, 7vw, 4rem)", lineHeight: 1.1 }}
-          >
-            hi there
-            <span className="inline-block w-2 h-2 rounded-full bg-background opacity-80 mt-2" />
-          </p>
-        </div>
       </div>
     </>
   );

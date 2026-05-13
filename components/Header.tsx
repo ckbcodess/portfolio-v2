@@ -12,7 +12,7 @@ import { scrambleText } from "animejs/text";
 import dynamic from "next/dynamic";
 const RefractiveNav = dynamic(() => import("./RefractiveNav"), { 
   ssr: false,
-  loading: () => <div className="h-12 w-[300px] bg-black/5 dark:bg-black/40 rounded-full animate-pulse" />
+  loading: () => <div className="h-12 w-[300px] rounded-full" />
 });
 import Clock from "./Clock";
 import ThemeControls from "./ThemeControls";
@@ -92,7 +92,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
   const logoRef = useRef<HTMLSpanElement>(null);
 
   const handleLogoEnter = () => {
-    if (!logoRef.current) return;
+    if (!logoRef.current || window.matchMedia("(pointer: coarse)").matches) return;
     animate(logoRef.current, {
       innerHTML: scrambleText({
         text: "Home",
@@ -104,7 +104,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
   };
 
   const handleLogoLeave = () => {
-    if (!logoRef.current) return;
+    if (!logoRef.current || window.matchMedia("(pointer: coarse)").matches) return;
     animate(logoRef.current, {
       innerHTML: scrambleText({
         text: "RG",
@@ -268,7 +268,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
                   initial={{ opacity: 0, rotate: -90, scale: 0.8 }}
                   animate={{ opacity: 1, rotate: 0, scale: 1 }}
                   exit={{ opacity: 0, rotate: 90, scale: 0.8 }}
-                  transition={{ duration: 0.2 }}
+                  transition={{ duration: 0.12, ease: "linear" }}
                   className="absolute inset-0 flex items-center justify-center"
                 >
                   {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -285,6 +285,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              transition={{ duration: 0.2, ease: "circOut" }}
               className="lg:hidden fixed inset-0 z-[999] bg-background/80 backdrop-blur-3xl flex flex-col pt-32 px-[var(--page-px)] pointer-events-auto"
             >
               <nav className="flex flex-col gap-8 flex-1">

@@ -15,6 +15,15 @@ import { caseStudies } from "@/content/case-studies";
 import { MaskReveal } from "@/components/MaskReveal";
 import FixedPreview from "@/components/FixedPreview";
 
+const PLAYGROUND_ASSETS = [
+  "/playground/health.png",
+  "/playground/slide-7.png",
+  "/playground/slide-5.mp4",
+  "/playground/slide-7-elegant.mp4",
+  "/playground/slide-4.png",
+  "/playground/slide-6.png"
+];
+
 export default function Home() {
   const pageRef = useRef<HTMLDivElement>(null);
   const [activeImage, setActiveImage] = useState<string>(caseStudies[0].heroSrc);
@@ -23,6 +32,17 @@ export default function Home() {
   const comboTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { canAnimate } = useTransition();
   const [hoveredSlug, setHoveredSlug] = useState<string | null>(null);
+  const [playgroundIndex, setPlaygroundIndex] = useState(0);
+
+  useEffect(() => {
+    if (hoveredSlug) return;
+    const interval = setInterval(() => {
+      setPlaygroundIndex((prev) => (prev + 1) % PLAYGROUND_ASSETS.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [hoveredSlug]);
+
+  const currentAsset = hoveredSlug ? activeImage : PLAYGROUND_ASSETS[playgroundIndex];
 
 
   const containerVariants: Variants = {
@@ -161,7 +181,7 @@ export default function Home() {
 
             {/* Mobile Preview */}
             <div className="lg:hidden w-full my-4 relative">
-              <PreviewCard activeImage={activeImage} className="w-full rounded-xl" />
+              <PreviewCard activeImage={currentAsset} className="w-full rounded-xl" />
             </div>
           </div>
 
@@ -188,11 +208,9 @@ export default function Home() {
                       onBlur={() => setHoveredSlug(null)}
                       animate={{
                         opacity: hoveredSlug && hoveredSlug !== study.slug ? 0.5 : 1,
-                        y: hoveredSlug === study.slug ? -2 : 0,
-                        scale: hoveredSlug === study.slug ? 1.01 : 1,
                         filter: hoveredSlug && hoveredSlug !== study.slug ? "saturate(0.85)" : "saturate(1)",
                       }}
-                      transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                      transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
                     >
                       <ProjectItem
                         title={study.logoText || study.title}
@@ -232,7 +250,12 @@ export default function Home() {
       </div>
 
       {/* Desktop Preview — Fixed Position */}
-      <FixedPreview activeImage={activeImage} isVisible={canAnimate} hoveredSlug={hoveredSlug} />
+      <FixedPreview 
+        activeImage={currentAsset} 
+        isVisible={canAnimate} 
+        hoveredSlug={hoveredSlug} 
+        isLocked={hoveredSlug ? caseStudies.find(s => s.slug === hoveredSlug)?.isLocked : false}
+      />
     </div>
   );
 }
@@ -308,8 +331,7 @@ const ProjectItem = React.memo(function ProjectItem({
     >
       <div className="flex items-center gap-5">
         <div
-          className={`w-16 h-16 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-500 relative overflow-hidden ${isActive ? "scale-[1.04]" : "group-hover:scale-[1.02]"
-            }`}
+          className={`w-16 h-16 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 relative overflow-hidden`}
           style={{ backgroundColor: color }}
         >
           <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-50" />
@@ -318,13 +340,13 @@ const ProjectItem = React.memo(function ProjectItem({
         </div>
         <div className="flex flex-col justify-center items-start">
           <div className="flex items-center gap-2">
-            <h3 className={`text-foreground text-lg font-normal transition-transform duration-300 ${isActive ? "translate-x-0.5" : ""}`}>{title}</h3>
+            <h3 className={`text-foreground text-lg font-normal transition-colors duration-300`}>{title}</h3>
             {isLocked && <Lock size={16} className="text-muted-foreground" />}
           </div>
           <p className="text-muted-foreground text-sm font-normal mt-1 opacity-40">{new Date().getFullYear()}</p>
         </div>
       </div>
-      <ArrowRight size={20} className={`text-foreground transition-all duration-200 ${isActive ? "opacity-100 translate-x-1" : "opacity-0 group-hover:opacity-100 group-hover:translate-x-1"}`} />
+      <ArrowRight size={20} className={`text-foreground transition-all duration-200 ${isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`} />
     </div>
   );
 
