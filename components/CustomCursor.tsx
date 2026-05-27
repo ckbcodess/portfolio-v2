@@ -10,7 +10,7 @@ export default function CustomCursor({ isTransitioning }: { isTransitioning?: bo
     const pathname = usePathname();
     const { resolvedTheme } = useTheme();
     const cursorRef = useRef<HTMLDivElement>(null);
-    const [cursorType, setCursorType] = useState<"default" | "copy" | "copied" | "pointer" | "case-study" | "confidential" | "none" | "wrap">("default");
+    const [cursorType, setCursorType] = useState<"default" | "copy" | "copied" | "pointer" | "case-study" | "confidential" | "none" | "wrap" | "lightbox-left" | "lightbox-right" | "close">("default");
     const isMobile = useRef(false);
 
     const [targetPos, setTargetPos] = useState<{ x: number; y: number } | null>(null);
@@ -71,15 +71,25 @@ export default function CustomCursor({ isTransitioning }: { isTransitioning?: bo
         };
     }, [cursorType]);
 
+    const targetPosRef = useRef(targetPos);
+    const isTransitioningRef = useRef(isTransitioning);
+    const isVisibleRef = useRef(false);
+
+    useEffect(() => {
+        targetPosRef.current = targetPos;
+    }, [targetPos]);
+
+    useEffect(() => {
+        isTransitioningRef.current = isTransitioning;
+        if (isTransitioning) {
+            isVisibleRef.current = false;
+        }
+    }, [isTransitioning]);
+
+    // 1. Coordinates and basic position tracking (Registered exactly ONCE on mount)
     useGSAP(() => {
         if (isMobile.current || !cursorRef.current) {
             if (cursorRef.current) gsap.set(cursorRef.current, { display: "none" });
-            return;
-        }
-
-        // Force hide during transition
-        if (isTransitioning) {
-            gsap.to(cursorRef.current, { autoAlpha: 0, duration: 0.2, overwrite: true });
             return;
         }
 
@@ -88,17 +98,23 @@ export default function CustomCursor({ isTransitioning }: { isTransitioning?: bo
         const xTo = gsap.quickTo(cursorRef.current, "x", { duration: 0.15, ease: "power2.out" });
         const yTo = gsap.quickTo(cursorRef.current, "y", { duration: 0.15, ease: "power2.out" });
 
-        let isVisible = false;
-
         const handleMouseMove = (e: MouseEvent) => {
-            if (!isVisible && !isTransitioning) {
+            if (isTransitioningRef.current) {
+                if (isVisibleRef.current) {
+                    gsap.to(cursorRef.current, { autoAlpha: 0, duration: 0.2, overwrite: true });
+                    isVisibleRef.current = false;
+                }
+                return;
+            }
+
+            if (!isVisibleRef.current) {
                 gsap.to(cursorRef.current, { autoAlpha: 1, duration: 0.3 });
-                isVisible = true;
+                isVisibleRef.current = true;
             }
             
-            if (targetPos) {
-                xTo(targetPos.x);
-                yTo(targetPos.y);
+            if (targetPosRef.current) {
+                xTo(targetPosRef.current.x);
+                yTo(targetPosRef.current.y);
             } else {
                 xTo(e.clientX);
                 yTo(e.clientY);
@@ -106,6 +122,7 @@ export default function CustomCursor({ isTransitioning }: { isTransitioning?: bo
         };
 
         const handleMouseDown = () => {
+            if (isTransitioningRef.current) return;
             gsap.to(cursorRef.current, { 
                 scale: 0.8, 
                 duration: 0.15, 
@@ -116,6 +133,7 @@ export default function CustomCursor({ isTransitioning }: { isTransitioning?: bo
         };
         
         const handleMouseUp = () => {
+            if (isTransitioningRef.current) return;
             gsap.to(cursorRef.current, { 
                 scale: 1, 
                 duration: 0.15, 
@@ -127,6 +145,22 @@ export default function CustomCursor({ isTransitioning }: { isTransitioning?: bo
         window.addEventListener("mousemove", handleMouseMove);
         window.addEventListener("mousedown", handleMouseDown);
         window.addEventListener("mouseup", handleMouseUp);
+
+        return () => {
+            window.removeEventListener("mousemove", handleMouseMove);
+            window.removeEventListener("mousedown", handleMouseDown);
+            window.removeEventListener("mouseup", handleMouseUp);
+        };
+    }, { scope: cursorRef, dependencies: [] });
+
+    // 2. Styling and size transitions (Triggered only when state actually changes)
+    useGSAP(() => {
+        if (isMobile.current || !cursorRef.current) return;
+
+        if (isTransitioning) {
+            gsap.to(cursorRef.current, { autoAlpha: 0, duration: 0.2, overwrite: true });
+            return;
+        }
 
         // Variant Styling logic (consolidated)
         if (cursorType === "copy") {
@@ -177,6 +211,18 @@ export default function CustomCursor({ isTransitioning }: { isTransitioning?: bo
                 duration: 0.4,
                 ease: "power3.out"
             });
+        } else if (["lightbox-left", "lightbox-right", "close"].includes(cursorType)) {
+            gsap.to(cursorRef.current, {
+                mixBlendMode: "difference",
+                width: 48,
+                height: 48,
+                borderRadius: "100%",
+                backgroundColor: "white",
+                color: "white",
+                border: "0px solid transparent",
+                duration: 0.4,
+                ease: "power3.out"
+            });
         } else if (cursorType === "none") {
             gsap.to(cursorRef.current, {
                 autoAlpha: 0,
@@ -205,13 +251,7 @@ export default function CustomCursor({ isTransitioning }: { isTransitioning?: bo
                 ease: "power3.out"
             });
         }
-
-        return () => {
-            window.removeEventListener("mousemove", handleMouseMove);
-            window.removeEventListener("mousedown", handleMouseDown);
-            window.removeEventListener("mouseup", handleMouseUp);
-        };
-    }, { scope: cursorRef, dependencies: [cursorType, targetPos, isTransitioning] });
+    }, { scope: cursorRef, dependencies: [cursorType, isTransitioning, resolvedTheme] });
 
     return (
         <div
@@ -237,6 +277,21 @@ export default function CustomCursor({ isTransitioning }: { isTransitioning?: bo
                    <path d="M18 11.5a2 2 0 0 1 4 0V20a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5v-2" />
                    <path d="M21 11V7.5a2 2 0 0 1 4 0V11" />
                    <path d="M7 10.5a2 2 0 0 0-4 0v3.5" />
+                </svg>
+            </div>
+            <div className={`absolute transition-opacity duration-300 ${cursorType === "lightbox-left" ? "opacity-100" : "opacity-0 invisible"}`}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                   <path d="m15 18-6-6 6-6" />
+                </svg>
+            </div>
+            <div className={`absolute transition-opacity duration-300 ${cursorType === "lightbox-right" ? "opacity-100" : "opacity-0 invisible"}`}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                   <path d="m9 18 6-6-6-6" />
+                </svg>
+            </div>
+            <div className={`absolute transition-opacity duration-300 ${cursorType === "close" ? "opacity-100" : "opacity-0 invisible"}`}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                   <path d="M18 6 6 18M6 6l12 12" />
                 </svg>
             </div>
         </div>

@@ -7,16 +7,16 @@ import { motion, AnimatePresence } from "motion/react";
 import { Lock } from "lucide-react";
 import PreviewCard from "./PreviewCard";
 import Lightbox from "./Lightbox";
-import { memo, useMemo } from "react";
+import { memo, useMemo, useCallback } from "react";
 
 interface FixedPreviewProps {
   activeImage: string;
   isVisible?: boolean;
   hoveredSlug?: string | null;
   isLocked?: boolean;
+  assets?: string[];
 }
 
-// Static configuration moved outside component to prevent recreation
 const REFLECTION_CONFIG = {
   angle: 62,
   maskEnd: 29,
@@ -28,17 +28,39 @@ const REFLECTION_CONFIG = {
   overallBlur: 13
 };
 
-const FixedPreview = memo(({ activeImage, isVisible = true, hoveredSlug, isLocked }: FixedPreviewProps) => {
+const FixedPreview = memo(({ activeImage, isVisible = true, hoveredSlug, isLocked, assets }: FixedPreviewProps) => {
   const [mounted, setMounted] = useState(false);
   const [lightboxAsset, setLightboxAsset] = useState<string | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState<number>(-1);
   const { resolvedTheme } = useTheme();
   
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const currentAsset = activeImage;
-  const isVideo = useMemo(() => currentAsset.endsWith(".mp4"), [currentAsset]);
+  const openLightbox = useCallback(() => {
+    if (assets && assets.length > 0) {
+      const idx = assets.indexOf(activeImage);
+      setLightboxIndex(idx);
+      setLightboxAsset(activeImage);
+    } else {
+      setLightboxAsset(activeImage);
+    }
+  }, [assets, activeImage]);
+
+  const closeLightbox = useCallback(() => {
+    setLightboxAsset(null);
+    setLightboxIndex(-1);
+  }, []);
+
+  const navigateLightbox = useCallback((direction: 1 | -1) => {
+    if (!assets || lightboxIndex === -1) return;
+    const nextIdx = (lightboxIndex + direction + assets.length) % assets.length;
+    setLightboxIndex(nextIdx);
+    setLightboxAsset(assets[nextIdx]);
+  }, [assets, lightboxIndex]);
+
+  const isVideo = useMemo(() => activeImage.endsWith(".mp4"), [activeImage]);
   const reflectionStyles = useMemo(() => ({
     top: `calc(100% + ${REFLECTION_CONFIG.topGap}px)`,
     height: `${REFLECTION_CONFIG.height}px`,
@@ -81,7 +103,7 @@ const FixedPreview = memo(({ activeImage, isVisible = true, hoveredSlug, isLocke
               style={{ aspectRatio: "628 / 346" }}
               className="fixed-preview-portal pointer-events-auto w-[clamp(350px,38vw,628px)] h-auto cursor-pointer group"
               aria-label="Case study preview"
-              onClick={() => setLightboxAsset(currentAsset)}
+              onClick={openLightbox}
             >
               <div className="relative w-full h-full">
                 {/* Floor Reflection Glow (High-Performance Progressive Blur) */}
@@ -95,7 +117,7 @@ const FixedPreview = memo(({ activeImage, isVisible = true, hoveredSlug, isLocke
                   <div className="w-[71.4%] relative transform-gpu" style={innerReflectionStyles}>
                     <AnimatePresence mode="wait" initial={false}>
                       <motion.div
-                        key={currentAsset}
+                        key={activeImage}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -104,9 +126,9 @@ const FixedPreview = memo(({ activeImage, isVisible = true, hoveredSlug, isLocke
                       >
                         {/* Single, lightweight media element */}
                         {isVideo ? (
-                          <video src={currentAsset} autoPlay muted loop playsInline preload="metadata" className="w-full h-full object-cover opacity-80" />
+                          <video src={activeImage} autoPlay muted loop playsInline preload="metadata" className="w-full h-full object-cover opacity-80" />
                         ) : (
-                          <img src={currentAsset} alt="" className="w-full h-full object-cover opacity-80" loading="eager" />
+                          <img src={activeImage} alt="" className="w-full h-full object-cover opacity-80" loading="eager" />
                         )}
                       </motion.div>
                     </AnimatePresence>
@@ -118,7 +140,7 @@ const FixedPreview = memo(({ activeImage, isVisible = true, hoveredSlug, isLocke
 
                 {/* Main Card */}
                 <div className="relative z-10 w-full h-full">
-                  <PreviewCard activeImage={currentAsset} className="!h-full shadow-2xl transition-all duration-500 group-hover:scale-[1.02] group-hover:opacity-90" />
+                  <PreviewCard activeImage={activeImage} className="!h-full shadow-2xl transition-all duration-500 group-hover:scale-[1.02] group-hover:opacity-90" />
                   
                   {/* Padlock Icon for Locked Case Studies */}
                   {isLocked && (
@@ -137,7 +159,9 @@ const FixedPreview = memo(({ activeImage, isVisible = true, hoveredSlug, isLocke
 
       <Lightbox 
         src={lightboxAsset} 
-        onClose={() => setLightboxAsset(null)} 
+        onClose={closeLightbox} 
+        onNext={assets && lightboxIndex !== -1 ? () => navigateLightbox(1) : undefined}
+        onPrev={assets && lightboxIndex !== -1 ? () => navigateLightbox(-1) : undefined}
         alt="Preview"
       />
     </>,

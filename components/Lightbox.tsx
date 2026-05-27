@@ -3,6 +3,7 @@
 import { useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import Image from "next/image";
+import { X } from "lucide-react";
 
 interface LightboxProps {
   src: string | null;
@@ -86,20 +87,53 @@ export default function Lightbox({ src, alt = "", layoutId, onClose, onNext, onP
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
+
+
+            {/* Close Button - Topmost */}
+            <button
+              onClick={(e) => { e.stopPropagation(); onClose(); }}
+              data-cursor="pointer"
+              className="absolute top-6 right-6 p-4 text-foreground/40 hover:text-foreground transition-all hover:scale-110 active:scale-95 z-[1000004] pointer-events-auto"
+              aria-label="Close lightbox"
+            >
+              <X size={24} strokeWidth={2} />
+            </button>
+
             <motion.div
               layoutId={layoutId}
-              className="relative max-w-[90vw] max-h-[85vh] w-full h-auto overflow-hidden rounded-lg shadow-2xl"
+              className="relative max-w-[90vw] max-h-[85vh] w-full h-auto overflow-hidden rounded-lg shadow-2xl z-[1000002]"
               style={{ aspectRatio: "auto" }}
               transition={{
                 layout: { duration: 0.5, ease: [0.32, 0.72, 0, 1] },
               }}
               onClick={(e) => e.stopPropagation()}
             >
+              {/* Navigation Zones */}
+              {(onPrev || onNext) && (
+                <div className="absolute inset-0 flex z-10 pointer-events-auto">
+                  {[
+                    { type: 'left', handler: onPrev, cursor: 'lightbox-left' },
+                    { type: 'right', handler: onNext, cursor: 'lightbox-right' }
+                  ].map(({ type, handler, cursor }) => (
+                    <div 
+                      key={type}
+                      className={`flex-1 ${handler ? "cursor-none" : "cursor-default"}`}
+                      data-cursor={handler ? cursor : undefined}
+                      onClick={(e) => {
+                        if (handler) {
+                          e.stopPropagation();
+                          handler();
+                        }
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
               {src.endsWith(".mp4") ? (
                 <video
                   src={src}
-                  controls
                   autoPlay
+                  muted
                   loop
                   playsInline
                   className="w-full h-full object-contain max-h-[85vh]"
@@ -117,40 +151,6 @@ export default function Lightbox({ src, alt = "", layoutId, onClose, onNext, onP
               )}
             </motion.div>
 
-            {/* Navigation buttons */}
-            {onPrev && (
-              <button
-                onClick={(e) => { e.stopPropagation(); onPrev(); }}
-                className="absolute left-4 top-1/2 -translate-y-1/2 p-4 text-foreground/40 hover:text-foreground transition-colors z-[1000002]"
-                aria-label="Previous image"
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="m15 18-6-6 6-6" />
-                </svg>
-              </button>
-            )}
-            {onNext && (
-              <button
-                onClick={(e) => { e.stopPropagation(); onNext(); }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 p-4 text-foreground/40 hover:text-foreground transition-colors z-[1000002]"
-                aria-label="Next image"
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="m9 18 6-6-6-6" />
-                </svg>
-              </button>
-            )}
-
-            {/* Close hint */}
-            <motion.span
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 0.4, y: 0 }}
-              exit={{ opacity: 0, y: 5 }}
-              transition={{ duration: 0.4, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute bottom-6 left-1/2 -translate-x-1/2 text-foreground text-xs font-normal tracking-tight select-none pointer-events-none"
-            >
-              Arrows or click to navigate · Esc to close
-            </motion.span>
           </motion.div>
         </>
       )}

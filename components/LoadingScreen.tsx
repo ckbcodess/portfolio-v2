@@ -16,7 +16,7 @@ const PRELOAD_IMAGES = [
   "/avatar.webp",
   "/allex-hero.webp",
   "/cs-img-6.webp",
-  "/gcb-card-v4.png",
+  "/gcb-card-v4.webp",
   "/noise.svg",
   "/globe.svg",
   "/file.svg",
@@ -74,16 +74,8 @@ export default function LoadingScreen() {
       tick();
     }
 
-    // Sounds
-    const checkSounds = () => {
-      // @ts-expect-error global flag set by SoundProvider
-      if (window.soundsLoaded) {
-        tick();
-      } else {
-        setTimeout(checkSounds, 80);
-      }
-    };
-    checkSounds();
+    // Sounds — non-blocking progressive enhancement
+    tick();
 
     // Images
     PRELOAD_IMAGES.forEach((src) => {
@@ -99,7 +91,7 @@ export default function LoadingScreen() {
       vid.preload = "auto";
       vid.muted = true;
       vid.playsInline = true;
-      vid.oncanplaythrough = tick;
+      vid.oncanplay = tick;
       vid.onerror = () => tick();
       vid.src = src;
       // force load start

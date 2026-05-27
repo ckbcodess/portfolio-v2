@@ -17,7 +17,7 @@ const RefractiveNav = dynamic(() => import("./RefractiveNav"), {
 import Clock from "./Clock";
 import ThemeControls from "./ThemeControls";
 import { useSound } from "@/components/SoundProvider";
-import { Volume2, VolumeX } from "lucide-react";
+import { Volume2, VolumeX, Maximize, Minimize } from "lucide-react";
 
 interface HeaderProps {
   backLink?: string;
@@ -38,6 +38,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
   const { pendingHref, isTransitioning } = useTransition();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [internalScrolled, setInternalScrolled] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const isCaseStudy = pathname.startsWith("/work/");
   const scrolled = scrolledProp ?? internalScrolled;
@@ -77,6 +78,26 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
     revealTimerRef.current = setTimeout(() => setIsNavHidden(false), 120);
     return () => { if (revealTimerRef.current) clearTimeout(revealTimerRef.current); };
   }, [isNavHidden, isTransitioning]);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch((err) => {
+        console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+      });
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
+  };
 
   useEffect(() => {
     let ticking = false;
@@ -246,6 +267,22 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
                 </div>
                 <div className="hidden lg:flex items-center gap-6">
                   <ThemeControls isHero={isCaseStudy && !scrolled} />
+                  
+                  <Tooltip>
+                    <TooltipTrigger
+                      onClick={toggleFullscreen}
+                      className={`${
+                        isCaseStudy && !scrolled ? "text-white" : "text-foreground/60 hover:text-foreground"
+                      } transition-colors p-2 -m-2 flex items-center justify-center cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-sm`}
+                      aria-label={isFullscreen ? "Exit full screen" : "Enter full screen"}
+                    >
+                      {isFullscreen ? <Minimize size={16} strokeWidth={2} /> : <Maximize size={16} strokeWidth={2} />}
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" sideOffset={12}>
+                      {isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
+                    </TooltipContent>
+                  </Tooltip>
+
                   <Tooltip>
                     <TooltipTrigger
                       onClick={toggleSound}

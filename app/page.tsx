@@ -21,7 +21,9 @@ const PLAYGROUND_ASSETS = [
   "/playground/slide-5.mp4",
   "/playground/slide-7-elegant.mp4",
   "/playground/slide-4.png",
-  "/playground/slide-6.png"
+  "/playground/slide-6.png",
+  "/playground/slide-8.png",
+  "/playground/slide-11.png"
 ];
 
 export default function Home() {
@@ -255,6 +257,7 @@ export default function Home() {
         isVisible={canAnimate} 
         hoveredSlug={hoveredSlug} 
         isLocked={hoveredSlug ? caseStudies.find(s => s.slug === hoveredSlug)?.isLocked : false}
+        assets={PLAYGROUND_ASSETS}
       />
     </div>
   );

@@ -121,6 +121,10 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
         const response = await fetch("/sounds/sound.ogg");
         if (!response.ok) {
           console.warn("Sound sprite not available");
+          if (typeof window !== 'undefined') {
+            // @ts-expect-error global flag
+            window.soundsLoaded = true;
+          }
           return;
         }
         const arrayBuffer = await response.arrayBuffer();
@@ -133,6 +137,10 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
         }
       } catch (error) {
         console.warn("Failed to load sound sprite:", error);
+        if (typeof window !== 'undefined') {
+          // @ts-expect-error global flag
+          window.soundsLoaded = true;
+        }
       }
     };
 

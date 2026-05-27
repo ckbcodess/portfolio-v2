@@ -406,7 +406,6 @@ body::-webkit-scrollbar,
 }
 
 #smooth-wrapper {
-  transition: -webkit-mask-image 0.8s cubic-bezier(0.4, 0, 0.2, 1), mask-image 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   mask-image: none;
   -webkit-mask-image: none;
 }

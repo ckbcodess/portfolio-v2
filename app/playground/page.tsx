@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { motion, LayoutGroup, Variants } from "motion/react";
 import { MaskReveal } from "@/components/MaskReveal";
@@ -57,21 +57,21 @@ export default function PlaygroundPage() {
     }
   };
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (!activeImage) return;
     const currentIndex = experiments.findIndex(exp => `playground-img-${exp.id}` === activeImage.id);
     const nextIndex = (currentIndex + 1) % experiments.length;
     const nextExp = experiments[nextIndex];
     setActiveImage({ src: "/allex-card.png", id: `playground-img-${nextExp.id}` });
-  };
+  }, [activeImage]);
 
-  const handlePrev = () => {
+  const handlePrev = useCallback(() => {
     if (!activeImage) return;
     const currentIndex = experiments.findIndex(exp => `playground-img-${exp.id}` === activeImage.id);
     const prevIndex = (currentIndex - 1 + experiments.length) % experiments.length;
     const prevExp = experiments[prevIndex];
     setActiveImage({ src: "/allex-card.png", id: `playground-img-${prevExp.id}` });
-  };
+  }, [activeImage]);
 
   return (
     <div ref={pageRef} className="min-h-screen lg:h-screen lg:overflow-hidden bg-background selection:bg-foreground selection:text-background flex flex-col pt-40 md:pt-56 pb-12 lg:pb-0">
