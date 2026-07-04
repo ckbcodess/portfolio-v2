@@ -2088,19 +2088,23 @@ export default function Interactive3DBlob() {
         />
       </div>
 
-      {/* Settings Gear Overlay Toggle */}
-      <div className="fixed top-6 right-6 z-[9999] flex items-center pointer-events-auto">
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="p-3 rounded-full bg-neutral-900/80 border border-white/10 hover:border-white/20 text-white/80 hover:text-white backdrop-blur-md cursor-pointer transition-all shadow-lg hover:scale-105 active:scale-95 flex items-center justify-center"
-          title="Open Editor Options"
-        >
-          {isOpen ? <X size={18} /> : <Settings size={18} />}
-        </button>
-      </div>
+      {/* Settings Gear Overlay Toggle (Only in Development) */}
+      {process.env.NODE_ENV === "development" && (
+        <>
+          <div className="fixed top-6 right-6 z-[9999] flex items-center pointer-events-auto">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="p-3 rounded-full bg-neutral-900/80 border border-white/10 hover:border-white/20 text-white/80 hover:text-white backdrop-blur-md cursor-pointer transition-all shadow-lg hover:scale-105 active:scale-95 flex items-center justify-center"
+              title="Open Editor Options"
+            >
+              {isOpen ? <X size={18} /> : <Settings size={18} />}
+            </button>
+          </div>
 
-      {/* Render sidebar fixed directly to document body via portal (stops scrolling with page) */}
-      {mounted && typeof document !== "undefined" && createPortal(sidebarContent, document.body)}
+          {/* Render sidebar fixed directly to document body via portal (stops scrolling with page) */}
+          {mounted && typeof document !== "undefined" && createPortal(sidebarContent, document.body)}
+        </>
+      )}
     </>
   );
 }
