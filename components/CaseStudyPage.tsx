@@ -149,7 +149,7 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-x-12 gap-y-6 min-w-0">
                   {caseStudy.meta.map((item) => (
                     <div key={item.label} className="flex flex-col gap-1 min-w-0">
-                      <span className="text-[10px] uppercase tracking-widest text-white/40 truncate" title={item.label}>
+                      <span className="text-xs uppercase tracking-widest text-white/40 truncate" title={item.label}>
                         {item.label}
                       </span>
                       <span className="text-sm font-normal break-words text-white/90">
@@ -253,7 +253,7 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
               >
                 <div className="flex flex-col gap-12 md:gap-20">
                   <div className="flex items-center gap-6">
-                    <span className="text-[10px] md:text-xs uppercase tracking-[0.4em] text-white/30 font-medium whitespace-nowrap">
+                    <span className="text-xs uppercase tracking-[0.4em] text-white/30 font-medium whitespace-nowrap">
                       {caseStudy.nextProject.eyebrow || "Next Case"}
                     </span>
                     <div className="h-px flex-1 bg-white/5 group-hover:bg-white/20 transition-colors duration-700" />
@@ -267,7 +267,7 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
                     </div>
                     
                     <div className="flex flex-col gap-2 shrink-0 md:items-end lg:mb-4 transition-transform duration-700 group-hover:-translate-x-2">
-                      <p className="text-[10px] uppercase tracking-widest text-white/20 font-bold">Client / Project</p>
+                      <p className="text-xs uppercase tracking-widest text-white/20 font-bold">Client / Project</p>
                       <p className="text-xl md:text-2xl text-white/40 font-light group-hover:text-white transition-colors duration-500">
                         {caseStudy.nextProject.label}
                       </p>

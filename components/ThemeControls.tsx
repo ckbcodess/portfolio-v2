@@ -36,6 +36,7 @@ export default function ThemeControls({ isHero }: { isHero?: boolean }) {
       <Tooltip>
         <TooltipTrigger
           onClick={() => handleThemeChange(theme === "dark" ? "light" : "dark")}
+          data-cursor="pointer"
           className={`${
             activeHero ? "text-white" : "text-foreground/60 hover:text-foreground"
           } transition-colors p-3 -m-3 md:p-1 md:-m-1 flex items-center justify-center min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0 cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-sm`}

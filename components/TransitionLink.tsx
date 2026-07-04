@@ -22,10 +22,13 @@ export default function TransitionLink({ children, href, label, color, onClick, 
             return;
         }
 
+        if (onClick) onClick(e);
+
+        // If the click event default was prevented, do not perform navigation
+        if (e.defaultPrevented) return;
+
         // Prevent typical instant navigation
         e.preventDefault();
-
-        if (onClick) onClick(e);
 
         // Don't transition if we are already on the target page
         if (pathname === href) return;

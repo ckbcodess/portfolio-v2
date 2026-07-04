@@ -167,7 +167,7 @@ export default function CaseStudySidebar({ links, visible }: { links: SectionLin
                     event.preventDefault();
                     scrollToSection(link.id);
                   }}
-                  className={`text-[14px] font-normal transition-colors duration-200 block ${
+                  className={`text-sm font-normal transition-colors duration-200 block ${
                     isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"
                   }`}
                 >

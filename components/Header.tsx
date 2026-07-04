@@ -4,7 +4,6 @@ import TransitionLink from "./TransitionLink";
 import { useEffect, useState, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { useTransition } from "./TransitionProvider";
-import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { animate } from "animejs";
@@ -17,7 +16,7 @@ const RefractiveNav = dynamic(() => import("./RefractiveNav"), {
 import Clock from "./Clock";
 import ThemeControls from "./ThemeControls";
 import { useSound } from "@/components/SoundProvider";
-import { Volume2, VolumeX, Maximize, Minimize } from "lucide-react";
+import { Volume2, VolumeX } from "lucide-react";
 
 interface HeaderProps {
   backLink?: string;
@@ -25,9 +24,10 @@ interface HeaderProps {
 }
 
 const NAV_ITEMS = [
-  { href: "/playground", label: "Playground" },
-  { href: "/about", label: "Bio" },
-  { href: "https://drive.google.com/file/d/1EJm5aBA3I95pPkgT-4PDKTlOZe7ChLH9/view?usp=sharing", label: "Resume", isExternal: true },
+  { href: "/", label: "Home" },
+  { href: "/playground", label: "Lab" },
+  { href: "/#case-studies", label: "Archive" },
+  { href: "/about", label: "Info" },
 ];
 
 
@@ -35,18 +35,14 @@ const NAV_ITEMS = [
 export default function Header({ backLink = "/", scrolled: scrolledProp }: HeaderProps) {
   const pathname = usePathname();
   const { isSoundEnabled, toggleSound } = useSound();
-  const { pendingHref, isTransitioning } = useTransition();
+  const { pendingHref, isTransitioning, setArchiveOpen, setInfoOpen } = useTransition();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [internalScrolled, setInternalScrolled] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const isCaseStudy = pathname.startsWith("/work/");
   const scrolled = scrolledProp ?? internalScrolled;
 
   // ─── Two-nav system ───────────────────────────────────────────────────
-  // Instead of morphing one nav, we render two separate RefractiveNav
-  // instances and toggle which one is visible. Each has stable props —
-  // no background class swaps, no width morphing, no flashes.
   const showBack = isCaseStudy && scrolled;
 
   // Track mode changes to coordinate hide/reveal with spring
@@ -79,25 +75,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
     return () => { if (revealTimerRef.current) clearTimeout(revealTimerRef.current); };
   }, [isNavHidden, isTransitioning]);
 
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
-    };
-    document.addEventListener("fullscreenchange", handleFullscreenChange);
-    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
-  }, []);
 
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch((err) => {
-        console.error(`Error attempting to enable full-screen mode: ${err.message}`);
-      });
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      }
-    }
-  };
 
   useEffect(() => {
     let ticking = false;
@@ -154,12 +132,13 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
 
   return (
     <header className="w-full fixed top-0 left-0 z-[1000] pointer-events-none pt-6 md:pt-[48px]">
-      <div className="w-full px-[var(--page-px)] flex items-center relative h-20">
-        {/* Left Section: Logo */}
-        <div className="flex-1 flex justify-start pointer-events-auto relative z-[1000]">
+      <div className="w-full px-[var(--page-px)] flex items-center relative h-20 max-w-[1400px] mx-auto">
+        {/* Left Section: Logo (Mobile only on home, or general on mobile) */}
+        <div className="flex-1 flex justify-start pointer-events-auto relative z-[1000] lg:hidden">
           <TransitionLink
             href="/"
             label="Home"
+            data-cursor="pointer"
             onMouseEnter={handleLogoEnter}
             onMouseLeave={handleLogoLeave}
             className={`text-sm font-normal tracking-tight transition-colors p-4 -m-4 ${
@@ -170,8 +149,8 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
           </TransitionLink>
         </div>
 
-        {/* ─── Desktop Nav: Two separate pills, only one visible ─── */}
-        <div className="flex-none hidden lg:flex items-center justify-center pointer-events-auto relative">
+        {/* ─── Desktop Nav: Centered single pill ─── */}
+        <div className="flex-1 hidden lg:flex items-center justify-center pointer-events-auto relative max-w-[620px] mx-auto w-full">
           {/* Default Navigation */}
           <motion.div
             animate={{
@@ -181,38 +160,94 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
             style={{
               visibility: showDefaultNav ? "visible" : "hidden",
               position: showBack ? "absolute" : "relative",
+              width: "100%",
             }}
             transition={showDefaultNav ? navSpring : navHideStyle}
+            className="w-full flex justify-center animate-fade-in"
           >
             <RefractiveNav
               isCaseStudyHero={isCaseStudy && !scrolled}
-              className={`relative rounded-full overflow-hidden ${
+              className={`relative rounded-full overflow-hidden w-full ${
                 isCaseStudy && !scrolled ? "text-white" : "text-foreground"
               }`}
             >
-              <div className="px-8 py-3 flex items-center justify-center gap-8 whitespace-nowrap">
-                {NAV_ITEMS.map((item) => {
-                  const isActive = activeHref === item.href;
-                  const content = (
-                    <span className={`text-sm font-normal tracking-tight transition-all duration-300 ${
-                      isActive ? "opacity-100" : "opacity-40 hover:opacity-100"
-                    }`}>
-                      {item.label}
-                    </span>
-                  );
-                  if (item.isExternal) {
+              <div className="px-6 py-3 flex items-center justify-between gap-8 whitespace-nowrap w-full">
+                {/* Left group: Home, Lab, Archive */}
+                <div className="flex items-center gap-6">
+                  {NAV_ITEMS.slice(0, 3).map((item) => {
+                    const isActive = activeHref === item.href || (item.href === "/" && activeHref === "/");
+                    const isArchive = item.label === "Archive";
                     return (
-                      <a key={item.href} href={item.href} target="_blank" rel="noopener noreferrer" className="group">
-                        {content}
-                      </a>
+                      <TransitionLink
+                        key={item.href}
+                        href={item.href}
+                        label={item.label}
+                        data-cursor="pointer"
+                        onClick={isArchive ? (e) => {
+                          e.preventDefault();
+                          setArchiveOpen(true);
+                        } : undefined}
+                        className={`text-sm font-normal tracking-tight transition-all duration-300 ${
+                          isActive ? "opacity-100 font-semibold" : "opacity-40 hover:opacity-100"
+                        }`}
+                      >
+                        {item.label}
+                      </TransitionLink>
                     );
-                  }
-                  return (
-                    <TransitionLink key={item.href} href={item.href} label={item.label} className="group">
-                      {content}
-                    </TransitionLink>
-                  );
-                })}
+                  })}
+                </div>
+
+                {/* Right group: Info, Theme, Volume, Clock */}
+                <div className="flex items-center gap-6">
+                  {/* Info Link */}
+                  {(() => {
+                    const item = NAV_ITEMS[3];
+                    const isActive = activeHref === item.href;
+                    return (
+                      <TransitionLink
+                        key={item.href}
+                        href={item.href}
+                        label={item.label}
+                        data-cursor="pointer"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setInfoOpen(true);
+                        }}
+                        className={`text-sm font-normal tracking-tight transition-all duration-300 ${
+                          isActive ? "opacity-100 font-semibold" : "opacity-40 hover:opacity-100"
+                        }`}
+                      >
+                        {item.label}
+                      </TransitionLink>
+                    );
+                  })()}
+
+
+
+                  {/* Theme controls */}
+                  <ThemeControls isHero={isCaseStudy && !scrolled} />
+
+                  {/* Volume Toggle */}
+                  <button
+                    onClick={toggleSound}
+                    data-cursor="pointer"
+                    className={`transition-all duration-300 p-1 -m-1 flex items-center justify-center cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-sm ${
+                      isCaseStudy && !scrolled ? "text-white opacity-100" : "text-foreground/60 hover:text-foreground"
+                    }`}
+                    aria-label={isSoundEnabled ? "Disable sound" : "Enable sound"}
+                  >
+                    {isSoundEnabled ? <Volume2 size={14} strokeWidth={2} /> : <VolumeX size={14} strokeWidth={2} />}
+                  </button>
+
+
+
+                  {/* Clock */}
+                  <div className={`text-xs font-normal tabular-nums select-none opacity-80 ${
+                    isCaseStudy && !scrolled ? "text-white" : "text-foreground"
+                  }`}>
+                    <Clock />
+                  </div>
+                </div>
               </div>
             </RefractiveNav>
           </motion.div>
@@ -237,6 +272,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
                 <TransitionLink
                   href={backLink}
                   label="Back"
+                  data-cursor="pointer"
                   className="flex items-center gap-2 transition-colors group p-4 -m-4"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transform group-hover:-translate-x-1 transition-transform -ml-0.5">
@@ -249,59 +285,9 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
           </motion.div>
         </div>
 
-        {/* Right Section — Time, Theme, Sound (Hidden on case study scroll) */}
-        <div className="flex-1 flex justify-end relative z-[1000]">
-          <AnimatePresence mode="wait">
-            {(!isCaseStudy || !scrolled) && (
-              <motion.div 
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 10 }}
-                transition={{ type: "spring", damping: 25, stiffness: 160 }}
-                className="hidden lg:flex items-center gap-6 pointer-events-auto"
-              >
-                <div className={`text-base font-normal tabular-nums inline-flex w-[10.5ch] justify-end ${
-                  isCaseStudy && !scrolled ? "text-white" : "text-foreground"
-                }`}>
-                  <Clock />
-                </div>
-                <div className="hidden lg:flex items-center gap-6">
-                  <ThemeControls isHero={isCaseStudy && !scrolled} />
-                  
-                  <Tooltip>
-                    <TooltipTrigger
-                      onClick={toggleFullscreen}
-                      className={`${
-                        isCaseStudy && !scrolled ? "text-white" : "text-foreground/60 hover:text-foreground"
-                      } transition-colors p-2 -m-2 flex items-center justify-center cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-sm`}
-                      aria-label={isFullscreen ? "Exit full screen" : "Enter full screen"}
-                    >
-                      {isFullscreen ? <Minimize size={16} strokeWidth={2} /> : <Maximize size={16} strokeWidth={2} />}
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom" sideOffset={12}>
-                      {isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
-                    </TooltipContent>
-                  </Tooltip>
-
-                  <Tooltip>
-                    <TooltipTrigger
-                      onClick={toggleSound}
-                      className={`${
-                        isCaseStudy && !scrolled ? "text-white" : "text-foreground/60 hover:text-foreground"
-                      } transition-colors p-2 -m-2 flex items-center justify-center cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-sm`}
-                      aria-label={isSoundEnabled ? "Disable sound" : "Enable sound"}
-                    >
-                      {isSoundEnabled ? <Volume2 size={16} strokeWidth={2} /> : <VolumeX size={16} strokeWidth={2} />}
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom" sideOffset={12}>
-                      {isSoundEnabled ? "Mute" : "Unmute"}
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-          <div className="lg:hidden flex items-center gap-4 mr-8 pointer-events-auto">
+        {/* Right Section — Mobile controls only on desktop hidden */}
+        <div className="flex-1 flex justify-end relative z-[1000] lg:hidden">
+          <div className="flex items-center gap-4 mr-8 pointer-events-auto">
             <ThemeControls isHero={isCaseStudy && !scrolled && !isMenuOpen} />
             <button
               onClick={toggleSound}
@@ -314,7 +300,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
             </button>
           </div>
 
-          <div className="lg:hidden pointer-events-auto">
+          <div className="pointer-events-auto">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className={`p-2 -mr-2 transition-colors relative w-10 h-10 flex items-center justify-center ${
@@ -351,26 +337,22 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
               <nav className="flex flex-col gap-8 flex-1">
                 {NAV_ITEMS.map((item) => {
                   const isActive = activeHref === item.href;
-                  if (item.isExternal) {
-                    return (
-                      <a
-                        key={item.href}
-                        href={item.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={() => setIsMenuOpen(false)}
-                        className="text-4xl font-normal tracking-tight transition-opacity block text-foreground/40 hover:opacity-60"
-                      >
-                        {item.label}
-                      </a>
-                    );
-                  }
                   return (
                     <TransitionLink
                       key={item.href}
                       href={item.href}
                       label={item.label}
-                      onClick={() => setIsMenuOpen(false)}
+                      data-cursor="pointer"
+                      onClick={(e) => {
+                        setIsMenuOpen(false);
+                        if (item.label === "Archive") {
+                          e.preventDefault();
+                          setArchiveOpen(true);
+                        } else if (item.label === "Info") {
+                          e.preventDefault();
+                          setInfoOpen(true);
+                        }
+                      }}
                       className={`text-4xl font-normal tracking-tight transition-opacity block ${
                         isActive ? "text-foreground" : "text-foreground/40 hover:opacity-60"
                       }`}

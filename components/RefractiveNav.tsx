@@ -32,9 +32,22 @@ const RefractiveNav = forwardRef<HTMLElement, {
 }, ref) => {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
     setMounted(true);
+
+    const handleScroll = () => {
+      const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
+      if (totalScroll > 0) {
+        setScrollProgress(window.scrollY / totalScroll);
+      } else {
+        setScrollProgress(0);
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const isDark = mounted && (resolvedTheme === "dark" || isCaseStudyHero);
@@ -62,8 +75,14 @@ const RefractiveNav = forwardRef<HTMLElement, {
     >
       {/* Core Glass Atmosphere Layer - Reduced blur to let refraction show */}
       <div
-        className={`absolute inset-0 backdrop-blur-[12px] backdrop-saturate-[1.4] pointer-events-none ${isCaseStudyHero ? "bg-black/5" : "bg-[#f9f9f9]/80 dark:bg-[#0f1014]/80"
+        className={`absolute inset-0 backdrop-blur-[12px] backdrop-saturate-[1.4] pointer-events-none rounded-full ${isCaseStudyHero ? "bg-black/5" : "bg-[#f9f9f9]/30 dark:bg-[#0f1014]/30"
           }`}
+      />
+
+      {/* Dynamic Scroll Progress Background Indicator Fill */}
+      <div
+        className="absolute inset-0 origin-left pointer-events-none transition-transform duration-100 ease-out bg-black/[0.04] dark:bg-white/[0.04] rounded-full z-10"
+        style={{ transform: `scaleX(${scrollProgress})` }}
       />
 
       {/* Crisp Inner Rim / Specular Border */}

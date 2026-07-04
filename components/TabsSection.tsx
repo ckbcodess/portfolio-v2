@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { animate, createTimer } from 'animejs';
 import { scrambleText } from 'animejs/text';
+import { MaskReveal } from "@/components/MaskReveal";
 
 const tabsData = [
   {
@@ -32,15 +33,13 @@ const tabsData = [
   },
 ];
 
-import { MaskReveal } from "@/components/MaskReveal";
-
 export default function TabsSection({ canAnimate = true }: { canAnimate?: boolean }) {
   const [active, setActive] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isScrambling, setIsScrambling] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
-  const textRef = useRef<HTMLHeadingElement>(null);
+  const textRef = useRef<HTMLSpanElement>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const allowSoundRef = useRef(false);
   const soundTimerRef = useRef<any>(null);
@@ -133,7 +132,20 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
         }
       };
       rafId = requestAnimationFrame(checkAndRun);
-      return () => cancelAnimationFrame(rafId);
+      return () => {
+        cancelAnimationFrame(rafId);
+        if (animeInstanceRef.current) {
+          animeInstanceRef.current.pause();
+        }
+        setIsScrambling(false);
+        isAnimatingRef.current = false;
+      };
+    } else {
+      if (animeInstanceRef.current) {
+        animeInstanceRef.current.pause();
+      }
+      setIsScrambling(false);
+      isAnimatingRef.current = false;
     }
   }, [active]);
   useEffect(() => {

@@ -44,6 +44,7 @@ export function MaskReveal({
         initial="hidden"
         animate={canAnimate ? "show" : "hidden"}
         variants={variants}
+        className={className.includes("h-full") ? "h-full" : ""}
       >
         {children}
       </motion.div>

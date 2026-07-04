@@ -38,7 +38,7 @@ export default function Clock() {
   if (!time) return <span className="opacity-0">00:00:00 am</span>;
 
   return (
-    <span className="inline-flex items-center tabular-nums text-[14px] font-medium tracking-[-0.02em]">
+    <span className="inline-flex items-center tabular-nums text-sm font-medium tracking-[-0.02em]">
       <span>{time.hours}</span>
       <span className="mx-[0.5px]">:</span>
       <span>{time.minutes}</span>
@@ -64,7 +64,7 @@ export default function Clock() {
           </div>
         ))}
       </span>
-      <span className="ml-[4px] text-[14px] uppercase tracking-wide">{time.ampm}</span>
+      <span className="ml-[4px] text-sm uppercase tracking-wide">{time.ampm}</span>
     </span>
   );
 }

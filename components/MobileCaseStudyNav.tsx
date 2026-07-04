@@ -177,7 +177,7 @@ export default function MobileCaseStudyNav({ links, visible }: { links: SectionL
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -5 }}
                     transition={{ duration: 0.25, ease: "easeOut" }}
-                    className="text-[1.1rem] font-medium tracking-tight text-foreground/90 truncate max-w-[50vw]"
+                    className="text-lg font-medium tracking-tight text-foreground/90 truncate max-w-[50vw]"
                   >
                     {activeLink?.label}
                   </motion.span>
@@ -206,7 +206,7 @@ export default function MobileCaseStudyNav({ links, visible }: { links: SectionL
             
             <div className="relative z-50 flex flex-col w-full p-2">
               <div className="flex items-center justify-between px-4 py-3 mb-2 border-b border-foreground/10">
-                <span className="text-[0.95rem] font-medium text-foreground/50">Navigation</span>
+                <span className="text-sm font-medium text-foreground/50">Navigation</span>
                 <button onClick={() => setIsOpen(false)} aria-label="Close menu" className="text-foreground/50 hover:text-foreground p-2 -mr-2 rounded-full hover:bg-foreground/10 transition-colors">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
                 </button>
@@ -220,7 +220,7 @@ export default function MobileCaseStudyNav({ links, visible }: { links: SectionL
                       variant="ghost"
                       type="button"
                       onClick={() => scrollToSection(link.id)}
-                      className={`w-full justify-start rounded-lg px-4 py-6 text-left text-[1rem] transition-all font-medium h-auto whitespace-normal break-words ${
+                      className={`w-full justify-start rounded-lg px-4 py-6 text-left text-base transition-all font-medium h-auto whitespace-normal break-words ${
                         isActive
                           ? "bg-foreground/[0.03] text-foreground border border-foreground/5 backdrop-blur-md"
                           : "text-foreground/40 hover:text-foreground hover:bg-foreground/5"

@@ -68,18 +68,17 @@
   --space-3xl: clamp(8.67rem, 6.66vw + 7.03rem, 13.01rem);
   --space-4xl: clamp(13.01rem, 10vw + 10.53rem, 19.52rem);
 
-  /* --- Fluid Typography Scale (Increased Scale) --- */
-  /* text-3xl (Hero Text) target: ~28px (2rem) -> ~48px (3.4rem) */
-  --text-xs: clamp(0.78rem, 0.05vw + 0.76rem, 0.85rem);
-  --text-sm: clamp(0.92rem, 0.11vw + 0.9rem, 1rem);
+  /* --- Fluid Typography Scale (16px base) --- */
+  --text-xs: clamp(0.75rem, 0.05vw + 0.73rem, 0.8rem);
+  --text-sm: clamp(0.875rem, 0.11vw + 0.85rem, 0.95rem);
   --text-base: 1rem;
-  /* 14px */
-  --text-lg: 1.142rem;
   /* 16px */
-  --text-xl: clamp(1.42rem, 0.55vw + 1.28rem, 1.71rem);
-  --text-2xl: clamp(1.71rem, 1.1vw + 1.43rem, 2.28rem);
-  --text-3xl: clamp(2rem, 1.5vw + 1.5rem, 3.4rem);
-  --text-4xl: clamp(2.8rem, 2.5vw + 2rem, 4.5rem);
+  --text-lg: 1.125rem;
+  /* 18px */
+  --text-xl: clamp(1.25rem, 0.55vw + 1.1rem, 1.5rem);
+  --text-2xl: clamp(1.5rem, 1.1vw + 1.25rem, 2rem);
+  --text-3xl: clamp(1.875rem, 1.5vw + 1.5rem, 3rem);
+  --text-4xl: clamp(2.5rem, 2.5vw + 1.8rem, 4rem);
 
   /* --- Layout Tokens (Compact for One-Pager) --- */
   --page-px: clamp(1rem, 6vw, 5.71rem);
@@ -130,17 +129,16 @@
 }
 
 html {
-  font-size: 14px;
+  font-size: 18px;
 }
 
 @media (min-width: 810px) {
   html {
     /* 
       Counteracts high browser/OS zoom (e.g. 150% on laptop).
-      Calculated to make a 1280px viewport (150% zoom) feel like a 1536px viewport (125% zoom).
-      14px * (1280/1536) = 11.66px.
+      Proportionally scaled up for 18px base.
     */
-    font-size: clamp(11.5px, 0.911vw, 14px);
+    font-size: clamp(15px, 1.025vw, 18px);
   }
 }
 
@@ -327,18 +325,71 @@ body {
   background-color: var(--background);
 }
 
-@media (pointer: fine) {
+@keyframes cursor-watchdog-tick {
+  0%, 90% {
+    cursor: auto !important;
+  }
+  100% {
+    cursor: auto !important;
+  }
+}
 
-  *,
-  *::before,
-  *::after {
-    cursor: none !important;
+@keyframes cursor-watchdog-tock {
+  0%, 90% {
+    cursor: auto !important;
+  }
+  100% {
+    cursor: auto !important;
+  }
+}
+
+@keyframes custom-cursor-element-tick {
+  0%, 90% {
+    opacity: 1;
+    visibility: visible;
+  }
+  100% {
+    opacity: 0 !important;
+    visibility: hidden !important;
+  }
+}
+
+@keyframes custom-cursor-element-tock {
+  0%, 90% {
+    opacity: 1;
+    visibility: visible;
+  }
+  100% {
+    opacity: 0 !important;
+    visibility: hidden !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .custom-cursor-active.watchdog-tick,
+  .custom-cursor-active.watchdog-tick * {
+    animation: cursor-watchdog-tick 1.2s forwards !important;
+  }
+
+  .custom-cursor-active.watchdog-tock,
+  .custom-cursor-active.watchdog-tock * {
+    animation: cursor-watchdog-tock 1.2s forwards !important;
+  }
+
+  .custom-cursor-active.watchdog-tick .custom-cursor-element {
+    animation: custom-cursor-element-tick 1.2s forwards !important;
+  }
+
+  .custom-cursor-active.watchdog-tock .custom-cursor-element {
+    animation: custom-cursor-element-tock 1.2s forwards !important;
   }
 }
 
 @layer base {
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     transition: none !important;
   }
 

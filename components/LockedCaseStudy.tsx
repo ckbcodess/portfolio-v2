@@ -232,7 +232,7 @@ export const LockedCaseStudy: React.FC<LockedCaseStudyProps> = ({ caseStudy, onU
               <path d="M16 0C10.4772 0 6 4.47715 6 10V13H4C1.79086 13 0 14.7909 0 17V34C0 36.2091 1.79086 38 4 38H28C30.2091 38 32 36.2091 32 34V17C32 14.7909 30.2091 13 28 13H26V10C26 4.47715 21.5228 0 16 0ZM24 13H8V10C8 5.58172 11.5817 2 16 2C20.4183 2 24 5.58172 24 10V13ZM16 21C17.6569 21 19 22.3431 19 24C19 25.6569 17.6569 27 16 27C14.3431 27 13 25.6569 13 24C13 22.3431 14.3431 21 16 21Z" fill="currentColor" />
             </svg>
           </motion.div>
-          <h1 className="text-2xl md:text-[28px] leading-[1.3] font-normal tracking-tight text-foreground max-w-[400px]">
+          <h1 className="text-xl md:text-[24px] leading-[1.3] font-normal tracking-tight text-foreground max-w-[400px]">
             You'd need to know the code to see this case study.
           </h1>
         </div>
@@ -254,7 +254,7 @@ export const LockedCaseStudy: React.FC<LockedCaseStudyProps> = ({ caseStudy, onU
                   <div
                     key={index}
                     className={[
-                      "relative w-14 h-14 md:w-16 md:h-16 rounded-lg border bg-muted dark:bg-[#070709] flex items-center justify-center transition-all duration-300 ease-in-out overflow-hidden",
+                      "relative w-12 h-12 md:w-14 md:h-14 rounded-lg border bg-muted dark:bg-[#070709] flex items-center justify-center transition-all duration-300 ease-in-out overflow-hidden",
                       isInvalid ? "border-danger" : "border-transparent",
                       isInvalid ? "focus-within:border-danger" : "focus-within:border-primary",
                       isSubmitting && "opacity-60 cursor-not-allowed"
@@ -267,7 +267,7 @@ export const LockedCaseStudy: React.FC<LockedCaseStudyProps> = ({ caseStudy, onU
                       autoComplete={index === 0 ? "one-time-code" : "off"}
                       autoFocus={index === 0}
                       className={[
-                        "absolute inset-0 w-full h-full text-center text-lg md:text-xl",
+                        "absolute inset-0 w-full h-full text-center text-base md:text-lg",
                         "bg-transparent border-none outline-none ring-0 focus:ring-0 focus:outline-none",
                         "text-transparent caret-foreground leading-none",
                         "disabled:cursor-not-allowed",
@@ -294,7 +294,7 @@ export const LockedCaseStudy: React.FC<LockedCaseStudyProps> = ({ caseStudy, onU
                             damping: 15, 
                             stiffness: 400,
                           }}
-                          className="text-lg md:text-xl font-medium text-foreground pointer-events-none select-none"
+                          className="text-base md:text-lg font-medium text-foreground pointer-events-none select-none"
                         >
                           {digit}
                         </motion.span>
