@@ -105,6 +105,7 @@ export const theAllexCaseStudy: CaseStudyContent = {
     label: "GCB App",
     eyebrow: "GCB App",
     title: "Mobile Banking App Case Study",
+    thumbnail: "/gcb-card-v4.webp",
   },
   gradientColors: ["#360000", "#9C0000", "#FF1759"],
   badgeVariant: "red",

@@ -18,6 +18,7 @@ export interface CaseStudyNextProject {
   label: string;
   title: string;
   eyebrow?: string;
+  thumbnail?: string;
 }
 
 export interface CaseStudyContent {

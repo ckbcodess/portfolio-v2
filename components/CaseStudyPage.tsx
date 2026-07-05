@@ -240,9 +240,9 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
           ))}
         </div>
 
-        {/* Next Project Footer - Simple Next Card */}
+        {/* Next Project Footer - Simple Thumbnail Card */}
         {caseStudy.nextProject && (
-          <footer className="mt-48 pb-32 relative z-10 px-[var(--page-px)]">
+          <footer className="mt-32 pb-24 relative z-10 px-[var(--page-px)]">
             <div className="max-w-4xl mx-auto">
               <TransitionLink 
                 href={caseStudy.nextProject.href}
@@ -251,41 +251,57 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
               >
                 <div 
                   data-cursor="case-study"
-                  className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-8 md:p-12 transition-all duration-500 hover:bg-white/[0.05] hover:border-white/20 hover:shadow-[0_0_50px_-12px_rgba(255,255,255,0.05)] backdrop-blur-md"
+                  className="relative overflow-hidden rounded-2xl border border-neutral-200 dark:border-white/10 bg-black/[0.01] dark:bg-white/[0.01] p-6 md:p-8 transition-all duration-500 hover:bg-black/[0.03] dark:hover:bg-white/[0.03] hover:border-neutral-300 dark:hover:border-white/20 hover:shadow-lg dark:hover:shadow-[0_0_50px_-12px_rgba(255,255,255,0.03)] backdrop-blur-md"
                 >
-                  {/* Subtle background glow effect */}
-                  <div className="absolute -right-24 -bottom-24 h-64 w-64 rounded-full bg-white/[0.02] blur-3xl transition-transform duration-700 group-hover:scale-125 pointer-events-none" />
+                  <div className="flex flex-col md:flex-row items-center gap-8 justify-between relative z-10">
+                    
+                    {/* Left: Text Details */}
+                    <div className="flex flex-col gap-4 md:gap-6 flex-1 text-left w-full">
+                      <div className="flex items-center gap-3">
+                        <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-muted-foreground/80">
+                          Next Project
+                        </span>
+                        <div className="h-px w-8 bg-neutral-200 dark:bg-white/10" />
+                      </div>
 
-                  <div className="flex flex-col gap-6 md:gap-8 relative z-10">
-                    <div className="flex items-center gap-4">
-                      <span className="text-xs font-semibold uppercase tracking-[0.3em] text-white/30">
-                        Next Project
-                      </span>
-                      <div className="h-px w-12 bg-white/10" />
+                      <div className="flex flex-col gap-2">
+                        <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-foreground transition-colors duration-300">
+                          {caseStudy.nextProject.label}
+                        </h2>
+                        <p className="text-xs md:text-sm text-muted-foreground font-light max-w-md leading-relaxed">
+                          {caseStudy.nextProject.title}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-muted-foreground group-hover:text-foreground transition-colors duration-300 mt-2">
+                        <span>Read Case Study</span>
+                        <svg 
+                          width="14" 
+                          height="14" 
+                          viewBox="0 0 24 24" 
+                          fill="none" 
+                          xmlns="http://www.w3.org/2000/svg" 
+                          className="transform group-hover:translate-x-1 transition-transform duration-300"
+                        >
+                          <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </div>
                     </div>
 
-                    <div className="flex flex-col gap-3">
-                      <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-white/90 group-hover:text-white transition-colors duration-300">
-                        {caseStudy.nextProject.label}
-                      </h2>
-                      <p className="text-sm md:text-base text-white/50 font-light max-w-xl leading-relaxed">
-                        {caseStudy.nextProject.title}
-                      </p>
-                    </div>
+                    {/* Right: Thumbnail Preview */}
+                    {caseStudy.nextProject.thumbnail && (
+                      <div className="w-full md:w-64 aspect-[16/10] relative rounded-xl overflow-hidden bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-white/10 shrink-0">
+                        <Image
+                          src={caseStudy.nextProject.thumbnail}
+                          alt={caseStudy.nextProject.label}
+                          fill
+                          className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                          sizes="(max-width: 768px) 100vw, 256px"
+                        />
+                        <div className="absolute inset-0 bg-black/5 dark:bg-black/20" />
+                      </div>
+                    )}
 
-                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-white/40 group-hover:text-white transition-colors duration-300 mt-2">
-                      <span>Explore Case Study</span>
-                      <svg 
-                        width="16" 
-                        height="16" 
-                        viewBox="0 0 24 24" 
-                        fill="none" 
-                        xmlns="http://www.w3.org/2000/svg" 
-                        className="transform group-hover:translate-x-1.5 transition-transform duration-300"
-                      >
-                        <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                      </svg>
-                    </div>
                   </div>
                 </div>
               </TransitionLink>

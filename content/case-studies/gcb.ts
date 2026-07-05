@@ -80,6 +80,7 @@ export const gcbCaseStudy: CaseStudyContent = {
     label: "The Allex",
     eyebrow: "The Allex",
     title: "Brand + Product System Case Study",
+    thumbnail: "/allex-hero.webp",
   },
   gradientColors: ["#001530", "#0f3d7a", "#2563eb"],
 };
