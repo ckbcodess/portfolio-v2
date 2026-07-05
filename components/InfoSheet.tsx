@@ -102,7 +102,7 @@ export default function InfoSheet({ isOpen, onClose }: InfoSheetProps) {
                           images.find((img: any) => img.size === "large")?.["#text"] ||
                           images[0]?.["#text"];
                           
-          if (xlImage) {
+          if (xlImage && xlImage.trim() !== "") {
             albumArt = xlImage;
           }
 
