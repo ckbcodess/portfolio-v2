@@ -209,7 +209,7 @@ export default function Home() {
                <a href="https://www.linkedin.com/in/ransford-gyasi/" target="_blank" rel="noopener noreferrer" className="flex items-center px-6 py-4 hover:bg-foreground/[0.02] rounded-2xl text-foreground/60 hover:text-foreground text-base font-medium transition-all duration-300 w-full">
                  Linkedin
                </a>
-               <a href="https://github.com/rnsford" target="_blank" rel="noopener noreferrer" className="flex items-center px-6 py-4 hover:bg-foreground/[0.02] rounded-2xl text-foreground/60 hover:text-foreground text-base font-medium transition-all duration-300 w-full">
+               <a href="https://github.com/ckbcodess" target="_blank" rel="noopener noreferrer" className="flex items-center px-6 py-4 hover:bg-foreground/[0.02] rounded-2xl text-foreground/60 hover:text-foreground text-base font-medium transition-all duration-300 w-full">
                  Github
                </a>
              </div>
@@ -218,13 +218,13 @@ export default function Home() {
            <div className="flex flex-col gap-6 text-left">
              <h3 className="text-foreground text-base font-semibold tracking-tight">My Art</h3>
              <div className="flex flex-col gap-2">
-               <a href="https://x.com" target="_blank" rel="noopener noreferrer" className="flex items-center px-6 py-4 hover:bg-foreground/[0.02] rounded-2xl text-foreground/60 hover:text-foreground text-base font-medium transition-all duration-300 w-full">
+               <a href="https://x.com/ckbdidit?lang=en" target="_blank" rel="noopener noreferrer" className="flex items-center px-6 py-4 hover:bg-foreground/[0.02] rounded-2xl text-foreground/60 hover:text-foreground text-base font-medium transition-all duration-300 w-full">
                  X (Twitter)
                </a>
-               <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="flex items-center px-6 py-4 hover:bg-foreground/[0.02] rounded-2xl text-foreground/60 hover:text-foreground text-base font-medium transition-all duration-300 w-full">
+               <a href="https://www.instagram.com/ckb.didit/?hl=en" target="_blank" rel="noopener noreferrer" className="flex items-center px-6 py-4 hover:bg-foreground/[0.02] rounded-2xl text-foreground/60 hover:text-foreground text-base font-medium transition-all duration-300 w-full">
                  Instagram
                </a>
-               <a href="https://artstation.com" target="_blank" rel="noopener noreferrer" className="flex items-center px-6 py-4 hover:bg-foreground/[0.02] rounded-2xl text-foreground/60 hover:text-foreground text-base font-medium transition-all duration-300 w-full">
+               <a href="https://www.artstation.com/ckbdidit" target="_blank" rel="noopener noreferrer" className="flex items-center px-6 py-4 hover:bg-foreground/[0.02] rounded-2xl text-foreground/60 hover:text-foreground text-base font-medium transition-all duration-300 w-full">
                  Artstation
                </a>
              </div>

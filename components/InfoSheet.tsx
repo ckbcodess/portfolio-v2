@@ -26,9 +26,10 @@ const GEEK_TAGS = [
 const CONNECT_LINKS = [
   { label: "Mail", href: "mailto:rnsfordgyasi@gmail.com" },
   { label: "LinkedIn", href: "https://www.linkedin.com/in/ransford-gyasi/", external: true },
-  { label: "Github", href: "https://github.com/rnsford", external: true },
-  { label: "Instagram", href: "https://instagram.com", external: true },
-  { label: "Twitter [X]", href: "https://x.com", external: true },
+  { label: "Github", href: "https://github.com/ckbcodess", external: true },
+  { label: "Instagram", href: "https://www.instagram.com/ckb.didit/?hl=en", external: true },
+  { label: "Twitter [X]", href: "https://x.com/ckbdidit?lang=en", external: true },
+  { label: "Artstation", href: "https://www.artstation.com/ckbdidit", external: true },
 ];
 
 const panelVariants = {
