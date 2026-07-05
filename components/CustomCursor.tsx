@@ -38,6 +38,20 @@ export default function CustomCursor({ isTransitioning }: { isTransitioning?: bo
         setCursorType("default");
     }, [pathname]);
 
+    // Temporary hold text visibility for a brief delightful moment
+    const [holdTemporaryActive, setHoldTemporaryActive] = useState(false);
+    useEffect(() => {
+        if (cursorType === "hold") {
+            setHoldTemporaryActive(true);
+            const timer = setTimeout(() => {
+                setHoldTemporaryActive(false);
+            }, 1200);
+            return () => clearTimeout(timer);
+        } else {
+            setHoldTemporaryActive(false);
+        }
+    }, [cursorType]);
+
     // Keep refs of values to prevent recreating listeners constantly
     const cursorTypeRef = useRef(cursorType);
     const targetPosRef = useRef(targetPos);
@@ -355,17 +369,31 @@ export default function CustomCursor({ isTransitioning }: { isTransitioning?: bo
 
         // Variant Styling logic (consolidated)
         if (cursorType === "hold") {
-            const isLight = resolvedTheme === "light";
-            gsap.to(cursorRef.current, {
-                mixBlendMode: "normal",
-                width: 76, height: 40,
-                borderRadius: "20px",
-                backgroundColor: isLight ? "#000000" : "#ffffff",
-                color: isLight ? "#ffffff" : "#000000",
-                border: "0px solid transparent",
-                duration: 0.4,
-                ease: "elastic.out(1, 0.82)"
-            });
+            if (holdTemporaryActive) {
+                const isLight = resolvedTheme === "light";
+                gsap.to(cursorRef.current, {
+                    mixBlendMode: "normal",
+                    width: 76, height: 40,
+                    borderRadius: "20px",
+                    backgroundColor: isLight ? "#000000" : "#ffffff",
+                    color: isLight ? "#ffffff" : "#000000",
+                    border: "0px solid transparent",
+                    duration: 0.4,
+                    ease: "elastic.out(1, 0.82)"
+                });
+            } else {
+                // Revert to pointer cursor when temporary hold duration is over
+                gsap.to(cursorRef.current, {
+                    mixBlendMode: "difference",
+                    width: 8, height: 8,
+                    borderRadius: "100%",
+                    backgroundColor: "white",
+                    color: "#ffffff",
+                    border: "0px solid transparent",
+                    duration: 0.3,
+                    ease: "power2.out"
+                });
+            }
         } else if (cursorType === "copy") {
             gsap.to(cursorRef.current, {
                 mixBlendMode: "normal",
@@ -454,7 +482,7 @@ export default function CustomCursor({ isTransitioning }: { isTransitioning?: bo
                 ease: "power3.out"
             });
         }
-    }, { scope: cursorRef, dependencies: [cursorType, isTransitioning, resolvedTheme, enabled] });
+    }, { scope: cursorRef, dependencies: [cursorType, holdTemporaryActive, isTransitioning, resolvedTheme, enabled] });
 
     if (!enabled) return null;
 
@@ -467,7 +495,7 @@ export default function CustomCursor({ isTransitioning }: { isTransitioning?: bo
             <span className={`transition-opacity duration-300 uppercase text-xs font-normal tracking-wider ${cursorType === "copy" ? "opacity-100" : "opacity-0 invisible"}`}>
                 Copy Email
             </span>
-            <span className={`absolute transition-opacity duration-300 uppercase text-xs font-bold tracking-wider ${cursorType === "hold" ? "opacity-100 animate-cursor-flash" : "opacity-0 invisible"}`}>
+            <span className={`absolute transition-all duration-300 text-xs font-semibold tracking-wider ${cursorType === "hold" && holdTemporaryActive ? "opacity-100 scale-100 animate-cursor-flash" : "opacity-0 scale-75 invisible"}`}>
                 Hold
             </span>
             <span className={`absolute transition-opacity duration-300 uppercase text-xs font-normal tracking-wider ${cursorType === "copied" ? "opacity-100" : "opacity-0 invisible"}`}>
