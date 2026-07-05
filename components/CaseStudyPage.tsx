@@ -242,14 +242,16 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
 
         {/* Next Project Footer - Exact Reference Design */}
         {caseStudy.nextProject && (
-          <footer className="mt-24 pb-32 relative z-10 max-w-2xl mx-auto px-4 sm:px-0">
+          <footer className="mt-24 pb-32 relative z-10 max-w-2xl mx-auto px-4 sm:px-0 flex flex-col items-end">
+            {/* Divider */}
+            <div className="h-px w-full bg-neutral-200 dark:bg-white/10 mb-16" />
+
             <TransitionLink 
               href={caseStudy.nextProject.href}
               label={caseStudy.nextProject.label}
               className="group inline-block"
             >
               <div 
-                data-cursor="case-study"
                 className="flex items-center gap-6 text-left"
               >
                 {/* Left: Thumbnail Preview */}
