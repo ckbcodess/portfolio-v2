@@ -240,44 +240,51 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
           ))}
         </div>
 
-        {/* Next Project Footer - Impeccable Design */}
+        {/* Next Project Footer - Simple Next Card */}
         {caseStudy.nextProject && (
-          <footer className="mt-64 pb-48 relative z-10 px-[var(--page-px)]">
-            <div className="max-w-7xl mx-auto">
-              <div className="h-px w-full bg-white/10 mb-24" />
-              
+          <footer className="mt-48 pb-32 relative z-10 px-[var(--page-px)]">
+            <div className="max-w-4xl mx-auto">
               <TransitionLink 
                 href={caseStudy.nextProject.href}
                 label={caseStudy.nextProject.label}
                 className="group block"
               >
-                <div className="flex flex-col gap-12 md:gap-20">
-                  <div className="flex items-center gap-6">
-                    <span className="text-xs uppercase tracking-[0.4em] text-white/30 font-medium whitespace-nowrap">
-                      {caseStudy.nextProject.eyebrow || "Next Case"}
-                    </span>
-                    <div className="h-px flex-1 bg-white/5 group-hover:bg-white/20 transition-colors duration-700" />
-                  </div>
-                  
-                  <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-12 lg:gap-24">
-                    <div className="flex flex-col gap-6 max-w-4xl">
-                      <h2 className="text-5xl md:text-7xl lg:text-[7vw] leading-[0.95] font-normal tracking-tighter text-white/80 group-hover:text-white transition-all duration-700 ease-out group-hover:translate-x-2">
-                        {caseStudy.nextProject.title}
-                      </h2>
+                <div 
+                  data-cursor="case-study"
+                  className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-8 md:p-12 transition-all duration-500 hover:bg-white/[0.05] hover:border-white/20 hover:shadow-[0_0_50px_-12px_rgba(255,255,255,0.05)] backdrop-blur-md"
+                >
+                  {/* Subtle background glow effect */}
+                  <div className="absolute -right-24 -bottom-24 h-64 w-64 rounded-full bg-white/[0.02] blur-3xl transition-transform duration-700 group-hover:scale-125 pointer-events-none" />
+
+                  <div className="flex flex-col gap-6 md:gap-8 relative z-10">
+                    <div className="flex items-center gap-4">
+                      <span className="text-xs font-semibold uppercase tracking-[0.3em] text-white/30">
+                        Next Project
+                      </span>
+                      <div className="h-px w-12 bg-white/10" />
                     </div>
-                    
-                    <div className="flex flex-col gap-2 shrink-0 md:items-end lg:mb-4 transition-transform duration-700 group-hover:-translate-x-2">
-                      <p className="text-xs uppercase tracking-widest text-white/20 font-bold">Client / Project</p>
-                      <p className="text-xl md:text-2xl text-white/40 font-light group-hover:text-white transition-colors duration-500">
+
+                    <div className="flex flex-col gap-3">
+                      <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-white/90 group-hover:text-white transition-colors duration-300">
                         {caseStudy.nextProject.label}
+                      </h2>
+                      <p className="text-sm md:text-base text-white/50 font-light max-w-xl leading-relaxed">
+                        {caseStudy.nextProject.title}
                       </p>
-                      
-                      <div className="mt-4 flex items-center gap-2 text-white/0 group-hover:text-primary transition-all duration-500 transform translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100">
-                        <span className="text-xs uppercase tracking-widest font-medium">Explore</span>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="transform group-hover:translate-x-1 transition-transform">
-                          <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-white/40 group-hover:text-white transition-colors duration-300 mt-2">
+                      <span>Explore Case Study</span>
+                      <svg 
+                        width="16" 
+                        height="16" 
+                        viewBox="0 0 24 24" 
+                        fill="none" 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        className="transform group-hover:translate-x-1.5 transition-transform duration-300"
+                      >
+                        <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
                     </div>
                   </div>
                 </div>
