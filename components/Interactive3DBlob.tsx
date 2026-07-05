@@ -308,32 +308,37 @@ export default function Interactive3DBlob() {
   const presets = {
     Soft: {
       name: "Soft",
-      radius: 1.05,
+      radius: 1.32,
       noiseScale: 0.70,
       noiseStrength: 0.10,
       speed: 0.50,
-      lightColor: "#B9B9B9",
-      lightColor2: "#B9B9B9",
+      lightColor: "#d4cde5",
+      lightColor2: "#d0d8e1",
       lightRimColor: "#FFFFFF",
       lightGlowColor: "#FFFFFF",
-      darkColor: "#1E1E1E",
-      darkColor2: "#121212",
-      darkRimColor: "#444444",
+      darkColor: "#0f4966",
+      darkColor2: "#474176",
+      darkRimColor: "#4e6179",
       darkGlowColor: "#333333",
-      rimStrength: 1.00,
-      rimPower: 2.00,
+      rimStrength: 0.53,
+      rimPower: 1.56,
       followPointer: true,
       pointerTilt: 1.00,
       pointerFollow: 5.00,
-      autoRotationSpeed: 0.000,
+      autoRotationSpeed: 0.002,
       bloomEnabled: false,
       holdEnabled: true,
-      twistX: 0.00,
-      twistY: 0.00,
+      twistX: 0.85,
+      twistY: 0.45,
       textureMode: 0, // None
       textureScale: 15.0,
       textureStrength: 0.04,
-      textureRoundness: 1.00
+      textureRoundness: 1.00,
+      pressScale: 1.20,
+      pressNoiseMultiplier: 2.50,
+      pressDuration: 2.00,
+      moltenColor: "#2b65ee",
+      moltenCoreColor: "#38f2ff"
     },
     Aurora: {
       name: "Aurora",
@@ -609,11 +614,11 @@ export default function Interactive3DBlob() {
 
   // Press Hold morphing state
   const [holdEnabled, setHoldEnabled] = useState(presets.Soft.holdEnabled);
-  const [pressScale, setPressScale] = useState(1.30);
-  const [pressNoiseMultiplier, setPressNoiseMultiplier] = useState(5.00);
-  const [pressDuration, setPressDuration] = useState(1.60);
-  const [moltenColor, setMoltenColor] = useState("#FF3A00");
-  const [moltenCoreColor, setMoltenCoreColor] = useState("#FFD23A");
+  const [pressScale, setPressScale] = useState(presets.Soft.pressScale ?? 1.20);
+  const [pressNoiseMultiplier, setPressNoiseMultiplier] = useState(presets.Soft.pressNoiseMultiplier ?? 2.50);
+  const [pressDuration, setPressDuration] = useState(presets.Soft.pressDuration ?? 2.00);
+  const [moltenColor, setMoltenColor] = useState(presets.Soft.moltenColor ?? "#2b65ee");
+  const [moltenCoreColor, setMoltenCoreColor] = useState(presets.Soft.moltenCoreColor ?? "#38f2ff");
 
   // Animation Refs
   const isPressedRef = useRef(false);
