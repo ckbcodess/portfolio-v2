@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { X, Play } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import Image from "next/image";
@@ -56,6 +56,77 @@ export default function InfoSheet({ isOpen, onClose }: InfoSheetProps) {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
+
+  interface TrackInfo {
+    name: string;
+    artist: string;
+    album: string;
+    albumArt: string;
+    url: string;
+    nowPlaying: boolean;
+  }
+
+  const [track, setTrack] = useState<TrackInfo>({
+    name: "Margot",
+    artist: "Hotel Fiction",
+    album: "Margot",
+    albumArt: "/spotify-album-art.png",
+    url: "https://www.last.fm/music/Hotel+Fiction/_/Margot",
+    nowPlaying: false
+  });
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const apiKey = process.env.NEXT_PUBLIC_LASTFM_API_KEY;
+    const username = process.env.NEXT_PUBLIC_LASTFM_USERNAME;
+
+    if (!apiKey || !username) return;
+
+    const fetchLastTrack = async () => {
+      try {
+        const res = await fetch(
+          `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${apiKey}&format=json&limit=1`
+        );
+        const data = await res.json();
+        const latestTrack = data?.recenttracks?.track?.[0];
+        
+        if (latestTrack) {
+          const name = latestTrack.name;
+          const artist = latestTrack.artist?.["#text"] || "";
+          const album = latestTrack.album?.["#text"] || "";
+          
+          let albumArt = "/spotify-album-art.png";
+          const images = latestTrack.image || [];
+          const xlImage = images.find((img: any) => img.size === "extralarge")?.["#text"] || 
+                          images.find((img: any) => img.size === "large")?.["#text"] ||
+                          images[0]?.["#text"];
+                          
+          if (xlImage) {
+            albumArt = xlImage;
+          }
+
+          const url = latestTrack.url || "";
+          const nowPlaying = latestTrack["@attr"]?.nowplaying === "true";
+
+          setTrack({
+            name,
+            artist,
+            album,
+            albumArt,
+            url,
+            nowPlaying
+          });
+        }
+      } catch (err) {
+        console.error("Failed to fetch track from Last.fm:", err);
+      }
+    };
+
+    fetchLastTrack();
+    const interval = setInterval(fetchLastTrack, 30000);
+    return () => clearInterval(interval);
+  }, [isOpen]);
 
   return (
     <>
@@ -161,31 +232,53 @@ export default function InfoSheet({ isOpen, onClose }: InfoSheetProps) {
               </div>
             </div>
 
-            {/* Spotify — fixed size, bottom-right */}
-            <div className="flex justify-end">
-              <div className="flex flex-col gap-2">
-                <p className="text-foreground/40 text-sm">Blasting my ears with:</p>
-                <div className="group relative w-[130px] h-[130px] rounded-xl overflow-hidden bg-foreground/5 cursor-pointer shadow-sm transition-all duration-500 hover:shadow-md">
-                  <Image
-                    src="/spotify-album-art.png"
-                    alt="Album art — Margot by Hotel Fiction"
-                    fill
-                    sizes="130px"
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                    priority
-                  />
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                    <div className="w-9 h-9 rounded-full bg-[#1DB954] flex items-center justify-center text-white shadow-lg scale-90 group-hover:scale-100 transition-transform duration-300">
-                      <Play size={14} fill="currentColor" className="ml-0.5" />
-                    </div>
-                  </div>
-                </div>
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-foreground font-medium text-lg leading-snug">Margot</span>
-                  <span className="text-foreground/40 text-base leading-normal">Hotel Fiction</span>
-                </div>
-              </div>
-            </div>
+             {/* Spotify/Last.fm scrobbler — fixed size, bottom-right */}
+             <div className="flex justify-end">
+               <div className="flex flex-col gap-2">
+                 <p className="text-foreground/40 text-sm">
+                   {track.nowPlaying ? "Blasting my ears with:" : "Recently listened to:"}
+                 </p>
+                 <a 
+                   href={track.url} 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   className="group block"
+                 >
+                   <div className="relative w-[130px] h-[130px] rounded-xl overflow-hidden bg-foreground/5 cursor-pointer shadow-sm transition-all duration-500 hover:shadow-md">
+                     <Image
+                       src={track.albumArt}
+                       alt={`Album art — ${track.name} by ${track.artist}`}
+                       fill
+                       sizes="130px"
+                       className="object-cover transition-transform duration-700 group-hover:scale-105"
+                       priority
+                     />
+                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                       <div className="w-9 h-9 rounded-full bg-[#1DB954] flex items-center justify-center text-white shadow-lg scale-90 group-hover:scale-100 transition-transform duration-300">
+                         <Play size={14} fill="currentColor" className="ml-0.5" />
+                       </div>
+                     </div>
+                   </div>
+                 </a>
+                 <div className="flex flex-col gap-0.5 max-w-[130px]">
+                   <a 
+                     href={track.url} 
+                     target="_blank" 
+                     rel="noopener noreferrer"
+                     className="text-foreground font-medium text-lg leading-snug hover:underline truncate"
+                     title={track.name}
+                   >
+                     {track.name}
+                   </a>
+                   <span 
+                     className="text-foreground/40 text-base leading-normal truncate"
+                     title={track.artist}
+                   >
+                     {track.artist}
+                   </span>
+                 </div>
+               </div>
+             </div>
           </div>
 
         </div>
