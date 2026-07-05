@@ -10,7 +10,7 @@ export default function CustomCursor({ isTransitioning }: { isTransitioning?: bo
     const pathname = usePathname();
     const { resolvedTheme } = useTheme();
     const cursorRef = useRef<HTMLDivElement>(null);
-    const [cursorType, setCursorType] = useState<"default" | "copy" | "copied" | "pointer" | "case-study" | "confidential" | "none" | "wrap" | "lightbox-left" | "lightbox-right" | "close">("default");
+    const [cursorType, setCursorType] = useState<"default" | "copy" | "copied" | "pointer" | "case-study" | "confidential" | "none" | "wrap" | "lightbox-left" | "lightbox-right" | "close" | "hold">("default");
     
     const [targetPos, setTargetPos] = useState<{ x: number; y: number } | null>(null);
     const resetTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -354,7 +354,19 @@ export default function CustomCursor({ isTransitioning }: { isTransitioning?: bo
         }
 
         // Variant Styling logic (consolidated)
-        if (cursorType === "copy") {
+        if (cursorType === "hold") {
+            const isLight = resolvedTheme === "light";
+            gsap.to(cursorRef.current, {
+                mixBlendMode: "normal",
+                width: 76, height: 40,
+                borderRadius: "20px",
+                backgroundColor: isLight ? "#000000" : "#ffffff",
+                color: isLight ? "#ffffff" : "#000000",
+                border: "0px solid transparent",
+                duration: 0.4,
+                ease: "elastic.out(1, 0.82)"
+            });
+        } else if (cursorType === "copy") {
             gsap.to(cursorRef.current, {
                 mixBlendMode: "normal",
                 width: 100, height: 40,
@@ -454,6 +466,9 @@ export default function CustomCursor({ isTransitioning }: { isTransitioning?: bo
         >
             <span className={`transition-opacity duration-300 uppercase text-xs font-normal tracking-wider ${cursorType === "copy" ? "opacity-100" : "opacity-0 invisible"}`}>
                 Copy Email
+            </span>
+            <span className={`absolute transition-opacity duration-300 uppercase text-xs font-bold tracking-wider ${cursorType === "hold" ? "opacity-100 animate-cursor-flash" : "opacity-0 invisible"}`}>
+                Hold
             </span>
             <span className={`absolute transition-opacity duration-300 uppercase text-xs font-normal tracking-wider ${cursorType === "copied" ? "opacity-100" : "opacity-0 invisible"}`}>
                 Copied!

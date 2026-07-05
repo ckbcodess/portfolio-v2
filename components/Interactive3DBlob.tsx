@@ -2071,7 +2071,7 @@ export default function Interactive3DBlob() {
       {/* Canvas wrapper container */}
       <div
         ref={containerRef}
-        data-cursor="pointer"
+        data-cursor="hold"
         className="relative w-full h-full select-none overflow-visible"
         onPointerMove={handlePointerMove}
         onPointerDown={handlePointerDown}

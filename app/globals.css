@@ -505,3 +505,13 @@ body::-webkit-scrollbar,
 header {
   transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/* --- Custom Cursor Flash Animation --- */
+@keyframes cursor-flash {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+
+.animate-cursor-flash {
+  animation: cursor-flash 0.8s ease-in-out infinite;
+}
