@@ -66,17 +66,12 @@ export default function InfoSheet({ isOpen, onClose }: InfoSheetProps) {
     nowPlaying: boolean;
   }
 
-  const [track, setTrack] = useState<TrackInfo>({
-    name: "Margot",
-    artist: "Hotel Fiction",
-    album: "Margot",
-    albumArt: "/spotify-album-art.png",
-    url: "https://www.last.fm/music/Hotel+Fiction/_/Margot",
-    nowPlaying: false
-  });
+  const [track, setTrack] = useState<TrackInfo | null>(null);
+  const [trackLoading, setTrackLoading] = useState(true);
 
   useEffect(() => {
     if (!isOpen) return;
+    setTrackLoading(true);
 
     const apiKey = process.env.NEXT_PUBLIC_LASTFM_API_KEY || "f8423408e5019132bc7e3b7d4d8fbb60";
     const username = process.env.NEXT_PUBLIC_LASTFM_USERNAME || "ckbdidit";
@@ -158,6 +153,8 @@ export default function InfoSheet({ isOpen, onClose }: InfoSheetProps) {
         }
       } catch (err) {
         console.error("Failed to fetch track from Last.fm:", err);
+      } finally {
+        setTrackLoading(false);
       }
     };
 
@@ -274,70 +271,83 @@ export default function InfoSheet({ isOpen, onClose }: InfoSheetProps) {
              <div className="flex justify-end">
                <div className="flex flex-col gap-2">
                  <p className="text-foreground/40 text-xs select-none">
-                   {track.nowPlaying ? "Blasting my ears with:" : "Recently listened to:"}
+                   {trackLoading ? "\u00a0" : track?.nowPlaying ? "Blasting my ears with:" : "Recently listened to:"}
                  </p>
-                 <a 
-                   href={track.url} 
-                   target="_blank" 
-                   rel="noopener noreferrer"
-                   className="group block"
-                 >
-                    <div className="relative w-[128px] h-[128px] rounded-xl overflow-hidden bg-foreground/5 cursor-pointer shadow-sm transition-all duration-500 hover:shadow-md">
-                      <Image
-                        src={track.albumArt}
-                        alt={`Album art — ${track.name} by ${track.artist}`}
-                        fill
-                        sizes="128px"
-                        className="object-cover transition-transform duration-700 group-hover:scale-105"
-                        priority
-                      />
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                        <div className="w-9 h-9 rounded-full bg-[#1DB954] flex items-center justify-center text-white shadow-lg scale-90 group-hover:scale-100 transition-transform duration-300">
-                          <Play size={14} fill="currentColor" className="ml-0.5" />
-                        </div>
-                      </div>
-                    </div>
-                 </a>
-                  <div className="flex flex-col gap-0.5 max-w-[128px] overflow-hidden">
-                    <a 
-                      href={track.url} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-foreground font-medium text-base leading-snug hover:underline block w-full overflow-hidden"
-                      title={track.name}
-                    >
-                      {track.name.length > 15 ? (
-                        <div className="overflow-hidden whitespace-nowrap w-full relative">
-                          <div 
-                            className="inline-flex animate-marquee-text"
-                            style={{ animationDuration: `${Math.max(track.name.length * 0.35, 6)}s` }}
-                          >
-                            <span className="pr-6">{track.name}</span>
-                            <span className="pr-6">{track.name}</span>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="truncate">
-                          {track.name}
-                        </div>
-                      )}
-                    </a>
-                   <div className="flex items-center justify-between gap-1.5">
-                     <span 
-                       className="text-foreground/40 text-sm leading-normal truncate flex-1"
-                       title={track.artist}
-                     >
-                       {track.artist}
-                     </span>
-                     {track.nowPlaying && (
-                       <div className="flex items-end gap-[2px] h-3 flex-shrink-0 mb-0.5" aria-hidden="true">
-                         <div className="w-[2px] bg-foreground/40 rounded-full animate-wave-1 origin-bottom" />
-                         <div className="w-[2px] bg-foreground/40 rounded-full animate-wave-2 origin-bottom" />
-                         <div className="w-[2px] bg-foreground/40 rounded-full animate-wave-3 origin-bottom" />
-                         <div className="w-[2px] bg-foreground/40 rounded-full animate-wave-4 origin-bottom" />
+                 {/* Album art */}
+                 {trackLoading ? (
+                   <div className="w-[128px] h-[128px] rounded-xl bg-foreground/8 animate-pulse" />
+                 ) : (
+                   <a
+                     href={track?.url}
+                     target="_blank"
+                     rel="noopener noreferrer"
+                     className="group block"
+                   >
+                     <div className="relative w-[128px] h-[128px] rounded-xl overflow-hidden bg-foreground/5 cursor-pointer shadow-sm transition-all duration-500 hover:shadow-md">
+                       <Image
+                         src={track?.albumArt ?? "/spotify-album-art.png"}
+                         alt={`Album art — ${track?.name} by ${track?.artist}`}
+                         fill
+                         sizes="128px"
+                         className="object-cover transition-transform duration-700 group-hover:scale-105"
+                         priority
+                       />
+                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                         <div className="w-9 h-9 rounded-full bg-[#1DB954] flex items-center justify-center text-white shadow-lg scale-90 group-hover:scale-100 transition-transform duration-300">
+                           <Play size={14} fill="currentColor" className="ml-0.5" />
+                         </div>
                        </div>
-                     )}
-                   </div>
+                     </div>
+                   </a>
+                 )}
+                 {/* Track info */}
+                 <div className="flex flex-col gap-0.5 max-w-[128px] overflow-hidden">
+                   {trackLoading ? (
+                     <>
+                       <div className="h-4 w-24 rounded bg-foreground/8 animate-pulse mb-1" />
+                       <div className="h-3 w-16 rounded bg-foreground/5 animate-pulse" />
+                     </>
+                   ) : (
+                     <>
+                       <a
+                         href={track?.url}
+                         target="_blank"
+                         rel="noopener noreferrer"
+                         className="text-foreground font-medium text-base leading-snug hover:underline block w-full overflow-hidden"
+                         title={track?.name}
+                       >
+                         {(track?.name?.length ?? 0) > 15 ? (
+                           <div className="overflow-hidden whitespace-nowrap w-full relative">
+                             <div
+                               className="inline-flex animate-marquee-text"
+                               style={{ animationDuration: `${Math.max((track?.name?.length ?? 0) * 0.35, 6)}s` }}
+                             >
+                               <span className="pr-6">{track?.name}</span>
+                               <span className="pr-6">{track?.name}</span>
+                             </div>
+                           </div>
+                         ) : (
+                           <div className="truncate">{track?.name}</div>
+                         )}
+                       </a>
+                       <div className="flex items-center justify-between gap-1.5">
+                         <span
+                           className="text-foreground/40 text-sm leading-normal truncate flex-1"
+                           title={track?.artist}
+                         >
+                           {track?.artist}
+                         </span>
+                         {track?.nowPlaying && (
+                           <div className="flex items-end gap-[2px] h-3 flex-shrink-0 mb-0.5" aria-hidden="true">
+                             <div className="w-[2px] bg-foreground/40 rounded-full animate-wave-1 origin-bottom" />
+                             <div className="w-[2px] bg-foreground/40 rounded-full animate-wave-2 origin-bottom" />
+                             <div className="w-[2px] bg-foreground/40 rounded-full animate-wave-3 origin-bottom" />
+                             <div className="w-[2px] bg-foreground/40 rounded-full animate-wave-4 origin-bottom" />
+                           </div>
+                         )}
+                       </div>
+                     </>
+                   )}
                  </div>
                </div>
              </div>
