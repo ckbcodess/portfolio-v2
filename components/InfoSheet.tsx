@@ -78,8 +78,8 @@ export default function InfoSheet({ isOpen, onClose }: InfoSheetProps) {
   useEffect(() => {
     if (!isOpen) return;
 
-    const apiKey = process.env.NEXT_PUBLIC_LASTFM_API_KEY;
-    const username = process.env.NEXT_PUBLIC_LASTFM_USERNAME;
+    const apiKey = process.env.NEXT_PUBLIC_LASTFM_API_KEY || "f8423408e5019132bc7e3b7d4d8fbb60";
+    const username = process.env.NEXT_PUBLIC_LASTFM_USERNAME || "ckbdidit";
 
     if (!apiKey || !username) return;
 
