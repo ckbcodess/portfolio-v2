@@ -6,7 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useTransition } from "@/components/TransitionProvider";
 import CaseStudyBackground from "@/components/CaseStudyBackground";
 import CaseStudySidebar from "@/components/CaseStudySidebar";
-import { motion, AnimatePresence } from "motion/react";
+import { motion } from "motion/react";
 import { MaskReveal } from "@/components/MaskReveal";
 import LockedCaseStudy from "@/components/LockedCaseStudy";
 import MobileCaseStudyNav from "@/components/MobileCaseStudyNav";
@@ -224,6 +224,22 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
                       fill
                       className="object-cover"
                       sizes="(max-width: 768px) 100vw, 768px"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {section.videoSrc && (
+                <div className="w-full mt-8">
+                  <div className="relative overflow-hidden rounded-lg bg-muted aspect-video">
+                    <video
+                      src={section.videoSrc}
+                      controls
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                      className="w-full h-full object-cover"
                     />
                   </div>
                 </div>

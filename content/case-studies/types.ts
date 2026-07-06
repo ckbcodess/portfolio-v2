@@ -11,6 +11,7 @@ export interface CaseStudySection {
   bullets?: string[];
   labelClassName?: string;
   imageSrc?: string;
+  videoSrc?: string;
 }
 
 export interface CaseStudyNextProject {

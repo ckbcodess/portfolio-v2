@@ -282,21 +282,29 @@ export default function InfoSheet({ isOpen, onClose }: InfoSheetProps) {
                    rel="noopener noreferrer"
                    className="group block"
                  >
-                   <div className="relative w-[130px] h-[130px] rounded-xl overflow-hidden bg-foreground/5 cursor-pointer shadow-sm transition-all duration-500 hover:shadow-md">
-                     <Image
-                       src={track.albumArt}
-                       alt={`Album art — ${track.name} by ${track.artist}`}
-                       fill
-                       sizes="130px"
-                       className="object-cover transition-transform duration-700 group-hover:scale-105"
-                       priority
-                     />
-                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                       <div className="w-9 h-9 rounded-full bg-[#1DB954] flex items-center justify-center text-white shadow-lg scale-90 group-hover:scale-100 transition-transform duration-300">
-                         <Play size={14} fill="currentColor" className="ml-0.5" />
-                       </div>
-                     </div>
-                   </div>
+                    <div className="relative w-[130px] h-[130px] rounded-xl overflow-hidden bg-foreground/5 cursor-pointer shadow-sm transition-all duration-500 hover:shadow-md">
+                      <Image
+                        src={track.albumArt}
+                        alt={`Album art — ${track.name} by ${track.artist}`}
+                        fill
+                        sizes="130px"
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        priority
+                      />
+                      {track.nowPlaying && (
+                        <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-md px-1.5 py-1 rounded-md flex items-end gap-[2px] h-4 z-[2] group-hover:opacity-0 transition-opacity duration-300">
+                          <div className="w-[2px] bg-[#1DB954] rounded-full animate-wave-1 h-3 origin-bottom" />
+                          <div className="w-[2px] bg-[#1DB954] rounded-full animate-wave-2 h-1.5 origin-bottom" />
+                          <div className="w-[2px] bg-[#1DB954] rounded-full animate-wave-3 h-2 origin-bottom" />
+                          <div className="w-[2px] bg-[#1DB954] rounded-full animate-wave-4 h-3.5 origin-bottom" />
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                        <div className="w-9 h-9 rounded-full bg-[#1DB954] flex items-center justify-center text-white shadow-lg scale-90 group-hover:scale-100 transition-transform duration-300">
+                          <Play size={14} fill="currentColor" className="ml-0.5" />
+                        </div>
+                      </div>
+                    </div>
                  </a>
                  <div className="flex flex-col gap-0.5 max-w-[130px]">
                    <a 
