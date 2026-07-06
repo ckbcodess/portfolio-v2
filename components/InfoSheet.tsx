@@ -282,28 +282,28 @@ export default function InfoSheet({ isOpen, onClose }: InfoSheetProps) {
                    rel="noopener noreferrer"
                    className="group block"
                  >
-                    <div className="relative w-[108px] h-[108px] rounded-xl overflow-hidden bg-foreground/5 cursor-pointer shadow-sm transition-all duration-500 hover:shadow-md">
+                    <div className="relative w-[128px] h-[128px] rounded-xl overflow-hidden bg-foreground/5 cursor-pointer shadow-sm transition-all duration-500 hover:shadow-md">
                       <Image
                         src={track.albumArt}
                         alt={`Album art — ${track.name} by ${track.artist}`}
                         fill
-                        sizes="108px"
+                        sizes="128px"
                         className="object-cover transition-transform duration-700 group-hover:scale-105"
                         priority
                       />
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                        <div className="w-8 h-8 rounded-full bg-[#1DB954] flex items-center justify-center text-white shadow-lg scale-90 group-hover:scale-100 transition-transform duration-300">
-                          <Play size={12} fill="currentColor" className="ml-0.5" />
+                        <div className="w-9 h-9 rounded-full bg-[#1DB954] flex items-center justify-center text-white shadow-lg scale-90 group-hover:scale-100 transition-transform duration-300">
+                          <Play size={14} fill="currentColor" className="ml-0.5" />
                         </div>
                       </div>
                     </div>
                  </a>
-                  <div className="flex flex-col gap-0.5 max-w-[108px] overflow-hidden">
+                  <div className="flex flex-col gap-0.5 max-w-[128px] overflow-hidden">
                     <a 
                       href={track.url} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="text-foreground font-medium text-sm leading-snug hover:underline block w-full overflow-hidden"
+                      className="text-foreground font-medium text-base leading-snug hover:underline block w-full overflow-hidden"
                       title={track.name}
                     >
                       {track.name.length > 15 ? (
@@ -324,7 +324,7 @@ export default function InfoSheet({ isOpen, onClose }: InfoSheetProps) {
                     </a>
                    <div className="flex items-center justify-between gap-1.5">
                      <span 
-                       className="text-foreground/40 text-xs leading-normal truncate flex-1"
+                       className="text-foreground/40 text-sm leading-normal truncate flex-1"
                        title={track.artist}
                      >
                        {track.artist}

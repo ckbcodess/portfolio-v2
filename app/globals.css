@@ -366,13 +366,11 @@ body {
 }
 
 @media (min-width: 1024px) {
-  .custom-cursor-active.watchdog-tick,
-  .custom-cursor-active.watchdog-tick * {
+  .custom-cursor-active.watchdog-tick {
     animation: cursor-watchdog-tick 1.2s forwards !important;
   }
 
-  .custom-cursor-active.watchdog-tock,
-  .custom-cursor-active.watchdog-tock * {
+  .custom-cursor-active.watchdog-tock {
     animation: cursor-watchdog-tock 1.2s forwards !important;
   }
 
