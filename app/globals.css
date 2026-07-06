@@ -568,3 +568,15 @@ header {
 .animate-wave-4 {
   animation: wave-bounce-4 0.75s ease-in-out infinite;
 }
+
+/* --- Music Marquee Keyframes --- */
+@keyframes marquee-text {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-50%, 0, 0); }
+}
+
+.animate-marquee-text {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: marquee-text linear infinite;
+}

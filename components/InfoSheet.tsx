@@ -273,7 +273,7 @@ export default function InfoSheet({ isOpen, onClose }: InfoSheetProps) {
              {/* Spotify/Last.fm scrobbler — fixed size, bottom-right */}
              <div className="flex justify-end">
                <div className="flex flex-col gap-2">
-                 <p className="text-foreground/40 text-sm">
+                 <p className="text-foreground/40 text-xs select-none">
                    {track.nowPlaying ? "Blasting my ears with:" : "Recently listened to:"}
                  </p>
                  <a 
@@ -282,46 +282,62 @@ export default function InfoSheet({ isOpen, onClose }: InfoSheetProps) {
                    rel="noopener noreferrer"
                    className="group block"
                  >
-                    <div className="relative w-[130px] h-[130px] rounded-xl overflow-hidden bg-foreground/5 cursor-pointer shadow-sm transition-all duration-500 hover:shadow-md">
+                    <div className="relative w-[108px] h-[108px] rounded-xl overflow-hidden bg-foreground/5 cursor-pointer shadow-sm transition-all duration-500 hover:shadow-md">
                       <Image
                         src={track.albumArt}
                         alt={`Album art — ${track.name} by ${track.artist}`}
                         fill
-                        sizes="130px"
+                        sizes="108px"
                         className="object-cover transition-transform duration-700 group-hover:scale-105"
                         priority
                       />
-                      {track.nowPlaying && (
-                        <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-md px-1.5 py-1 rounded-md flex items-end gap-[2px] h-4 z-[2] group-hover:opacity-0 transition-opacity duration-300">
-                          <div className="w-[2px] bg-[#1DB954] rounded-full animate-wave-1 h-3 origin-bottom" />
-                          <div className="w-[2px] bg-[#1DB954] rounded-full animate-wave-2 h-1.5 origin-bottom" />
-                          <div className="w-[2px] bg-[#1DB954] rounded-full animate-wave-3 h-2 origin-bottom" />
-                          <div className="w-[2px] bg-[#1DB954] rounded-full animate-wave-4 h-3.5 origin-bottom" />
-                        </div>
-                      )}
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                        <div className="w-9 h-9 rounded-full bg-[#1DB954] flex items-center justify-center text-white shadow-lg scale-90 group-hover:scale-100 transition-transform duration-300">
-                          <Play size={14} fill="currentColor" className="ml-0.5" />
+                        <div className="w-8 h-8 rounded-full bg-[#1DB954] flex items-center justify-center text-white shadow-lg scale-90 group-hover:scale-100 transition-transform duration-300">
+                          <Play size={12} fill="currentColor" className="ml-0.5" />
                         </div>
                       </div>
                     </div>
                  </a>
-                 <div className="flex flex-col gap-0.5 max-w-[130px]">
-                   <a 
-                     href={track.url} 
-                     target="_blank" 
-                     rel="noopener noreferrer"
-                     className="text-foreground font-medium text-lg leading-snug hover:underline truncate"
-                     title={track.name}
-                   >
-                     {track.name}
-                   </a>
-                   <span 
-                     className="text-foreground/40 text-base leading-normal truncate"
-                     title={track.artist}
-                   >
-                     {track.artist}
-                   </span>
+                  <div className="flex flex-col gap-0.5 max-w-[108px] overflow-hidden">
+                    <a 
+                      href={track.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-foreground font-medium text-sm leading-snug hover:underline block w-full overflow-hidden"
+                      title={track.name}
+                    >
+                      {track.name.length > 15 ? (
+                        <div className="overflow-hidden whitespace-nowrap w-full relative">
+                          <div 
+                            className="inline-flex animate-marquee-text hover:[animation-play-state:paused]"
+                            style={{ animationDuration: `${Math.max(track.name.length * 0.35, 6)}s` }}
+                          >
+                            <span className="pr-6">{track.name}</span>
+                            <span className="pr-6">{track.name}</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="truncate">
+                          {track.name}
+                        </div>
+                      )}
+                    </a>
+                   <div className="flex items-center justify-between gap-1.5">
+                     <span 
+                       className="text-foreground/40 text-xs leading-normal truncate flex-1"
+                       title={track.artist}
+                     >
+                       {track.artist}
+                     </span>
+                     {track.nowPlaying && (
+                       <div className="flex items-end gap-[2px] h-3 flex-shrink-0 mb-0.5" aria-hidden="true">
+                         <div className="w-[2px] bg-foreground/40 rounded-full animate-wave-1 origin-bottom" />
+                         <div className="w-[2px] bg-foreground/40 rounded-full animate-wave-2 origin-bottom" />
+                         <div className="w-[2px] bg-foreground/40 rounded-full animate-wave-3 origin-bottom" />
+                         <div className="w-[2px] bg-foreground/40 rounded-full animate-wave-4 origin-bottom" />
+                       </div>
+                     )}
+                   </div>
                  </div>
                </div>
              </div>
