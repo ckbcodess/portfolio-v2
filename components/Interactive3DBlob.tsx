@@ -293,6 +293,20 @@ const glowFragmentShader = `
   }
 `;
 
+// Curated palette of vibrant molten color pairs — cycled randomly on every hold release
+const MOLTEN_PALETTES: Array<[string, string]> = [
+  ["#2b65ee", "#38f2ff"], // Electric blue / cyan  (default)
+  ["#ff3a00", "#ffd23a"], // Lava orange / gold
+  ["#9b00ff", "#ff2af0"], // Deep violet / magenta
+  ["#00e676", "#b9ff6e"], // Neon green / lime
+  ["#ff006e", "#ff8c00"], // Hot pink / amber
+  ["#00cfff", "#ffffff"], // Ice blue / white
+  ["#ff1744", "#ff6d00"], // Scarlet / tangerine
+  ["#aa00ff", "#00e5ff"], // Purple / aqua
+  ["#ffd600", "#ff6d00"], // Yellow gold / deep orange
+  ["#1de9b6", "#00b0ff"], // Teal / sky blue
+];
+
 export default function Interactive3DBlob() {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -668,6 +682,8 @@ export default function Interactive3DBlob() {
   const pressDurationRef = useRef(pressDuration);
   const moltenColorRef = useRef(moltenColor);
   const moltenCoreColorRef = useRef(moltenCoreColor);
+  // Tracks which palette index to use next, so every hold is a different color
+  const nextMoltenPaletteIndexRef = useRef(1); // start at 1 to differ from the default
 
   useEffect(() => { noiseScaleRef.current = noiseScale; }, [noiseScale]);
   useEffect(() => { noiseStrengthRef.current = noiseStrength; }, [noiseStrength]);
@@ -1230,6 +1246,18 @@ export default function Interactive3DBlob() {
   const handlePointerUp = () => {
     isPressedRef.current = false;
     if (canvasRef.current) canvasRef.current.style.cursor = "grab";
+    // Pick next random palette for the NEXT hold interaction
+    const idx = nextMoltenPaletteIndexRef.current;
+    const [nextBase, nextCore] = MOLTEN_PALETTES[idx];
+    moltenColorRef.current = nextBase;
+    moltenCoreColorRef.current = nextCore;
+    setMoltenColor(nextBase);
+    setMoltenCoreColor(nextCore);
+    // Advance to next random index (avoiding repeat)
+    let nextIdx;
+    do { nextIdx = Math.floor(Math.random() * MOLTEN_PALETTES.length); }
+    while (nextIdx === idx);
+    nextMoltenPaletteIndexRef.current = nextIdx;
   };
 
   const handlePointerOver = () => {
