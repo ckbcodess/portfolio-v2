@@ -684,6 +684,8 @@ export default function Interactive3DBlob() {
   const moltenCoreColorRef = useRef(moltenCoreColor);
   // Tracks which palette index to use next, so every hold is a different color
   const nextMoltenPaletteIndexRef = useRef(1); // start at 1 to differ from the default
+  // Set to true after release; the animate loop fires the actual swap once heat hits 0
+  const pendingPaletteSwapRef = useRef(false);
 
   useEffect(() => { noiseScaleRef.current = noiseScale; }, [noiseScale]);
   useEffect(() => { noiseStrengthRef.current = noiseStrength; }, [noiseStrength]);
@@ -1102,6 +1104,21 @@ export default function Interactive3DBlob() {
       } else {
         heatRef.current = 0.0;
       }
+
+      // Once fully cooled back to 0, silently swap the next palette in
+      if (pendingPaletteSwapRef.current && heatRef.current === 0.0) {
+        pendingPaletteSwapRef.current = false;
+        const idx = nextMoltenPaletteIndexRef.current;
+        const [nextBase, nextCore] = MOLTEN_PALETTES[idx];
+        moltenColorRef.current = nextBase;
+        moltenCoreColorRef.current = nextCore;
+        setMoltenColor(nextBase);
+        setMoltenCoreColor(nextCore);
+        let nextIdx;
+        do { nextIdx = Math.floor(Math.random() * MOLTEN_PALETTES.length); }
+        while (nextIdx === idx);
+        nextMoltenPaletteIndexRef.current = nextIdx;
+      }
       
       const smoothHeat = heatRef.current * heatRef.current * (3.0 - 2.0 * heatRef.current);
       material.uniforms.heat.value = smoothHeat;
@@ -1246,18 +1263,8 @@ export default function Interactive3DBlob() {
   const handlePointerUp = () => {
     isPressedRef.current = false;
     if (canvasRef.current) canvasRef.current.style.cursor = "grab";
-    // Pick next random palette for the NEXT hold interaction
-    const idx = nextMoltenPaletteIndexRef.current;
-    const [nextBase, nextCore] = MOLTEN_PALETTES[idx];
-    moltenColorRef.current = nextBase;
-    moltenCoreColorRef.current = nextCore;
-    setMoltenColor(nextBase);
-    setMoltenCoreColor(nextCore);
-    // Advance to next random index (avoiding repeat)
-    let nextIdx;
-    do { nextIdx = Math.floor(Math.random() * MOLTEN_PALETTES.length); }
-    while (nextIdx === idx);
-    nextMoltenPaletteIndexRef.current = nextIdx;
+    // Flag a palette swap — the animate loop will fire it once heat reaches 0
+    pendingPaletteSwapRef.current = true;
   };
 
   const handlePointerOver = () => {
