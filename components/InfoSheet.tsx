@@ -24,76 +24,12 @@ const GEEK_TAGS = [
 ];
 
 const CONNECT_LINKS = [
-  {
-    label: "Mail",
-    href: "mailto:rnsfordgyasi@gmail.com",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-full h-full">
-        <rect x="2" y="4" width="20" height="16" rx="2"/>
-        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-      </svg>
-    ),
-    rotation: "-rotate-[15deg]",
-  },
-  {
-    label: "LinkedIn",
-    href: "https://www.linkedin.com/in/ransford-gyasi/",
-    external: true,
-    icon: (
-      <svg viewBox="0 0 24 24" fill="currentColor" className="w-full h-full">
-        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
-        <rect x="2" y="9" width="4" height="12"/>
-        <circle cx="4" cy="4" r="2"/>
-      </svg>
-    ),
-    rotation: "-rotate-[30deg]",
-  },
-  {
-    label: "Github",
-    href: "https://github.com/ckbcodess",
-    external: true,
-    icon: (
-      <svg viewBox="0 0 24 24" fill="currentColor" className="w-full h-full">
-        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
-      </svg>
-    ),
-    rotation: "-rotate-[30deg]",
-  },
-  {
-    label: "Instagram",
-    href: "https://www.instagram.com/ckb.didit/?hl=en",
-    external: true,
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-full h-full">
-        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-      </svg>
-    ),
-    rotation: "-rotate-[30deg]",
-  },
-  {
-    label: "Twitter [X]",
-    href: "https://x.com/ckbdidit?lang=en",
-    external: true,
-    icon: (
-      <svg viewBox="0 0 24 24" fill="currentColor" className="w-full h-full">
-        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-      </svg>
-    ),
-    rotation: "-rotate-[24deg]",
-  },
-  {
-    label: "Artstation",
-    href: "https://www.artstation.com/ckbdidit",
-    external: true,
-    icon: (
-      <svg viewBox="0 0 24 24" fill="currentColor" className="w-full h-full">
-        <path d="M0 17.723l2.027 3.505h.001a2.424 2.424 0 0 0 2.164 1.333h13.457l-2.792-4.838H0zm24 .025c0-.484-.143-.935-.388-1.314L15.728 2.728a2.424 2.424 0 0 0-2.164-1.333H9.419L21.598 22.54l1.92-3.325c.378-.637.482-.919.482-1.467zM10.94 9.729L15.272 17H6.607l4.333-7.271z"/>
-      </svg>
-    ),
-    rotation: "-rotate-[20deg]",
-  },
+  { label: "Mail", href: "mailto:rnsfordgyasi@gmail.com" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/ransford-gyasi/", external: true },
+  { label: "Github", href: "https://github.com/ckbcodess", external: true },
+  { label: "Instagram", href: "https://www.instagram.com/ckb.didit/?hl=en", external: true },
+  { label: "Twitter [X]", href: "https://x.com/ckbdidit?lang=en", external: true },
+  { label: "Artstation", href: "https://www.artstation.com/ckbdidit", external: true },
 ];
 
 const panelVariants = {
@@ -319,24 +255,16 @@ export default function InfoSheet({ isOpen, onClose }: InfoSheetProps) {
             {/* Connect */}
             <div className="flex flex-col gap-3">
               <p className="text-foreground/40 text-base">Connect</p>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-0.5">
                 {CONNECT_LINKS.map((link) => (
                   <a
                     key={link.label}
                     href={link.href}
                     target={link.external ? "_blank" : undefined}
                     rel={link.external ? "noopener noreferrer" : undefined}
-                    className="group relative flex items-end overflow-hidden rounded-2xl bg-foreground/5 hover:bg-[#1d1d1d] dark:hover:bg-[#1d1d1d] light:hover:bg-[#222] px-6 py-4 transition-colors duration-300 w-full"
+                    className="text-foreground/50 hover:text-foreground text-lg py-0.5 transition-colors duration-150 w-fit"
                   >
-                    <span className="font-semibold text-base text-foreground/60 group-hover:text-white transition-colors duration-300 tracking-tight z-10 relative">
-                      {link.label}
-                    </span>
-                    {/* Floating brand icon — rotated, clipped to top-right on hover */}
-                    <div
-                      className={`absolute right-[-6px] top-[-6px] w-[52px] h-[52px] text-foreground/10 group-hover:text-white/20 transition-all duration-300 ${link.rotation} opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0`}
-                    >
-                      {link.icon}
-                    </div>
+                    {link.label}
                   </a>
                 ))}
               </div>
