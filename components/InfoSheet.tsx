@@ -104,6 +104,44 @@ export default function InfoSheet({ isOpen, onClose }: InfoSheetProps) {
                           
           if (xlImage && xlImage.trim() !== "") {
             albumArt = xlImage;
+          } else {
+            // Last.fm has no art - try to fetch from YouTube (with 3-hour client-side caching)
+            const cacheKey = `yt_thumb_${encodeURIComponent(name)}_${encodeURIComponent(artist)}`;
+            const cached = typeof window !== "undefined" ? localStorage.getItem(cacheKey) : null;
+            const now = Date.now();
+            
+            if (cached) {
+              try {
+                const parsed = JSON.parse(cached);
+                // Check if cache is still valid (3 hours = 10,800,000 ms)
+                if (now - parsed.timestamp < 10800000 && parsed.thumbnail) {
+                  albumArt = parsed.thumbnail;
+                }
+              } catch (e) {
+                // Ignore parse errors
+              }
+            }
+            
+            // If not resolved from cache, fetch it from our serverless route
+            if (albumArt === "/spotify-album-art.png") {
+              try {
+                const ytRes = await fetch(
+                  `/api/youtube-thumbnail?track=${encodeURIComponent(name)}&artist=${encodeURIComponent(artist)}`
+                );
+                const ytData = await ytRes.json();
+                if (ytData.thumbnailUrl) {
+                  albumArt = ytData.thumbnailUrl;
+                  if (typeof window !== "undefined") {
+                    localStorage.setItem(
+                      cacheKey,
+                      JSON.stringify({ thumbnail: albumArt, timestamp: now })
+                    );
+                  }
+                }
+              } catch (err) {
+                console.error("Failed to fetch YouTube thumbnail:", err);
+              }
+            }
           }
 
           const url = latestTrack.url || "";
