@@ -234,24 +234,25 @@ export default function TransitionProvider({ children }: { children: ReactNode }
             </Suspense>
             <PageCurtain ref={curtainRef} label={currentLabel} />
             
-            <div
-                id="smooth-wrapper"
-                ref={contentRef}
-                className={`w-full relative z-10 transition-transform duration-[750ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${isMaskActive ? 'case-study-mask' : ''} ${isArchiveOpen ? 'md:-translate-x-[200px]' : ''} ${isInfoOpen ? '-translate-y-10' : ''}`}
-                style={{ opacity: initialLoadDone ? 1 : 0, visibility: initialLoadDone ? 'visible' : 'hidden' }}
-            >
-                <div id="smooth-content" className="w-full">
-                    {children}
-                </div>
-                {/* Dim overlay when info sheet is open */}
+            <SmoothScroll>
                 <div
-                    className={`pointer-events-none fixed inset-0 z-[5] bg-black/85 transition-opacity duration-500 ease-out ${isInfoOpen ? 'opacity-100' : 'opacity-0'}`}
-                    aria-hidden="true"
-                />
-            </div>
+                    id="smooth-wrapper"
+                    ref={contentRef}
+                    className={`w-full relative z-10 transition-transform duration-[750ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${isMaskActive ? 'case-study-mask' : ''} ${isArchiveOpen ? 'md:-translate-x-[200px]' : ''} ${isInfoOpen ? '-translate-y-10' : ''}`}
+                    style={{ opacity: initialLoadDone ? 1 : 0, visibility: initialLoadDone ? 'visible' : 'hidden' }}
+                >
+                    <div id="smooth-content" className="w-full">
+                        {children}
+                    </div>
+                    {/* Dim overlay when info sheet is open */}
+                    <div
+                        className={`pointer-events-none fixed inset-0 z-[5] bg-black/85 transition-opacity duration-500 ease-out ${isInfoOpen ? 'opacity-100' : 'opacity-0'}`}
+                        aria-hidden="true"
+                    />
+                </div>
+            </SmoothScroll>
 
             <LoadingScreen />
-            <SmoothScroll />
             <CustomCursor isTransitioning={isTransitioning} />
             <div className={`transition-all duration-500 ease-in-out ${(!initialLoadDone || headerProps.hidden) ? 'opacity-0 invisible pointer-events-none' : 'opacity-100 visible'}`}>
                 <Header {...headerProps} />

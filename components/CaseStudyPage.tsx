@@ -65,11 +65,7 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
     };
   }, [setHeaderProps]);
 
-  // Hide scrollbar on mount, restore on unmount
-  useEffect(() => {
-    document.documentElement.classList.add('scrollbar-hide');
-    return () => document.documentElement.classList.remove('scrollbar-hide');
-  }, []);
+
 
   // Simple header configuration
   useEffect(() => {

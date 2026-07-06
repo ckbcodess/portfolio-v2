@@ -1,42 +1,54 @@
 "use client";
 
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { ReactLenis, useLenis } from "lenis/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ScrollSmoother } from "gsap/ScrollSmoother";
 
+// Register ScrollTrigger plugin
 if (typeof window !== "undefined") {
-    gsap.registerPlugin(ScrollTrigger, ScrollSmoother);
+  gsap.registerPlugin(ScrollTrigger);
 }
 
-export default function SmoothScroll() {
-    const pathname = usePathname();
+interface SmoothScrollProps {
+  children: React.ReactNode;
+}
 
-    useEffect(() => {
-        // Disable browser's native scroll restoration
-        if ("scrollRestoration" in window.history) {
-            window.history.scrollRestoration = "manual";
-        }
-        
-        // Force window to top before engine initializes
-        window.scrollTo(0, 0);
+export default function SmoothScroll({ children }: SmoothScrollProps) {
+  const lenis = useLenis();
+  const pathname = usePathname();
 
-        const ctx = gsap.context(() => {
-            const smoother = ScrollSmoother.create({
-                wrapper: "#smooth-wrapper",
-                content: "#smooth-content",
-                smooth: 0.4,
-                effects: true,
-            });
+  // Scroll to top on route change
+  useEffect(() => {
+    if (lenis) {
+      lenis.scrollTo(0, { immediate: true });
+    }
+  }, [pathname, lenis]);
 
-            // Double-tap the scroll reset to ensure it sticks across page loads
-            smoother.scrollTop(0);
-            requestAnimationFrame(() => smoother.scrollTop(0));
-        });
+  // Connect Lenis to GSAP scroll updates
+  useEffect(() => {
+    if (!lenis) return;
+    
+    // Connect ScrollTrigger to Lenis scroll updates
+    lenis.on("scroll", ScrollTrigger.update);
+    
+    // Use GSAP's ticker to drive Lenis RAF
+    const tick = (time: number) => {
+      lenis.raf(time * 1000);
+    };
+    
+    gsap.ticker.add(tick);
+    gsap.ticker.lagSmoothing(0);
+    
+    return () => {
+      gsap.ticker.remove(tick);
+    };
+  }, [lenis]);
 
-        return () => ctx.revert();
-    }, [pathname]);
-
-    return null;
+  return (
+    <ReactLenis root options={{ lerp: 0.1, duration: 1.2, smoothWheel: true }}>
+      {children}
+    </ReactLenis>
+  );
 }
