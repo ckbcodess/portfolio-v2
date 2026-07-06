@@ -309,7 +309,7 @@ export default function InfoSheet({ isOpen, onClose }: InfoSheetProps) {
                       {track.name.length > 15 ? (
                         <div className="overflow-hidden whitespace-nowrap w-full relative">
                           <div 
-                            className="inline-flex animate-marquee-text hover:[animation-play-state:paused]"
+                            className="inline-flex animate-marquee-text"
                             style={{ animationDuration: `${Math.max(track.name.length * 0.35, 6)}s` }}
                           >
                             <span className="pr-6">{track.name}</span>
