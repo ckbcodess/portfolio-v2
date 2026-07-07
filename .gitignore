@@ -41,3 +41,14 @@ yarn-error.log*
 next-env.d.ts
 /scratch/
 
+
+# agent tooling / local skills (not part of the app)
+/.agents/
+/skills/
+*.restored
+
+.vercel
+.env*
+
+# local Claude Code settings
+.claude/settings.local.json
