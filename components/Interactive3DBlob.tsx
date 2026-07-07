@@ -33,17 +33,17 @@ function createNoise3D(random = Math.random) {
   }
 
   return function noise3D(x: number, y: number, z: number) {
-    let s = (x + y + z) * F3;
-    let i = Math.floor(x + s);
-    let j = Math.floor(y + s);
-    let k = Math.floor(z + s);
-    let t = (i + j + k) * G3;
-    let X0 = i - t;
-    let Y0 = j - t;
-    let Z0 = k - t;
-    let x0 = x - X0;
-    let y0 = y - Y0;
-    let z0 = z - Z0;
+    const s = (x + y + z) * F3;
+    const i = Math.floor(x + s);
+    const j = Math.floor(y + s);
+    const k = Math.floor(z + s);
+    const t = (i + j + k) * G3;
+    const X0 = i - t;
+    const Y0 = j - t;
+    const Z0 = k - t;
+    const x0 = x - X0;
+    const y0 = y - Y0;
+    const z0 = z - Z0;
 
     let i1, j1, k1;
     let i2, j2, k2;
@@ -58,19 +58,19 @@ function createNoise3D(random = Math.random) {
       else { i1 = 0; j1 = 1; k1 = 0; i2 = 1; j2 = 1; k2 = 0; }
     }
 
-    let x1 = x0 - i1 + G3;
-    let y1 = y0 - j1 + G3;
-    let z1 = z0 - k1 + G3;
-    let x2 = x0 - i2 + 2.0 * G3;
-    let y2 = y0 - j2 + 2.0 * G3;
-    let z2 = z0 - k2 + 2.0 * G3;
-    let x3 = x0 - 1.0 + 3.0 * G3;
-    let y3 = y0 - 1.0 + 3.0 * G3;
-    let z3 = z0 - 1.0 + 3.0 * G3;
+    const x1 = x0 - i1 + G3;
+    const y1 = y0 - j1 + G3;
+    const z1 = z0 - k1 + G3;
+    const x2 = x0 - i2 + 2.0 * G3;
+    const y2 = y0 - j2 + 2.0 * G3;
+    const z2 = z0 - k2 + 2.0 * G3;
+    const x3 = x0 - 1.0 + 3.0 * G3;
+    const y3 = y0 - 1.0 + 3.0 * G3;
+    const z3 = z0 - 1.0 + 3.0 * G3;
 
-    let ii = i & 255;
-    let jj = j & 255;
-    let kk = k & 255;
+    const ii = i & 255;
+    const jj = j & 255;
+    const kk = k & 255;
 
     let n0, n1, n2, n3;
 
@@ -78,7 +78,7 @@ function createNoise3D(random = Math.random) {
     if (t0 < 0) n0 = 0.0;
     else {
       t0 *= t0;
-      let gi = permMod12[ii + perm[jj + perm[kk]]] * 3;
+      const gi = permMod12[ii + perm[jj + perm[kk]]] * 3;
       n0 = t0 * t0 * (grad3[gi] * x0 + grad3[gi + 1] * y0 + grad3[gi + 2] * z0);
     }
 
@@ -86,7 +86,7 @@ function createNoise3D(random = Math.random) {
     if (t1 < 0) n1 = 0.0;
     else {
       t1 *= t1;
-      let gi = permMod12[ii + i1 + perm[jj + j1 + perm[kk + k1]]] * 3;
+      const gi = permMod12[ii + i1 + perm[jj + j1 + perm[kk + k1]]] * 3;
       n1 = t1 * t1 * (grad3[gi] * x1 + grad3[gi + 1] * y1 + grad3[gi + 2] * z1);
     }
 
@@ -94,7 +94,7 @@ function createNoise3D(random = Math.random) {
     if (t2 < 0) n2 = 0.0;
     else {
       t2 *= t2;
-      let gi = permMod12[ii + i2 + perm[jj + j2 + perm[kk + k2]]] * 3;
+      const gi = permMod12[ii + i2 + perm[jj + j2 + perm[kk + k2]]] * 3;
       n2 = t2 * t2 * (grad3[gi] * x2 + grad3[gi + 1] * y2 + grad3[gi + 2] * z2);
     }
 
@@ -102,7 +102,7 @@ function createNoise3D(random = Math.random) {
     if (t3 < 0) n3 = 0.0;
     else {
       t3 *= t3;
-      let gi = permMod12[ii + 1 + perm[jj + 1 + perm[kk + 1]]] * 3;
+      const gi = permMod12[ii + 1 + perm[jj + 1 + perm[kk + 1]]] * 3;
       n3 = t3 * t3 * (grad3[gi] * x3 + grad3[gi + 1] * y3 + grad3[gi + 2] * z3);
     }
 

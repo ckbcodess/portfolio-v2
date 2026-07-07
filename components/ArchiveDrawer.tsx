@@ -1,18 +1,20 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import { X, ArrowUpRight } from "lucide-react";
-import { caseStudies } from "@/content/case-studies";
+import type { ArchiveRow } from "@/lib/types";
 import TransitionLink from "./TransitionLink";
 import { useTransition } from "./TransitionProvider";
 
 interface ArchiveDrawerProps {
+  rows: ArchiveRow[];
   isOpen: boolean;
   onClose: () => void;
 }
 
-export default function ArchiveDrawer({ isOpen, onClose }: ArchiveDrawerProps) {
+export default function ArchiveDrawer({ rows, isOpen, onClose }: ArchiveDrawerProps) {
   const { navigate } = useTransition();
   return (
     <AnimatePresence>
@@ -62,85 +64,99 @@ export default function ArchiveDrawer({ isOpen, onClose }: ArchiveDrawerProps) {
                   </tr>
                 </thead>
                 <tbody>
-                   {caseStudies.map((study) => (
-                    <tr 
-                      key={study.slug} 
-                      onClick={() => {
-                        onClose();
-                        navigate(`/work/${study.slug}`, study.title, study.gradientColors?.[0] || "#333");
-                      }}
-                      className="border-b border-black/5 dark:border-white/5 text-sm group hover:bg-foreground/[0.01] transition-colors cursor-pointer"
-                    >
-                      {/* Title & Year */}
-                      <td className="py-4 pr-4">
-                        <div className="flex flex-col items-start">
-                          <TransitionLink
-                            href={`/work/${study.slug}`}
-                            label={study.title}
-                            color={study.gradientColors?.[0] || "#333"}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onClose();
-                            }}
-                            className="text-foreground font-medium group-hover:text-[#008f8c] dark:group-hover:text-[#00fff6] transition-colors inline-block text-left"
-                          >
-                            {study.title}
-                          </TransitionLink>
-                          <span className="text-xs text-muted-foreground/60 font-normal sm:hidden mt-0.5">
-                            {study.meta.find(m => m.label === "Role")?.value || "Product Designer"}
-                          </span>
-                        </div>
-                      </td>
+                  {rows.map((row) => {
+                    const isCaseStudy = Boolean(row.caseStudyHref);
+                    return (
+                      <tr
+                        key={row.title}
+                        onClick={
+                          isCaseStudy
+                            ? () => {
+                                onClose();
+                                navigate(row.caseStudyHref!, row.title, row.color || "#333");
+                              }
+                            : undefined
+                        }
+                        className={`border-b border-black/5 dark:border-white/5 text-sm group hover:bg-foreground/[0.01] transition-colors ${
+                          isCaseStudy ? "cursor-pointer" : ""
+                        }`}
+                      >
+                        {/* Title (+ optional thumbnail) */}
+                        <td className="py-4 pr-4">
+                          <div className="flex items-center gap-3">
+                            {row.image && (
+                              <div className="relative w-8 h-8 rounded-md overflow-hidden bg-foreground/5 shrink-0">
+                                <Image src={row.image} alt={row.title} fill className="object-cover" sizes="32px" />
+                              </div>
+                            )}
+                            <div className="flex flex-col items-start">
+                              {isCaseStudy ? (
+                                <TransitionLink
+                                  href={row.caseStudyHref!}
+                                  label={row.title}
+                                  color={row.color || "#333"}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onClose();
+                                  }}
+                                  className="text-foreground font-medium group-hover:text-[#008f8c] dark:group-hover:text-[#00fff6] transition-colors inline-block text-left"
+                                >
+                                  {row.title}
+                                </TransitionLink>
+                              ) : (
+                                <span className="text-foreground/75 font-medium">{row.title}</span>
+                              )}
+                              {row.tech && (
+                                <span className="text-xs text-muted-foreground/60 font-normal mt-0.5">{row.tech}</span>
+                              )}
+                              {!row.tech && (
+                                <span className="text-xs text-muted-foreground/60 font-normal sm:hidden mt-0.5">
+                                  {row.role}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </td>
 
-                      {/* Role (Hidden on mobile) */}
-                      <td className="py-4 pr-4 text-muted-foreground/80 font-normal hidden sm:table-cell">
-                        {study.meta.find(m => m.label === "Role")?.value || "Product Designer"}
-                      </td>
+                        {/* Role (Hidden on mobile) */}
+                        <td className="py-4 pr-4 text-muted-foreground/80 font-normal hidden sm:table-cell">
+                          {row.role}
+                        </td>
 
-                      {/* Year */}
-                      <td className="py-4 pr-4 text-muted-foreground/80 font-normal text-xs">
-                        {study.meta.find(m => m.label === "Year")?.value || "2024"}
-                      </td>
+                        {/* Year */}
+                        <td className="py-4 pr-4 text-muted-foreground/80 font-normal text-xs">{row.year}</td>
 
-                      {/* Actions */}
-                      <td className="py-4 text-right">
-                        <TransitionLink
-                          href={`/work/${study.slug}`}
-                          label={study.title}
-                          color={study.gradientColors?.[0] || "#333"}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onClose();
-                          }}
-                          className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground text-xs font-semibold uppercase tracking-wider transition-colors"
-                        >
-                          View <ArrowUpRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </TransitionLink>
-                      </td>
-                    </tr>
-                  ))}
-
-                  {/* Supplemental historical archive elements to make the list rich */}
-                  <tr className="border-b border-black/5 dark:border-white/5 text-sm group hover:bg-foreground/[0.01] transition-colors">
-                    <td className="py-4 pr-4">
-                      <span className="text-foreground/75 font-medium">Oratory AI Sprints</span>
-                    </td>
-                    <td className="py-4 pr-4 text-muted-foreground/80 font-normal hidden sm:table-cell">UI Engineering</td>
-                    <td className="py-4 pr-4 text-muted-foreground/80 font-normal text-xs">React, WebGL</td>
-                    <td className="py-4 text-right">
-                      <span className="text-muted-foreground/40 text-xs font-normal">2026</span>
-                    </td>
-                  </tr>
-                  <tr className="border-b border-black/5 dark:border-white/5 text-sm group hover:bg-foreground/[0.01] transition-colors">
-                    <td className="py-4 pr-4">
-                      <span className="text-foreground/75 font-medium">Equal IQ System</span>
-                    </td>
-                    <td className="py-4 pr-4 text-muted-foreground/80 font-normal hidden sm:table-cell">Frontend Dev</td>
-                    <td className="py-4 pr-4 text-muted-foreground/80 font-normal text-xs">React, Next.js</td>
-                    <td className="py-4 text-right">
-                      <span className="text-muted-foreground/40 text-xs font-normal">2025</span>
-                    </td>
-                  </tr>
+                        {/* Link */}
+                        <td className="py-4 text-right">
+                          {isCaseStudy ? (
+                            <TransitionLink
+                              href={row.caseStudyHref!}
+                              label={row.title}
+                              color={row.color || "#333"}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onClose();
+                              }}
+                              className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground text-xs font-semibold uppercase tracking-wider transition-colors"
+                            >
+                              View <ArrowUpRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </TransitionLink>
+                          ) : row.externalLink ? (
+                            <a
+                              href={row.externalLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 text-muted-foreground hover:text-foreground text-xs font-semibold uppercase tracking-wider transition-colors"
+                            >
+                              Visit <ArrowUpRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </a>
+                          ) : (
+                            <span className="text-muted-foreground/40 text-xs font-normal">—</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

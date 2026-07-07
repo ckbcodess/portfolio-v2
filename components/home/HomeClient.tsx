@@ -1,20 +1,25 @@
 "use client";
 
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import TransitionLink from "@/components/TransitionLink";
 import React, { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence, Variants } from "motion/react";
 import { useTransition } from "@/components/TransitionProvider";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
-import { ArrowRight, Lock } from "lucide-react";
-import { caseStudies } from "@/content/case-studies";
+import { Lock } from "lucide-react";
+import type { CaseStudyCard } from "@/lib/types";
 import Lightbox from "@/components/Lightbox";
 import NumberTicker from "@/components/NumberTicker";
-import Interactive3DBlob from "@/components/Interactive3DBlob";
 import { MaskReveal } from "@/components/MaskReveal";
 import TabsSection from "@/components/TabsSection";
 
-export default function Home() {
+// three.js is heavy — load the blob after hydration instead of shipping it in the main bundle
+const Interactive3DBlob = dynamic(() => import("@/components/Interactive3DBlob"), {
+  ssr: false,
+});
+
+export default function HomeClient({ caseStudies }: { caseStudies: CaseStudyCard[] }) {
   const pageRef = useRef<HTMLDivElement>(null);
   const [clickCount, setClickCount] = useState(0);
   const [isDisabled, setIsDisabled] = useState(false);
@@ -186,7 +191,7 @@ export default function Home() {
                   description={study.description}
                   heroSrc={study.heroSrc}
                   isLocked={study.isLocked}
-                  color={study.gradientColors?.[0] || "#333"}
+                  color={study.color}
                   isDimmed={hoveredId !== null && hoveredId !== study.slug}
                   isHovered={hoveredId === study.slug}
                   onMouseEnter={() => setHoveredId(study.slug)}

@@ -2,6 +2,13 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactCompiler: true,
+  // Keystatic's GitHub-mode auth flow runs on 127.0.0.1 in dev
+  allowedDevOrigins: ["127.0.0.1"],
+  // Keystatic reads content/*.json from the filesystem; make sure those files
+  // ship with the serverless functions on Vercel for any non-static render.
+  outputFileTracingIncludes: {
+    "/**": ["./content/**/*"],
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],

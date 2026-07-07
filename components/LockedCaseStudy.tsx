@@ -3,7 +3,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { AnimatePresence } from "framer-motion";
-import { CaseStudyContent } from "@/content/case-studies/types";
+import { CaseStudyContent } from "@/lib/types";
 import { useSound } from "@/components/SoundProvider";
 import { useTransition } from "@/components/TransitionProvider";
 import GateHeader from "./GateHeader";

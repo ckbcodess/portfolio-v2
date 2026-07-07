@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { CaseStudyContent } from "@/content/case-studies/types";
+import { CaseStudyContent } from "@/lib/types";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTransition } from "@/components/TransitionProvider";
 import CaseStudyBackground from "@/components/CaseStudyBackground";

@@ -1,12 +1,7 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
-import { ThemeColorProvider } from "@/components/theme-color-provider";
-import TransitionProvider from "@/components/TransitionProvider";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { SoundProvider } from "@/components/SoundProvider";
-import ClickFeedback from "@/components/ClickFeedback";
+
 const geist = Geist({
   variable: "--font-sans",
   subsets: ["latin"],
@@ -35,20 +30,7 @@ export default function RootLayout({
         />
       </head>
       <body className="font-sans font-normal antialiased text-foreground bg-background">
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-          <ThemeColorProvider>
-            <SoundProvider>
-              <TooltipProvider delay={300}>
-                <ClickFeedback />
-                <TransitionProvider>
-                  <div id="main-content" className="outline-none" tabIndex={-1}>
-                    {children}
-                  </div>
-                </TransitionProvider>
-              </TooltipProvider>
-            </SoundProvider>
-          </ThemeColorProvider>
-        </ThemeProvider>
+        {children}
       </body>
     </html>
   );

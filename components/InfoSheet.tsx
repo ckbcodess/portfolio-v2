@@ -73,32 +73,21 @@ export default function InfoSheet({ isOpen, onClose }: InfoSheetProps) {
     if (!isOpen) return;
     setTrackLoading(true);
 
-    const apiKey = process.env.NEXT_PUBLIC_LASTFM_API_KEY || "f8423408e5019132bc7e3b7d4d8fbb60";
-    const username = process.env.NEXT_PUBLIC_LASTFM_USERNAME || "ckbdidit";
-
-    if (!apiKey || !username) return;
-
     const fetchLastTrack = async () => {
       try {
-        const res = await fetch(
-          `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${username}&api_key=${apiKey}&format=json&limit=1`
-        );
+        // Last.fm is proxied through our API route so the key stays server-side
+        const res = await fetch("/api/now-playing");
         const data = await res.json();
-        const latestTrack = data?.recenttracks?.track?.[0];
-        
+        const latestTrack = data?.track;
+
         if (latestTrack) {
           const name = latestTrack.name;
-          const artist = latestTrack.artist?.["#text"] || "";
-          const album = latestTrack.album?.["#text"] || "";
-          
+          const artist = latestTrack.artist || "";
+          const album = latestTrack.album || "";
+
           let albumArt = "/spotify-album-art.png";
-          const images = latestTrack.image || [];
-          const xlImage = images.find((img: any) => img.size === "extralarge")?.["#text"] || 
-                          images.find((img: any) => img.size === "large")?.["#text"] ||
-                          images[0]?.["#text"];
-                          
-          if (xlImage && xlImage.trim() !== "") {
-            albumArt = xlImage;
+          if (latestTrack.albumArt && latestTrack.albumArt.trim() !== "") {
+            albumArt = latestTrack.albumArt;
           } else {
             // Last.fm has no art - try to fetch from YouTube (with 3-hour client-side caching)
             const cacheKey = `yt_thumb_${encodeURIComponent(name)}_${encodeURIComponent(artist)}`;
@@ -140,7 +129,7 @@ export default function InfoSheet({ isOpen, onClose }: InfoSheetProps) {
           }
 
           const url = latestTrack.url || "";
-          const nowPlaying = latestTrack["@attr"]?.nowplaying === "true";
+          const nowPlaying = Boolean(latestTrack.nowPlaying);
 
           setTrack({
             name,

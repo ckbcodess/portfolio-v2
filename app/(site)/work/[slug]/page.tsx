@@ -1,33 +1,37 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import CaseStudyPage from "@/components/CaseStudyPage";
-import { caseStudies, caseStudiesBySlug } from "@/content/case-studies";
+import { getCaseStudies, getCaseStudy } from "@/lib/content";
 
 interface WorkCaseStudyPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export function generateStaticParams() {
-  return caseStudies.map((caseStudy) => ({ slug: caseStudy.slug }));
+// Only slugs that exist at build time are valid — content changes redeploy the site
+export const dynamicParams = false;
+
+export async function generateStaticParams() {
+  const caseStudies = await getCaseStudies();
+  return caseStudies.map(({ slug }) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: WorkCaseStudyPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const caseStudy = caseStudiesBySlug[slug];
+  const caseStudy = await getCaseStudy(slug);
 
   if (!caseStudy) {
     return { title: "Case Study Not Found" };
   }
 
   return {
-    title: "Ransford Gyasi",
+    title: caseStudy.metadataTitle ?? `${caseStudy.title} - Ransford Gyasi`,
     description: caseStudy.description,
   };
 }
 
 export default async function WorkCaseStudyPage({ params }: WorkCaseStudyPageProps) {
   const { slug } = await params;
-  const caseStudy = caseStudiesBySlug[slug];
+  const caseStudy = await getCaseStudy(slug);
 
   if (!caseStudy) {
     notFound();
