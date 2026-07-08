@@ -57,7 +57,7 @@ export default async function ResumePage() {
                 priority
               />
               <div className="flex flex-col gap-1">
-                <h1 className="text-foreground text-xl font-semibold tracking-[0.08em] uppercase">
+                <h1 className="text-foreground text-xl font-semibold tracking-tight">
                   {resume.name}
                 </h1>
                 <p className="text-foreground/70 text-sm font-normal">{resume.title}</p>
