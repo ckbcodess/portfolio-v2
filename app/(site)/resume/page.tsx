@@ -1,0 +1,208 @@
+import { Metadata } from "next";
+import Image from "next/image";
+import { notFound } from "next/navigation";
+import { ArrowUpRight, Download } from "lucide-react";
+import { MaskReveal } from "@/components/MaskReveal";
+import { getResume } from "@/lib/content";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const resume = await getResume();
+  return {
+    title: "Resume - Ransford Gyasi",
+    description: resume?.summary,
+  };
+}
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <h2 className="text-sm font-normal text-muted-foreground md:pt-1">{children}</h2>
+  );
+}
+
+export default async function ResumePage() {
+  const resume = await getResume();
+
+  if (!resume) {
+    notFound();
+  }
+
+  return (
+    <div className="bg-background min-h-screen pt-32 md:pt-40 pb-24 w-full selection:bg-primary selection:text-primary-foreground flex flex-col items-center">
+      <main className="w-full max-w-[960px] px-[var(--page-px)] flex flex-col">
+        {/* Download */}
+        <div className="flex justify-end mb-10 md:mb-14">
+          {resume.pdf && (
+            <a
+              href={resume.pdf}
+              download
+              data-cursor="pointer"
+              className="inline-flex items-center gap-2 rounded-full border border-foreground/10 px-5 py-2.5 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-foreground/5 transition-all duration-300"
+            >
+              <Download size={14} strokeWidth={2} />
+              Download PDF
+            </a>
+          )}
+        </div>
+
+        {/* Header */}
+        <MaskReveal delay={0.1}>
+          <header className="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
+            <div className="flex items-start gap-4">
+              <Image
+                src="/avatar.webp"
+                alt={resume.name}
+                width={52}
+                height={52}
+                className="rounded-full mt-1"
+                priority
+              />
+              <div className="flex flex-col gap-1">
+                <h1 className="text-foreground text-xl font-semibold tracking-[0.08em] uppercase">
+                  {resume.name}
+                </h1>
+                <p className="text-foreground/70 text-sm font-normal">{resume.title}</p>
+                {resume.location && (
+                  <p className="text-muted-foreground text-sm font-normal">{resume.location}</p>
+                )}
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1.5 md:items-end">
+              {resume.contacts.map((contact) =>
+                contact.url ? (
+                  <a
+                    key={contact.label}
+                    href={contact.url}
+                    target={contact.url.startsWith("http") ? "_blank" : undefined}
+                    rel={contact.url.startsWith("http") ? "noopener noreferrer" : undefined}
+                    className="group inline-flex items-center gap-1 text-sm text-foreground/60 hover:text-foreground transition-colors"
+                  >
+                    {contact.label}
+                    <ArrowUpRight
+                      size={12}
+                      className="opacity-40 group-hover:opacity-100 transition-opacity"
+                    />
+                  </a>
+                ) : (
+                  <span key={contact.label} className="text-sm text-foreground/60">
+                    {contact.label}
+                  </span>
+                )
+              )}
+            </div>
+          </header>
+        </MaskReveal>
+
+        <div className="border-t border-foreground/10 mt-10 md:mt-12 mb-12 md:mb-16" />
+
+        <div className="flex flex-col gap-16 md:gap-20">
+          {/* About */}
+          {resume.summary && (
+            <section className="grid grid-cols-1 md:grid-cols-[160px_1fr] gap-4 md:gap-8">
+              <SectionLabel>About</SectionLabel>
+              <p className="text-foreground/80 text-base leading-relaxed max-w-[620px]">
+                {resume.summary}
+              </p>
+            </section>
+          )}
+
+          {/* Experience */}
+          {resume.experience.length > 0 && (
+            <section className="grid grid-cols-1 md:grid-cols-[160px_1fr] gap-6 md:gap-8">
+              <SectionLabel>Experience</SectionLabel>
+              <div className="flex flex-col gap-12 md:gap-14">
+                {resume.experience.map((job) => (
+                  <div
+                    key={`${job.company}-${job.period}`}
+                    className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-3 md:gap-8"
+                  >
+                    <div className="flex flex-col gap-0.5">
+                      <h3 className="text-foreground text-sm font-semibold">{job.role}</h3>
+                      <p className="text-foreground/70 text-sm">{job.company}</p>
+                      {job.meta && (
+                        <p className="text-muted-foreground text-sm">{job.meta}</p>
+                      )}
+                      <p className="text-muted-foreground text-sm">{job.period}</p>
+                    </div>
+                    <ul className="flex flex-col gap-3">
+                      {job.bullets.map((bullet, i) => (
+                        <li
+                          key={i}
+                          className="flex gap-3 text-sm text-foreground/70 leading-relaxed max-w-[520px]"
+                        >
+                          <span className="text-muted-foreground/60 mt-px shrink-0">•</span>
+                          <span>{bullet}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Skills */}
+          {resume.skills.length > 0 && (
+            <section className="grid grid-cols-1 md:grid-cols-[160px_1fr] gap-4 md:gap-8">
+              <SectionLabel>Skills</SectionLabel>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
+                {resume.skills.map((skill) => (
+                  <div key={skill.category} className="flex flex-col gap-1">
+                    <h3 className="text-foreground text-sm font-semibold">{skill.category}</h3>
+                    <p className="text-foreground/70 text-sm leading-relaxed">{skill.items}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Achievements */}
+          {resume.achievements.length > 0 && (
+            <section className="grid grid-cols-1 md:grid-cols-[160px_1fr] gap-4 md:gap-8">
+              <SectionLabel>Achievements</SectionLabel>
+              <ul className="flex flex-col gap-3">
+                {resume.achievements.map((achievement, i) => (
+                  <li
+                    key={i}
+                    className="flex gap-3 text-sm text-foreground/70 leading-relaxed max-w-[620px]"
+                  >
+                    <span className="text-muted-foreground/60 mt-px shrink-0">•</span>
+                    <span>{achievement}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {/* Education */}
+          {resume.education.length > 0 && (
+            <section className="grid grid-cols-1 md:grid-cols-[160px_1fr] gap-4 md:gap-8">
+              <SectionLabel>Education</SectionLabel>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
+                {resume.education.map((item) => (
+                  <div key={item.title} className="flex flex-col gap-1">
+                    <h3 className="text-foreground text-sm font-semibold">{item.title}</h3>
+                    {item.detail && (
+                      <p className="text-muted-foreground text-sm">{item.detail}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+
+        {/* Footer */}
+        {resume.footnote && (
+          <p className="text-muted-foreground text-sm text-center mt-20 md:mt-24">
+            {resume.footnote}
+          </p>
+        )}
+        <div className="border-t border-foreground/10 mt-8 mb-6" />
+        <p className="text-muted-foreground/60 text-xs text-center">
+          {resume.name} · rgyasi.vercel.app · ransfordgyasi98@gmail.com
+        </p>
+      </main>
+    </div>
+  );
+}

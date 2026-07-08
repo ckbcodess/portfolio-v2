@@ -147,6 +147,7 @@ export default function TransitionProvider({
     const getLabelFromPath = (path: string) => {
         if (path === "/") return "Home";
         if (path === "/about") return "Bio";
+        if (path === "/resume") return "Resume";
         if (path === "/playground") return "Playground";
         if (path.startsWith("/work/")) {
             const slug = path.split("/").pop();

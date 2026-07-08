@@ -49,6 +49,7 @@ leave enabled.
 | --- | --- | --- |
 | **Case Studies** | `content/case-studies/*.json` | Homepage cards, `/work/<slug>` pages, archive drawer |
 | **Archive** | `content/archive/*.json` | The Archive drawer (supplemental rows) |
+| **Resume** (singleton) | `content/resume.json` | The `/resume` page — experience, skills, education, contact links, and the CV PDF served by the Download button (upload a new PDF here when your CV changes) |
 
 Case study fields worth knowing:
 

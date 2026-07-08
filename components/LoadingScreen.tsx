@@ -124,8 +124,10 @@ export default function LoadingScreen() {
   useGSAP(() => {
     if (!shouldAnimate || !fillRef.current) return;
 
+    // Once assets are ready (or the failsafe timeout fired), always drive the
+    // bar to 100% — otherwise a stalled asset leaves the overlay up forever.
     gsap.to(fillRef.current, {
-      scaleX: realProgress,
+      scaleX: assetsReady ? 1 : realProgress,
       duration: 0.6,
       ease: "power2.out",
       overwrite: "auto",

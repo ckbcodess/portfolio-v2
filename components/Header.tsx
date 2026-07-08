@@ -26,6 +26,7 @@ interface HeaderProps {
 const NAV_ITEMS = [
   { href: "/", label: "Home" },
   { href: "/#case-studies", label: "Archive" },
+  { href: "/resume", label: "Resume" },
   { href: "/about", label: "Info" },
 ];
 
@@ -171,9 +172,9 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
               }`}
             >
               <div className="px-6 py-3 flex items-center justify-between gap-8 whitespace-nowrap w-full">
-                {/* Left group: Home, Archive */}
+                {/* Left group: Home, Archive, Resume */}
                 <div className="flex items-center gap-6">
-                  {NAV_ITEMS.slice(0, 2).map((item) => {
+                  {NAV_ITEMS.slice(0, 3).map((item) => {
                     const isActive = activeHref === item.href || (item.href === "/" && activeHref === "/");
                     const isArchive = item.label === "Archive";
                     return (
@@ -200,7 +201,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
                 <div className="flex items-center gap-6">
                   {/* Info Link */}
                   {(() => {
-                    const item = NAV_ITEMS[2];
+                    const item = NAV_ITEMS[3];
                     const isActive = activeHref === item.href;
                     return (
                       <TransitionLink

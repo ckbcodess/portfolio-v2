@@ -45,6 +45,28 @@ export interface CaseStudyCard {
   color: string;
 }
 
+export interface ResumeExperience {
+  role: string;
+  company: string;
+  meta?: string;
+  period: string;
+  bullets: string[];
+}
+
+export interface ResumeContent {
+  name: string;
+  title: string;
+  location?: string;
+  summary?: string;
+  contacts: { label: string; url?: string }[];
+  experience: ResumeExperience[];
+  skills: { category: string; items: string }[];
+  achievements: string[];
+  education: { title: string; detail?: string }[];
+  footnote?: string;
+  pdf?: string;
+}
+
 /** A single row in the Archive drawer (case studies + supplemental entries). */
 export interface ArchiveRow {
   title: string;

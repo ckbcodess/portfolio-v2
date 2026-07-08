@@ -3,7 +3,7 @@
 import { cache } from "react";
 import { createReader } from "@keystatic/core/reader";
 import keystaticConfig from "@/keystatic.config";
-import type { ArchiveRow, CaseStudyContent } from "@/lib/types";
+import type { ArchiveRow, CaseStudyContent, ResumeContent } from "@/lib/types";
 
 const reader = createReader(process.cwd(), keystaticConfig);
 
@@ -68,6 +68,31 @@ export async function getCaseStudy(slug: string): Promise<CaseStudyContent | und
   const all = await getCaseStudies();
   return all.find((caseStudy) => caseStudy.slug === slug);
 }
+
+export const getResume = cache(async (): Promise<ResumeContent | null> => {
+  const entry = await reader.singletons.resume.read();
+  if (!entry) return null;
+
+  return {
+    name: entry.name,
+    title: entry.title,
+    location: entry.location || undefined,
+    summary: entry.summary || undefined,
+    contacts: entry.contacts.map((c) => ({ label: c.label, url: c.url || undefined })),
+    experience: entry.experience.map((job) => ({
+      role: job.role,
+      company: job.company,
+      meta: job.meta || undefined,
+      period: job.period,
+      bullets: [...job.bullets],
+    })),
+    skills: [...entry.skills],
+    achievements: [...entry.achievements],
+    education: entry.education.map((e) => ({ title: e.title, detail: e.detail || undefined })),
+    footnote: entry.footnote || undefined,
+    pdf: entry.pdf ?? undefined,
+  };
+});
 
 /** Rows for the Archive drawer: case studies first, then supplemental entries (newest first). */
 export const getArchiveRows = cache(async (): Promise<ArchiveRow[]> => {

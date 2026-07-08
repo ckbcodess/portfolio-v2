@@ -1,4 +1,4 @@
-import { config, fields, collection } from "@keystatic/core";
+import { config, fields, collection, singleton } from "@keystatic/core";
 
 // Local mode in dev (writes straight to files on disk).
 // GitHub mode in production (each save commits to the repo, which triggers a Vercel deploy).
@@ -16,6 +16,96 @@ export default config({
   storage,
   ui: {
     brand: { name: "Ransford's Portfolio" },
+  },
+  singletons: {
+    resume: singleton({
+      label: "Resume",
+      path: "content/resume",
+      format: { data: "json" },
+      schema: {
+        name: fields.text({ label: "Name", validation: { isRequired: true } }),
+        title: fields.text({
+          label: "Title",
+          description: "e.g. Product Designer — UI/UX",
+          validation: { isRequired: true },
+        }),
+        location: fields.text({ label: "Location" }),
+        summary: fields.text({
+          label: "About / summary",
+          multiline: true,
+        }),
+        contacts: fields.array(
+          fields.object({
+            label: fields.text({ label: "Label", validation: { isRequired: true } }),
+            url: fields.text({
+              label: "Link",
+              description: "https://…, mailto:… or tel:…",
+            }),
+          }),
+          {
+            label: "Contact links",
+            itemLabel: (props) => props.fields.label.value,
+          }
+        ),
+        experience: fields.array(
+          fields.object({
+            role: fields.text({ label: "Role", validation: { isRequired: true } }),
+            company: fields.text({ label: "Company", validation: { isRequired: true } }),
+            meta: fields.text({
+              label: "Sector / location",
+              description: "e.g. Fintech · Accra, Ghana",
+            }),
+            period: fields.text({
+              label: "Period",
+              description: "e.g. Oct 2024 – Present",
+              validation: { isRequired: true },
+            }),
+            bullets: fields.array(fields.text({ label: "Bullet", multiline: true }), {
+              label: "Highlights",
+              itemLabel: (props) => props.value.slice(0, 80) || "(empty)",
+            }),
+          }),
+          {
+            label: "Experience",
+            itemLabel: (props) =>
+              `${props.fields.role.value} — ${props.fields.company.value}`,
+          }
+        ),
+        skills: fields.array(
+          fields.object({
+            category: fields.text({ label: "Category", validation: { isRequired: true } }),
+            items: fields.text({ label: "Items", validation: { isRequired: true } }),
+          }),
+          {
+            label: "Core competencies",
+            itemLabel: (props) => props.fields.category.value,
+          }
+        ),
+        achievements: fields.array(fields.text({ label: "Achievement", multiline: true }), {
+          label: "Achievements",
+          itemLabel: (props) => props.value.slice(0, 80) || "(empty)",
+        }),
+        education: fields.array(
+          fields.object({
+            title: fields.text({ label: "Title", validation: { isRequired: true } }),
+            detail: fields.text({ label: "Detail" }),
+          }),
+          {
+            label: "Education & certifications",
+            itemLabel: (props) => props.fields.title.value,
+          }
+        ),
+        footnote: fields.text({
+          label: "Footnote",
+          description: "Small line at the bottom, e.g. your toolbox",
+        }),
+        pdf: fields.file({
+          label: "CV PDF (the file the Download button serves)",
+          directory: "public/resume",
+          publicPath: "/resume/",
+        }),
+      },
+    }),
   },
   collections: {
     caseStudies: collection({

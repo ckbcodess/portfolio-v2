@@ -1,0 +1,72 @@
+{
+  "name": "Ransford Gyasi",
+  "title": "Product Designer — UI/UX",
+  "location": "Accra, Ghana",
+  "summary": "High-impact Product Designer with 3 years delivering user-centered digital solutions in fintech and telecom. Excellent at transforming complex needs into scalable design systems, high-fidelity prototypes, and accessible interfaces. Proven collaborator in Agile environments, driving brand consistency, faster delivery, and measurable business results for millions of users.",
+  "contacts": [
+    { "label": "rgyasi.vercel.app", "url": "https://rgyasi.vercel.app" },
+    { "label": "ransfordgyasi98@gmail.com", "url": "mailto:ransfordgyasi98@gmail.com" },
+    { "label": "linkedin.com/in/ransford-gyasi", "url": "https://www.linkedin.com/in/ransford-gyasi/" },
+    { "label": "+233 57 925 2564", "url": "tel:+233579252564" }
+  ],
+  "experience": [
+    {
+      "role": "Design Engineer",
+      "company": "Mirepa Capital",
+      "meta": "Contract · Accra, Ghana",
+      "period": "Jan – Mar 2026",
+      "bullets": [
+        "Migrated four websites to separate Squarespace accounts, completing the full migration in three months.",
+        "Designed and implemented a brand identity refresh, including a new logo and a consistent design system across all sites.",
+        "Developed custom CSS and AI-assisted interactions from scratch in Squarespace to enhance the user experience."
+      ]
+    },
+    {
+      "role": "Product Designer, UX/UI",
+      "company": "GCB Bank PLC",
+      "meta": "Fintech · Accra, Ghana",
+      "period": "Oct 2024 – Present",
+      "bullets": [
+        "Engineered an enterprise design system with tokens and variables, accelerating UI delivery by 30% while ensuring brand consistency.",
+        "Co-designed the refreshed GCB Mobile App and ATM interfaces, delivering premium UI for 1M+ customers.",
+        "Launched an inclusive digital account-opening portal, minimizing friction and meeting accessibility standards."
+      ]
+    },
+    {
+      "role": "Product Designer",
+      "company": "Websoft Inc",
+      "meta": "Contract · Remote",
+      "period": "Aug 2023 – Jan 2024",
+      "bullets": [
+        "Led end-to-end design for the BIIA mobile app: layouts, icons, and interactive prototypes from discovery to launch.",
+        "Iterated designs via user feedback and constraints, driving 400 successful onboardings in the first month."
+      ]
+    },
+    {
+      "role": "Product Designer",
+      "company": "Bsystems Limited",
+      "meta": "Accra, Ghana",
+      "period": "Oct 2022 – Jun 2023",
+      "bullets": [
+        "Conducted 30 user interviews and tests, redesigning flows that boosted engagement by 15%.",
+        "Delivered 50 production-ready UI assets and maintained the brand kit for seamless developer handoff."
+      ]
+    }
+  ],
+  "skills": [
+    { "category": "UI/UX Design", "items": "Figma, wireframing, prototyping, user flows, mockups" },
+    { "category": "Systems", "items": "Design tokens, WCAG accessibility, information architecture" },
+    { "category": "AI-Driven", "items": "Rapid iteration with AI tools, generative UI, automated workflows" }
+  ],
+  "achievements": [
+    "Contributed to the GCB Mobile App design, reaching 1M+ downloads.",
+    "Co-led the Department Management System for University of Ghana Computer Science."
+  ],
+  "education": [
+    { "title": "BSc Information Technology", "detail": "University of Ghana, Legon" },
+    { "title": "Google UX Design Professional Certificate", "detail": "Agile / Scrum" },
+    { "title": "Anthropic AI Fluency", "detail": "Framework & Foundations" }
+  ],
+  "footnote": "Toolbox — Figma, Adobe Suite, Framer, Cursor, Gemini, ChatGPT, Squarespace, Claude Code",
+  "pdf": "/resume/RansfordGyasiCV.pdf"
+}
