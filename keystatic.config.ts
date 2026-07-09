@@ -18,6 +18,43 @@ export default config({
     brand: { name: "Ransford's Portfolio" },
   },
   singletons: {
+    infoSheet: singleton({
+      label: "Info Sheet",
+      path: "content/info-sheet",
+      format: { data: "json" },
+      schema: {
+        info: fields.array(fields.text({ label: "Paragraph", multiline: true }), {
+          label: "Info paragraphs",
+          itemLabel: (props) => props.value.slice(0, 80) || "(empty)",
+        }),
+        lastUpdated: fields.text({
+          label: "Last updated",
+          description: "e.g. June 2026 — shown under the Info column",
+        }),
+        experience: fields.array(fields.text({ label: "Paragraph", multiline: true }), {
+          label: "Experience paragraphs",
+          itemLabel: (props) => props.value.slice(0, 80) || "(empty)",
+        }),
+        geekTags: fields.array(fields.text({ label: "Tag" }), {
+          label: "Things I geek about",
+          itemLabel: (props) => props.value || "(empty)",
+        }),
+        connectLinks: fields.array(
+          fields.object({
+            label: fields.text({ label: "Label", validation: { isRequired: true } }),
+            url: fields.text({
+              label: "Link",
+              description: "https://…, mailto:… or tel:…",
+              validation: { isRequired: true },
+            }),
+          }),
+          {
+            label: "Connect links",
+            itemLabel: (props) => props.fields.label.value,
+          }
+        ),
+      },
+    }),
     resume: singleton({
       label: "Resume",
       path: "content/resume",

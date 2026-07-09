@@ -4,33 +4,13 @@ import React, { useEffect, useState } from "react";
 import { X, Play } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import Image from "next/image";
+import type { InfoSheetContent } from "@/lib/types";
 
 interface InfoSheetProps {
+  content: InfoSheetContent;
   isOpen: boolean;
   onClose: () => void;
 }
-
-const GEEK_TAGS = [
-  "Design Systems",
-  "Interaction Design",
-  "Google Antigravity",
-  "Claude Code",
-  "Speedcubing",
-  "Figma",
-  "Feather",
-  "Adobe Suite",
-  "Procreate",
-  "Artstudio Pro",
-];
-
-const CONNECT_LINKS = [
-  { label: "Mail", href: "mailto:rnsfordgyasi@gmail.com" },
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/ransford-gyasi/", external: true },
-  { label: "Github", href: "https://github.com/ckbcodess", external: true },
-  { label: "Instagram", href: "https://www.instagram.com/ckb.didit/?hl=en", external: true },
-  { label: "Twitter [X]", href: "https://x.com/ckbdidit?lang=en", external: true },
-  { label: "Artstation", href: "https://www.artstation.com/ckbdidit", external: true },
-];
 
 const panelVariants = {
   hidden: {
@@ -43,7 +23,7 @@ const panelVariants = {
   },
 };
 
-export default function InfoSheet({ isOpen, onClose }: InfoSheetProps) {
+export default function InfoSheet({ content, isOpen, onClose }: InfoSheetProps) {
   // Lock scroll while open
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "";
@@ -198,33 +178,29 @@ export default function InfoSheet({ isOpen, onClose }: InfoSheetProps) {
             <div className="flex flex-col gap-4">
               <p className="text-foreground/40 text-base">Info</p>
               <div className="flex flex-col gap-4 text-foreground/70 text-lg leading-relaxed">
-                <p>
-                  I&apos;m a product designer focused on interaction design and pixel-perfect front-end and mobile applications. Lately, I&apos;ve been building with AI tools and learning to engineer my designs into live products. With deep experience in design systems for startups, I&apos;m now on a design engineering journey, translating designs into clean code myself.
-                </p>
+                {content.info.map((paragraph, i) => (
+                  <p key={i}>{paragraph}</p>
+                ))}
               </div>
             </div>
-            <p className="text-foreground/25 text-sm mt-6">Last updated: June 2026</p>
+            {content.lastUpdated && (
+              <p className="text-foreground/25 text-sm mt-6">Last updated: {content.lastUpdated}</p>
+            )}
           </div>
 
           {/* ── Col 2: Experience ── */}
           <div className="flex flex-col gap-4 px-8 md:px-10 py-6 md:py-8 overflow-y-auto scrollbar-hide">
             <p className="text-foreground/40 text-base">Experience</p>
             <div className="flex flex-col gap-4 text-foreground/70 text-lg leading-relaxed">
-              <p>
-                Right now I&apos;m at GCB Bank PLC as a design systems engineer, 3+ years in, and lately I&apos;ve been leaning hard into designing with AI tools instead of around them, so much so that this portfolio itself was built with Google Antigravity and Claude Code in about two days.
-              </p>
-              <p>
-                Before that it was Mirepa Capital, where I built the frontend for four of their websites to help position them better as an investment unit, and earlier on there was Allex, where I was solo designer for their mobile and web platforms.
-              </p>
-              <p>
-                And under all of it is 8 years in digital art, since I was 15, so if some of this looks a little illustrated, that&apos;s still me, still a working artist.
-              </p>
+              {content.experience.map((paragraph, i) => (
+                <p key={i}>{paragraph}</p>
+              ))}
             </div>
 
             <div className="flex flex-col gap-3 mt-2">
               <p className="text-foreground/40 text-base">Things i geek about</p>
               <div className="flex flex-wrap gap-1.5">
-                {GEEK_TAGS.map((tag) => (
+                {content.geekTags.map((tag) => (
                   <span
                     key={tag}
                     className="border border-foreground/10 hover:border-foreground/25 px-[9px] py-[3px] rounded-full text-sm text-foreground/50 hover:text-foreground/80 transition-all duration-200 select-none cursor-default"
@@ -242,12 +218,12 @@ export default function InfoSheet({ isOpen, onClose }: InfoSheetProps) {
             <div className="flex flex-col gap-3">
               <p className="text-foreground/40 text-base">Connect</p>
               <div className="flex flex-col gap-0.5">
-                {CONNECT_LINKS.map((link) => (
+                {content.connectLinks.map((link) => (
                   <a
                     key={link.label}
-                    href={link.href}
-                    target={link.external ? "_blank" : undefined}
-                    rel={link.external ? "noopener noreferrer" : undefined}
+                    href={link.url}
+                    target={link.url.startsWith("http") ? "_blank" : undefined}
+                    rel={link.url.startsWith("http") ? "noopener noreferrer" : undefined}
                     className="text-foreground/50 hover:text-foreground text-lg py-0.5 transition-colors duration-150 w-fit"
                   >
                     {link.label}

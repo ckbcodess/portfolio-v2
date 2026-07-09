@@ -45,6 +45,14 @@ export interface CaseStudyCard {
   color: string;
 }
 
+export interface InfoSheetContent {
+  info: string[];
+  lastUpdated?: string;
+  experience: string[];
+  geekTags: string[];
+  connectLinks: { label: string; url: string }[];
+}
+
 export interface ResumeExperience {
   role: string;
   company: string;

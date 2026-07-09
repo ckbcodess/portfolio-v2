@@ -34,7 +34,7 @@ export default async function ResumePage() {
           {resume.pdf && (
             <a
               href={resume.pdf}
-              download
+              download={`${resume.name.replace(/\s+/g, "-")}-CV.pdf`}
               data-cursor="pointer"
               className="inline-flex items-center gap-2 rounded-full border border-foreground/10 px-5 py-2.5 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-foreground/5 transition-all duration-300"
             >

@@ -3,7 +3,12 @@
 import { cache } from "react";
 import { createReader } from "@keystatic/core/reader";
 import keystaticConfig from "@/keystatic.config";
-import type { ArchiveRow, CaseStudyContent, ResumeContent } from "@/lib/types";
+import type {
+  ArchiveRow,
+  CaseStudyContent,
+  InfoSheetContent,
+  ResumeContent,
+} from "@/lib/types";
 
 const reader = createReader(process.cwd(), keystaticConfig);
 
@@ -68,6 +73,21 @@ export async function getCaseStudy(slug: string): Promise<CaseStudyContent | und
   const all = await getCaseStudies();
   return all.find((caseStudy) => caseStudy.slug === slug);
 }
+
+export const getInfoSheet = cache(async (): Promise<InfoSheetContent> => {
+  const entry = await reader.singletons.infoSheet.read();
+  if (!entry) {
+    return { info: [], experience: [], geekTags: [], connectLinks: [] };
+  }
+
+  return {
+    info: [...entry.info],
+    lastUpdated: entry.lastUpdated || undefined,
+    experience: [...entry.experience],
+    geekTags: [...entry.geekTags],
+    connectLinks: [...entry.connectLinks],
+  };
+});
 
 export const getResume = cache(async (): Promise<ResumeContent | null> => {
   const entry = await reader.singletons.resume.read();

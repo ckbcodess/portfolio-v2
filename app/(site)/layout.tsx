@@ -4,14 +4,17 @@ import TransitionProvider from "@/components/TransitionProvider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SoundProvider } from "@/components/SoundProvider";
 import ClickFeedback from "@/components/ClickFeedback";
-import { getArchiveRows } from "@/lib/content";
+import { getArchiveRows, getInfoSheet } from "@/lib/content";
 
 export default async function SiteLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const archiveRows = await getArchiveRows();
+  const [archiveRows, infoSheet] = await Promise.all([
+    getArchiveRows(),
+    getInfoSheet(),
+  ]);
 
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
@@ -19,7 +22,7 @@ export default async function SiteLayout({
         <SoundProvider>
           <TooltipProvider delay={300}>
             <ClickFeedback />
-            <TransitionProvider archiveRows={archiveRows}>
+            <TransitionProvider archiveRows={archiveRows} infoSheet={infoSheet}>
               <div id="main-content" className="outline-none" tabIndex={-1}>
                 {children}
               </div>

@@ -14,7 +14,7 @@ const CustomCursor = dynamic(() => import("./CustomCursor"), { ssr: false });
 import LoadingScreen from "./LoadingScreen";
 import ArchiveDrawer from "@/components/ArchiveDrawer";
 import InfoSheet from "@/components/InfoSheet";
-import type { ArchiveRow } from "@/lib/types";
+import type { ArchiveRow, InfoSheetContent } from "@/lib/types";
 
 interface HeaderProps {
     variant?: "default" | "case-study";
@@ -71,9 +71,11 @@ export const useTransition = () => useContext(TransitionContext);
 export default function TransitionProvider({
     children,
     archiveRows,
+    infoSheet,
 }: {
     children: ReactNode;
     archiveRows: ArchiveRow[];
+    infoSheet: InfoSheetContent;
 }) {
     const router = useRouter();
     const pathname = usePathname();
@@ -266,7 +268,7 @@ export default function TransitionProvider({
                 <Header {...headerProps} />
             </div>
             <ArchiveDrawer rows={archiveRows} isOpen={isArchiveOpen} onClose={() => setIsArchiveOpen(false)} />
-            <InfoSheet isOpen={isInfoOpen} onClose={() => setIsInfoOpen(false)} />
+            <InfoSheet content={infoSheet} isOpen={isInfoOpen} onClose={() => setIsInfoOpen(false)} />
         </TransitionContext.Provider>
     );
 }
