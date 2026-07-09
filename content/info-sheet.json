@@ -4,7 +4,7 @@
   ],
   "lastUpdated": "June 2026",
   "experience": [
-    "Right now I'm at GCB Bank PLC as a design systems engineer, 3+ years in, and lately I've been leaning hard into designing with AI tools instead of around them, so much so that this portfolio itself was built with Google Antigravity and Claude Code in about two days.",
+    "Right now I'm at GCB Bank PLC as a design systems engineer. 3+ years in, and lately I've been leaning hard into designing with AI tools instead of around them, so much so that this portfolio itself was built with Google Antigravity and Claude Code in about two days.",
     "Before that it was Mirepa Capital, where I built the frontend for four of their websites to help position them better as an investment unit, and earlier on there was Allex, where I was solo designer for their mobile and web platforms.",
     "And under all of it is 8 years in digital art, since I was 15, so if some of this looks a little illustrated, that's still me, still a working artist."
   ],
@@ -21,11 +21,29 @@
     "Artstudio Pro"
   ],
   "connectLinks": [
-    { "label": "Mail", "url": "mailto:rnsfordgyasi@gmail.com" },
-    { "label": "LinkedIn", "url": "https://www.linkedin.com/in/ransford-gyasi/" },
-    { "label": "Github", "url": "https://github.com/ckbcodess" },
-    { "label": "Instagram", "url": "https://www.instagram.com/ckb.didit/?hl=en" },
-    { "label": "Twitter [X]", "url": "https://x.com/ckbdidit?lang=en" },
-    { "label": "Artstation", "url": "https://www.artstation.com/ckbdidit" }
+    {
+      "label": "Mail",
+      "url": "mailto:rnsfordgyasi@gmail.com"
+    },
+    {
+      "label": "LinkedIn",
+      "url": "https://www.linkedin.com/in/ransford-gyasi/"
+    },
+    {
+      "label": "Github",
+      "url": "https://github.com/ckbcodess"
+    },
+    {
+      "label": "Instagram",
+      "url": "https://www.instagram.com/ckb.didit/?hl=en"
+    },
+    {
+      "label": "Twitter [X]",
+      "url": "https://x.com/ckbdidit?lang=en"
+    },
+    {
+      "label": "Artstation",
+      "url": "https://www.artstation.com/ckbdidit"
+    }
   ]
 }
