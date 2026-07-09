@@ -1,13 +1,25 @@
 {
   "name": "Ransford Gyasi",
-  "title": "Product Designer — UI/UX",
+  "title": "Product Designer",
   "location": "Accra, Ghana",
-  "summary": "High-impact Product Designer with 3 years delivering user-centered digital solutions in fintech and telecom. Excellent at transforming complex needs into scalable design systems, high-fidelity prototypes, and accessible interfaces. Proven collaborator in Agile environments, driving brand consistency, faster delivery, and measurable business results for millions of users.",
+  "summary": "High-impact Product Designer with 3+ years delivering user-centered digital solutions in fintech and telecom. Excellent at transforming complex needs into scalable design systems, high-fidelity prototypes, and accessible interfaces. Proven collaborator in Agile environments, driving brand consistency, faster delivery, and measurable business results for millions of users.",
   "contacts": [
-    { "label": "rgyasi.vercel.app", "url": "https://rgyasi.vercel.app" },
-    { "label": "ransfordgyasi98@gmail.com", "url": "mailto:ransfordgyasi98@gmail.com" },
-    { "label": "linkedin.com/in/ransford-gyasi", "url": "https://www.linkedin.com/in/ransford-gyasi/" },
-    { "label": "+233 57 925 2564", "url": "tel:+233579252564" }
+    {
+      "label": "rgyasi.vercel.app",
+      "url": "https://rgyasi.vercel.app"
+    },
+    {
+      "label": "ransfordgyasi98@gmail.com",
+      "url": "mailto:ransfordgyasi98@gmail.com"
+    },
+    {
+      "label": "linkedin.com/in/ransford-gyasi",
+      "url": "https://www.linkedin.com/in/ransford-gyasi/"
+    },
+    {
+      "label": "+233 57 925 2564",
+      "url": "tel:+233579252564"
+    }
   ],
   "experience": [
     {
@@ -54,19 +66,37 @@
     }
   ],
   "skills": [
-    { "category": "UI/UX Design", "items": "Figma, wireframing, prototyping, user flows, mockups" },
-    { "category": "Systems", "items": "Design tokens, WCAG accessibility, information architecture" },
-    { "category": "AI-Driven", "items": "Rapid iteration with AI tools, generative UI, automated workflows" }
+    {
+      "category": "UI/UX Design",
+      "items": "Figma, wireframing, prototyping, user flows, mockups"
+    },
+    {
+      "category": "Systems",
+      "items": "Design tokens, WCAG accessibility, information architecture"
+    },
+    {
+      "category": "AI-Driven",
+      "items": "Rapid iteration with AI tools, generative UI, automated workflows"
+    }
   ],
   "achievements": [
     "Contributed to the GCB Mobile App design, reaching 1M+ downloads.",
     "Co-led the Department Management System for University of Ghana Computer Science."
   ],
   "education": [
-    { "title": "BSc Information Technology", "detail": "University of Ghana, Legon" },
-    { "title": "Google UX Design Professional Certificate", "detail": "Agile / Scrum" },
-    { "title": "Anthropic AI Fluency", "detail": "Framework & Foundations" }
+    {
+      "title": "BSc Information Technology",
+      "detail": "University of Ghana, Legon"
+    },
+    {
+      "title": "Google UX Design Professional Certificate",
+      "detail": "Agile / Scrum"
+    },
+    {
+      "title": "Anthropic AI Fluency",
+      "detail": "Framework & Foundations"
+    }
   ],
   "footnote": "Toolbox — Figma, Adobe Suite, Framer, Cursor, Gemini, ChatGPT, Squarespace, Claude Code",
-  "pdf": "/resume/RansfordGyasiCV.pdf"
+  "pdf": "/resume/pdf.pdf"
 }
