@@ -9,7 +9,7 @@ import { MaskReveal } from "@/components/MaskReveal";
 const tabsData = [
   {
     name: "For all",
-    text: "I'm a designer who cares about two things: grids, aesthetics, and helping people.",
+    text: "I find the simple version that was hiding the whole time.",
   },
   {
     name: "Recruiters",
@@ -17,19 +17,15 @@ const tabsData = [
   },
   {
     name: "Product Designers",
-    text: "I'm the person on the team who reads the entire design system AND knows when to break the rules.",
-  },
-  {
-    name: "UX Research",
-    text: "I ask why before I ever open Figma. Research isn't a phase, it's the foundation of every pixel.",
+    text: "I know every rule in the system, and exactly when to break one.",
   },
   {
     name: "Vibe Coders",
-    text: "I prompted a full portfolio in 48 hours... and I'll do it again. Speed is my strongest vibe.",
+    text: "I prompted a full portfolio in 48 hours... and I'll do it again :)",
   },
   {
     name: "Artists",
-    text: "Eight years of digital art before product design. The craft never left, it just found new problems to solve.",
+    text: "Eight years an artist before this. same craft, new problems.",
   },
 ];
 
@@ -97,7 +93,7 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
     isAnimatingRef.current = true;
     animeInstanceRef.current = animate(textRef.current, {
       innerHTML: scrambleText({
-        text: tabsData[4].text,
+        text: tabsData[3].text,
         chars: '01<>[]{}_—=+*^?#&$!/\\|;:',
         from: 'left',
         duration: 400,
@@ -121,7 +117,7 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
   }, []);
 
   useEffect(() => {
-    if (active === 4) {
+    if (active === 3) {
       // Wait for ref to be available (especially important with AnimatePresence mode="wait")
       let rafId: number;
       const checkAndRun = () => {
@@ -179,9 +175,9 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             exit={{ opacity: 0, y: -10, filter: 'blur(10px)' }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="[grid-area:stack] text-2xl text-foreground font-normal font-sans leading-[1.2] tracking-tight text-left w-full m-0 relative tabular-nums"
+            className="[grid-area:stack] text-2xl text-foreground font-normal font-heading leading-[1.4] tracking-tight text-left w-full m-0 relative tabular-nums"
           >
-            {active === 4 ? (
+            {active === 3 ? (
               <>
                 {/* Ghost text to hold the layout volume */}
                 <span className="invisible select-none pointer-events-none block" aria-hidden="true">

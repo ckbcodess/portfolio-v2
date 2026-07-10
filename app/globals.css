@@ -12,7 +12,6 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-secondary-foreground: var(--secondary-foreground);
 
-  --font-sans: var(--font-sans);
   --breakpoint-md: 810px;
   --breakpoint-lg: 1100px;
   --font-heading: var(--font-sans);
@@ -579,3 +578,63 @@ header {
   white-space: nowrap;
   animation: marquee-text linear infinite;
 }
+
+/* --- Stable Ambient and Hover Text Shimmer --- */
+@keyframes ui-shimmer-sweep {
+  0% {
+    mask-position: 100% 0;
+    -webkit-mask-position: 100% 0;
+  }
+  100% {
+    mask-position: 0% 0;
+    -webkit-mask-position: 0% 0;
+  }
+}
+
+@keyframes ui-shimmer-ambient {
+  0% {
+    mask-position: 100% 0;
+    -webkit-mask-position: 100% 0;
+  }
+  20% {
+    mask-position: 0% 0;
+    -webkit-mask-position: 0% 0;
+  }
+  21%, 100% {
+    mask-position: 100% 0;
+    -webkit-mask-position: 100% 0;
+  }
+}
+
+.ui-shimmer-text {
+  position: relative;
+  display: inline-block;
+  -webkit-mask-image: linear-gradient(
+    120deg,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 1) 35%,
+    rgba(0, 0, 0, 0.5) 45%,
+    rgba(0, 0, 0, 1) 50%,
+    rgba(0, 0, 0, 0.5) 55%,
+    rgba(0, 0, 0, 1) 65%,
+    rgba(0, 0, 0, 1) 100%
+  );
+  mask-image: linear-gradient(
+    120deg,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 1) 35%,
+    rgba(0, 0, 0, 0.5) 45%,
+    rgba(0, 0, 0, 1) 50%,
+    rgba(0, 0, 0, 0.5) 55%,
+    rgba(0, 0, 0, 1) 65%,
+    rgba(0, 0, 0, 1) 100%
+  );
+  -webkit-mask-size: 300% 100%;
+  mask-size: 300% 100%;
+  animation: ui-shimmer-ambient 10s ease-in-out infinite;
+}
+
+.hover-shimmer-trigger:hover .ui-shimmer-text {
+  animation: ui-shimmer-sweep 2.2s ease-in-out forwards;
+}
+

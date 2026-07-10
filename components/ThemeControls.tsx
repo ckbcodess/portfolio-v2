@@ -50,7 +50,7 @@ export default function ThemeControls({ isHero }: { isHero?: boolean }) {
               )}
           </div>
         </TooltipTrigger>
-        <TooltipContent side="bottom" sideOffset={8}>
+        <TooltipContent side="bottom">
           {theme === "dark" ? "Light mode" : "Dark mode"}
         </TooltipContent>
       </Tooltip>

@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import * as THREE from "three";
 import { mergeVertices } from "three/addons/utils/BufferGeometryUtils.js";
 import { useTheme } from "next-themes";
+import { motion, AnimatePresence } from "motion/react";
 import { Settings, X, ChevronDown, RefreshCw, Eye, EyeOff, Save, Trash2, Copy } from "lucide-react";
 
 // --- 3D Simplex Noise Implementation ---
@@ -208,6 +209,40 @@ const fragmentShader = `
     // Optional molten core bleed
     color += moltenCoreColor * heat * pow(facing, 1.5) * 0.6;
 
+    // Reflection vector for environmental mapping
+    vec3 R = reflect(-viewDirection, normalize(vNormal));
+
+    // Procedural environment (sky vs ground) for metallic chrome reflections
+    vec3 skyColor = vec3(0.98, 0.99, 1.0);
+    vec3 groundColor = vec3(0.08, 0.08, 0.1);
+    
+    // Smooth horizon boundary
+    float horizon = smoothstep(-0.15, 0.15, R.y);
+    vec3 envColor = mix(groundColor, skyColor, horizon);
+    
+    // Horizon line accent to add realism/contrast
+    float horizonLine = 1.0 - smoothstep(0.0, 0.04, abs(R.y));
+    envColor = mix(envColor, vec3(0.02), horizonLine * 0.4);
+
+    // Specular lighting (sun highlight & fill)
+    vec3 lightDir1 = normalize(vec3(4.0, 6.0, 5.0));
+    vec3 lightDir2 = normalize(vec3(-5.0, 3.0, -4.0));
+    
+    float specKey = pow(max(dot(R, lightDir1), 0.0), 256.0); // tight hot-spot
+    float specFill = pow(max(dot(R, lightDir2), 0.0), 64.0);
+
+    // Detect if current molten color is gold-ish (#d4af37 or #ffd600)
+    float isGold = step(0.75, moltenColor.r) * step(0.55, moltenColor.g) * step(0.0, 0.45 - moltenColor.b) * heat;
+
+    // Gold Chrome Orb model (tinted reflections + high specular)
+    vec3 goldChrome = envColor * moltenColor + specKey * vec3(1.0, 0.95, 0.75) * 2.2 + specFill * moltenColor * 0.6;
+    
+    // Highly realistic glossy/glass normal model
+    vec3 glossyNormal = color + envColor * 0.18 * (1.0 - facing) + specKey * vec3(1.0) * 0.5 + specFill * vec3(1.0) * 0.15;
+
+    // Blend between glossy normal and the gold chrome orb based on isGold
+    color = mix(glossyNormal, goldChrome, isGold);
+
     gl_FragColor = vec4(color, 1.0);
   }
 `;
@@ -307,11 +342,54 @@ const MOLTEN_PALETTES: Array<[string, string]> = [
   ["#1de9b6", "#00b0ff"], // Teal / sky blue
 ];
 
+// Statements for normal interactions
+const NORMAL_DECK = [
+  "ooh, do that again.",
+  "yes. more of that.",
+  "you found the fun part.",
+  "keep going, I've got colors for days.",
+  "hold it longer, I dare you.",
+  "that one's my favorite. wait— no, this one.",
+  "you're really committed to this, huh.",
+  "every color's a different mood. this one's chaotic.",
+  "squeeze me again, it's fine.",
+  "okay you can stop— actually don't.",
+  "new color, who dis.",
+  "we could do this all day.",
+  "certified good hold. 10/10.",
+  "this is basically a friendship now."
+];
+
+// Statements for easter egg gold holds
+const EASTER_EGG_DECK = [
+  "okay you actually found the secret one.",
+  "achievement unlocked: chronic blob holder.",
+  "this color only shows up for the persistent ones.",
+  "gold. you earned that one."
+];
+
 export default function Interactive3DBlob() {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [mounted, setMounted] = useState(false);
   const { resolvedTheme } = useTheme();
+
+  const [holdCount, setHoldCount] = useState(0);
+  const [blobText, setBlobText] = useState("press and hold me. go on.");
+  const [showText, setShowText] = useState(false);
+
+  const normalBagRef = useRef<string[]>([]);
+  const easterEggBagRef = useRef<string[]>([]);
+
+  const drawFromBag = (bagRef: React.MutableRefObject<string[]>, originalDeck: string[]) => {
+    if (bagRef.current.length === 0) {
+      bagRef.current = [...originalDeck];
+    }
+    const randomIndex = Math.floor(Math.random() * bagRef.current.length);
+    const item = bagRef.current[randomIndex];
+    bagRef.current.splice(randomIndex, 1);
+    return item;
+  };
 
   // Set mounted flag to prevent Next.js hydration mismatches
   useEffect(() => {
@@ -1258,23 +1336,59 @@ export default function Interactive3DBlob() {
   const handlePointerDown = () => {
     isPressedRef.current = true;
     if (canvasRef.current) canvasRef.current.style.cursor = "grabbing";
+    setShowText(true);
+
+    // Check if the current hold is a gold hold
+    // Since holdCount represents the number of holds COMPLETED, the current hold is (holdCount + 1)
+    const currentHoldNumber = holdCount + 1;
+
+    if (currentHoldNumber % 6 === 0) {
+      // 6th hold: Gold shader variation while holding
+      const goldColor = "#d4af37";
+      const goldCore = "#fff5cc";
+      moltenColorRef.current = goldColor;
+      moltenCoreColorRef.current = goldCore;
+      setMoltenColor(goldColor);
+      setMoltenCoreColor(goldCore);
+    }
   };
 
   const handlePointerUp = () => {
+    if (!isPressedRef.current) return;
+
     isPressedRef.current = false;
     if (canvasRef.current) canvasRef.current.style.cursor = "grab";
     // Flag a palette swap — the animate loop will fire it once heat reaches 0
     pendingPaletteSwapRef.current = true;
+    setShowText(false); // Hide the text when they stop holding
+
+    // Increment hold count as the hold has finished
+    const completedHoldCount = holdCount + 1;
+    setHoldCount(completedHoldCount);
+
+    // Prepare the text line for the NEXT hover interaction (completedHoldCount + 1)
+    const nextHoldNumber = completedHoldCount + 1;
+    if (nextHoldNumber % 6 === 0) {
+      // The upcoming interaction is a gold hold: prepare gold text
+      const eggLine = drawFromBag(easterEggBagRef, EASTER_EGG_DECK);
+      setBlobText(eggLine);
+    } else {
+      // The upcoming interaction is normal: prepare normal text
+      const normalLine = drawFromBag(normalBagRef, NORMAL_DECK);
+      setBlobText(normalLine);
+    }
   };
 
   const handlePointerOver = () => {
     if (canvasRef.current) {
       canvasRef.current.style.cursor = isPressedRef.current ? "grabbing" : "grab";
     }
+    setShowText(true); // Show on hover
   };
 
   const handlePointerOut = () => {
     if (canvasRef.current) canvasRef.current.style.cursor = "default";
+    setShowText(false); // Hide when mouse leaves
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
@@ -2106,7 +2220,7 @@ export default function Interactive3DBlob() {
       {/* Canvas wrapper container */}
       <div
         ref={containerRef}
-        data-cursor="hold"
+        data-cursor="pointer"
         className="relative w-full h-full select-none overflow-visible"
         onPointerMove={handlePointerMove}
         onPointerDown={handlePointerDown}
@@ -2126,6 +2240,24 @@ export default function Interactive3DBlob() {
             left: "-30%"
           }}
         />
+      </div>
+
+      {/* Invitation/Hold status text line beneath the blob */}
+      <div className="absolute left-1/2 -translate-x-1/2 bottom-[-45px] text-center w-full pointer-events-none h-6 overflow-hidden flex items-center justify-center">
+        <AnimatePresence mode="wait">
+          {showText && (
+            <motion.span
+              key={blobText}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
+              className="text-foreground/45 text-xs font-normal tracking-tight font-sans whitespace-nowrap"
+            >
+              {blobText}
+            </motion.span>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Settings Gear Overlay Toggle (Only in Development) */}

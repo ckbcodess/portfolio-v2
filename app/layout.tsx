@@ -1,10 +1,31 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const geist = Geist({
+const openRunde = localFont({
+  src: [
+    {
+      path: "./fonts/OpenRunde-Regular.otf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "./fonts/OpenRunde-Medium.otf",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "./fonts/OpenRunde-Semibold.otf",
+      weight: "600",
+      style: "normal",
+    },
+    {
+      path: "./fonts/OpenRunde-Bold.otf",
+      weight: "700",
+      style: "normal",
+    },
+  ],
   variable: "--font-sans",
-  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
@@ -19,7 +40,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning className={geist.variable}>
+    <html lang="en" suppressHydrationWarning className={openRunde.variable}>
       <head>
         <link
           rel="preload"
