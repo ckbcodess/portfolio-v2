@@ -718,12 +718,43 @@ export default function Interactive3DBlob() {
   const lastPointerPosRef = useRef<{ x: number; y: number } | null>(null);
   const touchStartPosRef = useRef<{ x: number; y: number } | null>(null);
   const holdBufferTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hapticIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const globeTargetRotRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const globeCurrentRotRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const globeInertiaRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const heatRef = useRef(0.0);
   const timeOffsetRef = useRef(0.0);
   const themeRef = useRef(resolvedTheme);
+
+  const stopHapticBuzz = () => {
+    if (hapticIntervalRef.current) {
+      clearInterval(hapticIntervalRef.current);
+      hapticIntervalRef.current = null;
+    }
+    if (typeof window !== "undefined" && "vibrate" in navigator) {
+      try {
+        navigator.vibrate(0);
+      } catch (e) {}
+    }
+  };
+
+  const startHapticBuzz = () => {
+    stopHapticBuzz();
+    if (typeof window !== "undefined" && "vibrate" in navigator) {
+      try {
+        navigator.vibrate(12);
+      } catch (e) {}
+      hapticIntervalRef.current = setInterval(() => {
+        try {
+          if (isPressedRef.current && "vibrate" in navigator) {
+            navigator.vibrate(12);
+          } else {
+            stopHapticBuzz();
+          }
+        } catch (e) {}
+      }, 50);
+    }
+  };
 
   // Sync refs to avoid re-constructing WebGL loop
   const noiseScaleRef = useRef(noiseScale);
@@ -1366,6 +1397,7 @@ export default function Interactive3DBlob() {
     // 250ms intentional press delay buffer before hold morphing activates (allows normal page scrolling on vertical swipes)
     holdBufferTimerRef.current = setTimeout(() => {
       isPressedRef.current = true;
+      startHapticBuzz();
       if (canvasRef.current) canvasRef.current.style.cursor = "grabbing";
       setShowText(true);
 
@@ -1382,6 +1414,7 @@ export default function Interactive3DBlob() {
   };
 
   const handlePointerUp = () => {
+    stopHapticBuzz();
     if (holdBufferTimerRef.current) {
       clearTimeout(holdBufferTimerRef.current);
       holdBufferTimerRef.current = null;
@@ -1422,6 +1455,7 @@ export default function Interactive3DBlob() {
   };
 
   const handlePointerOut = () => {
+    stopHapticBuzz();
     if (holdBufferTimerRef.current) {
       clearTimeout(holdBufferTimerRef.current);
       holdBufferTimerRef.current = null;
@@ -2314,7 +2348,7 @@ export default function Interactive3DBlob() {
       </div>
 
       {/* Invitation/Hold status text line beneath the blob */}
-      <div className="absolute left-1/2 -translate-x-1/2 bottom-[-45px] text-center w-full pointer-events-none h-6 overflow-hidden flex items-center justify-center">
+      <div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 text-center w-max max-w-[90vw] pointer-events-none flex items-center justify-center z-20">
         <AnimatePresence mode="wait">
           {showText && (
             <motion.span
