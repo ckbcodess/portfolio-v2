@@ -144,19 +144,28 @@ export default function InfoSheet({ content, isOpen, onClose }: InfoSheetProps) 
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
             onClick={onClose}
-            className="fixed inset-0 z-[940]"
+            onPointerDown={onClose}
+            className="fixed inset-0 z-[940] bg-black/30 backdrop-blur-xs cursor-pointer pointer-events-auto w-screen h-screen"
             aria-hidden="true"
           />
         )}
       </AnimatePresence>
 
-      {/* Bottom sheet — full width, 65dvh tall */}
+      {/* Bottom sheet — full width, 90dvh tall */}
       <motion.div
         key="info-panel"
         variants={panelVariants}
         initial="hidden"
         animate={isOpen ? "visible" : "hidden"}
-        className="fixed bottom-0 left-0 right-0 z-[950] w-full h-[90dvh] bg-background rounded-t-[24px] shadow-2xl overflow-hidden text-base"
+        drag="y"
+        dragConstraints={{ top: 0, bottom: 0 }}
+        dragElastic={{ top: 0.02, bottom: 0.6 }}
+        onDragEnd={(_, info) => {
+          if (info.offset.y > 80 || info.velocity.y > 300) {
+            onClose();
+          }
+        }}
+        className="fixed bottom-0 left-0 right-0 z-[950] w-full h-[90dvh] bg-background rounded-t-[24px] shadow-2xl overflow-hidden text-base touch-pan-y"
         style={{ willChange: "transform" }}
         aria-hidden={!isOpen}
         aria-label="Info panel"
@@ -164,7 +173,7 @@ export default function InfoSheet({ content, isOpen, onClose }: InfoSheetProps) 
         {/* Drag handle bar for mobile bottom sheet indicator */}
         <div 
           onClick={onClose}
-          className="w-full flex items-center justify-center pt-3 pb-1 md:hidden select-none cursor-pointer group"
+          className="w-full flex items-center justify-center pt-3 pb-2 cursor-grab active:cursor-grabbing select-none group touch-none"
           aria-label="Close bottom sheet"
         >
           <div className="w-12 h-1.5 rounded-full bg-foreground/25 group-hover:bg-foreground/40 transition-colors" />
