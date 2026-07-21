@@ -94,13 +94,13 @@ export default function HomeClient({ caseStudies }: { caseStudies: CaseStudyCard
   return (
     <div
       ref={pageRef}
-      className="bg-background min-h-screen pt-40 md:pt-48 pb-24 w-full selection:bg-primary selection:text-primary-foreground flex flex-col items-center"
+      className="bg-background min-h-screen pt-28 sm:pt-36 md:pt-48 pb-16 md:pb-24 w-full selection:bg-primary selection:text-primary-foreground flex flex-col items-center"
     >
       <motion.main
         variants={containerVariants}
         initial="hidden"
         animate={canAnimate ? "show" : "hidden"}
-        className="w-full max-w-[1200px] px-[var(--page-px)] flex flex-col gap-24 origin-top-left"
+        className="w-full max-w-[1200px] px-[var(--page-px)] flex flex-col gap-16 sm:gap-20 md:gap-24 origin-top-left"
       >
         {/* Bio Section */}
         <section className="flex flex-col md:flex-row items-center justify-between gap-12 w-full relative">
@@ -152,7 +152,7 @@ export default function HomeClient({ caseStudies }: { caseStudies: CaseStudyCard
                       animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                       exit={{ opacity: 0, y: -15, filter: "blur(4px)" }}
                       transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                      className="text-foreground text-base font-medium tracking-tight whitespace-nowrap absolute"
+                      className="text-foreground text-sm font-medium tracking-tight whitespace-nowrap absolute"
                     >
                       {clickCount === 0 ? (
                         <ShimmeringText>{messages[clickCount]}</ShimmeringText>
@@ -236,7 +236,7 @@ export default function HomeClient({ caseStudies }: { caseStudies: CaseStudyCard
 
           <div className="flex flex-row justify-between w-full relative min-h-[240px] items-start pb-8" data-node-id="2820:12786">
             {/* Links Column */}
-            <div className="flex flex-col gap-8 w-full relative z-10" data-node-id="2820:12962">
+            <div className="flex flex-col gap-6 md:gap-8 w-full relative z-10" data-node-id="2820:12962">
               {[
                 { id: "mail", label: "Mail", href: "mailto:rnsfordgyasi@gmail.com", external: false },
                 { id: "linkedin", label: "Linkedin", href: "https://www.linkedin.com/in/ransford-gyasi/", external: true },
@@ -253,7 +253,7 @@ export default function HomeClient({ caseStudies }: { caseStudies: CaseStudyCard
                     rel={link.external ? "noopener noreferrer" : undefined}
                     onMouseEnter={() => setHoveredLink(link.id)}
                     onMouseLeave={() => setHoveredLink(null)}
-                    className={`text-foreground hover:text-foreground text-base font-medium transition-all duration-300 leading-none tracking-[-0.32px] block w-full ${
+                    className={`text-foreground hover:text-foreground text-sm sm:text-base font-medium transition-all duration-300 leading-none tracking-[-0.32px] block w-full ${
                       isLinkDimmed ? "opacity-30" : "opacity-100"
                     }`}
                   >
@@ -264,7 +264,7 @@ export default function HomeClient({ caseStudies }: { caseStudies: CaseStudyCard
 
               {/* Bracket & label annotation for X and Instagram */}
               <div
-                className="absolute left-[120px] top-[148px] flex items-center pointer-events-none transition-all duration-300"
+                className="absolute left-[110px] md:left-[120px] top-[120px] md:top-[148px] flex items-center pointer-events-none transition-all duration-300"
                 style={{
                   height: "46px",
                   opacity: hoveredLink !== null && hoveredLink !== "x" && hoveredLink !== "instagram" ? 0.3 : 1,
@@ -358,11 +358,11 @@ const ProjectItem = React.memo(function ProjectItem({
       </div>
       
       {/* Title & Description */}
-      <div className="flex flex-col gap-4 items-start w-full">
-        <h3 className="font-heading text-[20px] font-normal tracking-[-0.6px] leading-[1.4] flex items-center gap-2 text-foreground transition-colors">
+      <div className="flex flex-col gap-3 items-start w-full">
+        <h3 className="font-heading text-lg sm:text-[20px] font-normal tracking-[-0.6px] leading-[1.4] flex items-center gap-2 text-foreground transition-colors">
           {title}
         </h3>
-        <p className="text-foreground opacity-35 group-hover:opacity-60 text-[16px] font-medium leading-[1.4] max-w-[360px] transition-all duration-300">
+        <p className="text-foreground opacity-35 group-hover:opacity-60 text-sm sm:text-[16px] font-medium leading-[1.4] max-w-none w-full transition-all duration-300">
           {description}
         </p>
       </div>

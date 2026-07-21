@@ -1,6 +1,5 @@
 "use client";
 
-import { refractive, convex, concave, convexCircle } from "@hashintel/refractive";
 import React, { forwardRef, useEffect, useState } from "react";
 import { useTheme } from "next-themes";
 
@@ -53,45 +52,35 @@ const RefractiveNav = forwardRef<HTMLElement, {
   const isDark = mounted && (resolvedTheme === "dark" || isCaseStudyHero);
 
   return (
-    <refractive.nav
+    <nav
       ref={ref}
-      refraction={{
-        radius: settings?.radius ?? 24,
-        blur: settings?.blur ?? 2, // Lowered to make refraction more distinct
-        glassThickness: settings?.glassThickness ?? 24,
-        // Refined specular for more "catch" on the edges
-        specularOpacity: settings?.specularOpacity ?? (isDark ? 0.08 : 0.22),
-        // @ts-expect-error - specularSaturation is supported by the engine but missing from types
-        specularSaturation: settings?.specularSaturation ?? 95,
-        bezelWidth: settings?.bezelWidth ?? 14,
-        bezelHeightFn: convex,
-        refractiveIndex: settings?.refractiveIndex ?? 3.8, // Slightly lower for cleaner "glass" bend
-        specularAngle: settings?.specularAngle ?? 135,
-      }}
       className={className}
       style={style}
       role="navigation"
       aria-label="Main Floating Navigation"
     >
-      {/* Core Glass Atmosphere Layer - Reduced blur to let refraction show */}
+      {/* Core Glass Atmosphere Layer - High blur and darker frosty glass for maximum readability */}
       <div
-        className={`absolute inset-0 backdrop-blur-[12px] backdrop-saturate-[1.4] pointer-events-none rounded-full ${isCaseStudyHero ? "bg-black/5" : "bg-[#f9f9f9]/30 dark:bg-[#0f1014]/30"
-          }`}
+        className="absolute inset-0 pointer-events-none rounded-[14px] bg-black/60 dark:bg-black/75"
+        style={{
+          backdropFilter: "blur(40px) saturate(1.6)",
+          WebkitBackdropFilter: "blur(40px) saturate(1.6)"
+        }}
       />
 
       {/* Dynamic Scroll Progress Background Indicator Fill */}
       <div
-        className="absolute inset-0 origin-left pointer-events-none transition-transform duration-100 ease-out bg-black/[0.04] dark:bg-white/[0.04] rounded-full z-10"
+        className="absolute inset-0 origin-left pointer-events-none transition-transform duration-100 ease-out bg-black/[0.04] dark:bg-white/[0.04] rounded-[14px] z-10"
         style={{ transform: `scaleX(${scrollProgress})` }}
       />
 
       {/* Crisp Inner Rim / Specular Border */}
-      <div className="absolute inset-0 rounded-full border-[0.5px] border-white/10 dark:border-white/5 pointer-events-none z-30" />
+      <div className="absolute inset-0 rounded-[14px] border-[0.5px] border-white/10 dark:border-white/5 pointer-events-none z-30" />
 
 
       {/* Local noise texture overlay for high-fidelity glass */}
       <div
-        className={`absolute inset-0 rounded-full pointer-events-none mix-blend-overlay z-40 ${isCaseStudyHero ? "opacity-[0.08]" : "opacity-[0.04] dark:opacity-[0.08]"
+        className={`absolute inset-0 rounded-[14px] pointer-events-none mix-blend-overlay z-40 ${isCaseStudyHero ? "opacity-[0.08]" : "opacity-[0.04] dark:opacity-[0.08]"
           }`}
         style={{ backgroundImage: 'url(/noise.svg)' }}
       />
@@ -100,7 +89,7 @@ const RefractiveNav = forwardRef<HTMLElement, {
       <div className="relative z-50 flex items-center gap-1 p-1 w-full h-full">
         {children}
       </div>
-    </refractive.nav>
+    </nav>
   );
 });
 

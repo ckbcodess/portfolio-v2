@@ -131,26 +131,10 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
   const showBackNav = showBack && !isNavHidden;
 
   return (
-    <header className="w-full fixed top-0 left-0 z-[1000] pointer-events-none pt-6 md:pt-[48px]">
-      <div className="w-full px-[var(--page-px)] flex items-center relative h-20 max-w-[1400px] mx-auto">
-        {/* Left Section: Logo (Mobile only on home, or general on mobile) */}
-        <div className="flex-1 flex justify-start pointer-events-auto relative z-[1000] lg:hidden">
-          <TransitionLink
-            href="/"
-            label="Home"
-            data-cursor="pointer"
-            onMouseEnter={handleLogoEnter}
-            onMouseLeave={handleLogoLeave}
-            className={`text-sm font-normal tracking-tight transition-colors p-4 -m-4 ${
-              isCaseStudy && !scrolled ? "text-white" : "text-foreground"
-            }`}
-          >
-            <span ref={logoRef} className="inline-block min-w-[2ch]">RG</span>
-          </TransitionLink>
-        </div>
-
-        {/* ─── Desktop Nav: Centered single pill ─── */}
-        <div className="flex-1 hidden lg:flex items-center justify-center pointer-events-auto relative max-w-[620px] mx-auto w-full">
+    <header className="w-full fixed top-0 left-0 z-[1000] pointer-events-none pt-4 sm:pt-6 md:pt-[48px]">
+      <div className="w-full px-[var(--page-px)] flex items-center justify-center relative h-20 max-w-[1400px] mx-auto">
+        {/* ─── Navigation: Centered single pill ─── */}
+        <div className="flex items-center justify-center pointer-events-auto relative max-w-[620px] mx-auto w-full">
           {/* Default Navigation */}
           <motion.div
             animate={{
@@ -166,14 +150,12 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
             className="w-full flex justify-center animate-fade-in"
           >
             <RefractiveNav
-              isCaseStudyHero={isCaseStudy && !scrolled}
-              className={`relative rounded-full overflow-hidden w-full ${
-                isCaseStudy && !scrolled ? "text-white" : "text-foreground"
-              }`}
+              isCaseStudyHero={true}
+              className="relative rounded-[14px] overflow-hidden w-full text-white"
             >
-              <div className="px-6 py-3 flex items-center justify-between gap-8 whitespace-nowrap w-full">
+              <div className="px-3 py-2 sm:px-6 sm:py-3 flex items-center justify-between gap-2 sm:gap-6 md:gap-8 whitespace-nowrap w-full">
                 {/* Left group: Home, Archive, Resume */}
-                <div className="flex items-center gap-6">
+                <div className="flex items-center gap-2 sm:gap-4 md:gap-6">
                   {NAV_ITEMS.slice(0, 3).map((item) => {
                     const isActive = activeHref === item.href || (item.href === "/" && activeHref === "/");
                     const isArchive = item.label === "Archive";
@@ -187,8 +169,8 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
                           e.preventDefault();
                           setArchiveOpen(true);
                         } : undefined}
-                        className={`text-sm font-normal tracking-tight transition-all duration-300 ${
-                          isActive ? "opacity-100 font-semibold" : "opacity-40 hover:opacity-100"
+                        className={`text-xs sm:text-sm font-normal tracking-tight transition-all duration-300 ${
+                          isActive ? "opacity-100 font-semibold text-white" : "opacity-50 text-white/90 hover:opacity-100"
                         }`}
                       >
                         {item.label}
@@ -198,7 +180,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
                 </div>
 
                 {/* Right group: Info, Theme, Volume, Clock */}
-                <div className="flex items-center gap-6">
+                <div className="flex items-center gap-2.5 sm:gap-4 md:gap-6">
                   {/* Info Link */}
                   {(() => {
                     const item = NAV_ITEMS[3];
@@ -213,8 +195,8 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
                           e.preventDefault();
                           setInfoOpen(true);
                         }}
-                        className={`text-sm font-normal tracking-tight transition-all duration-300 ${
-                          isActive ? "opacity-100 font-semibold" : "opacity-40 hover:opacity-100"
+                        className={`text-xs sm:text-sm font-normal tracking-tight transition-all duration-300 ${
+                          isActive ? "opacity-100 font-semibold text-white" : "opacity-50 text-white/90 hover:opacity-100"
                         }`}
                       >
                         {item.label}
@@ -222,29 +204,21 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
                     );
                   })()}
 
-
-
                   {/* Theme controls */}
-                  <ThemeControls isHero={isCaseStudy && !scrolled} />
+                  <ThemeControls isHero={true} />
 
                   {/* Volume Toggle */}
                   <button
                     onClick={toggleSound}
                     data-cursor="pointer"
-                    className={`transition-all duration-300 p-1 -m-1 flex items-center justify-center cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-sm ${
-                      isCaseStudy && !scrolled ? "text-white opacity-100" : "text-foreground/60 hover:text-foreground"
-                    }`}
+                    className="transition-all duration-300 p-1 -m-1 flex items-center justify-center cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-sm text-white/50 hover:text-white"
                     aria-label={isSoundEnabled ? "Disable sound" : "Enable sound"}
                   >
-                    {isSoundEnabled ? <Volume2 size={14} strokeWidth={2} /> : <VolumeX size={14} strokeWidth={2} />}
+                    {isSoundEnabled ? <Volume2 size={13} strokeWidth={2} /> : <VolumeX size={13} strokeWidth={2} />}
                   </button>
 
-
-
                   {/* Clock */}
-                  <div className={`text-xs font-normal tabular-nums select-none opacity-80 ${
-                    isCaseStudy && !scrolled ? "text-white" : "text-foreground"
-                  }`}>
+                  <div className="hidden sm:block text-[10px] sm:text-xs font-normal tabular-nums select-none opacity-80 text-white">
                     <Clock />
                   </div>
                 </div>
@@ -266,106 +240,24 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
           >
             <RefractiveNav
               isScrolled={scrolled}
-              className="relative rounded-full overflow-hidden text-foreground"
+              className="relative rounded-[14px] overflow-hidden text-foreground"
             >
-              <div className="px-5 py-3 flex items-center justify-center whitespace-nowrap">
+              <div className="px-4 py-2 sm:px-5 sm:py-3 flex items-center justify-center whitespace-nowrap">
                 <TransitionLink
                   href={backLink}
                   label="Back"
                   data-cursor="pointer"
-                  className="flex items-center gap-2 transition-colors group p-4 -m-4"
+                  className="flex items-center gap-1.5 sm:gap-2 transition-colors group p-4 -m-4"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transform group-hover:-translate-x-1 transition-transform -ml-0.5">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transform group-hover:-translate-x-1 transition-transform -ml-0.5">
                     <path d="m15 18-6-6 6-6" />
                   </svg>
-                  <span className="text-sm font-normal">Back</span>
+                  <span className="text-xs sm:text-sm font-normal">Back</span>
                 </TransitionLink>
               </div>
             </RefractiveNav>
           </motion.div>
         </div>
-
-        {/* Right Section — Mobile controls only on desktop hidden */}
-        <div className="flex-1 flex justify-end relative z-[1000] lg:hidden">
-          <div className="flex items-center gap-4 mr-8 pointer-events-auto">
-            <ThemeControls isHero={isCaseStudy && !scrolled && !isMenuOpen} />
-            <button
-              onClick={toggleSound}
-              className={`${
-                (isCaseStudy && !scrolled && !isMenuOpen) ? "text-white" : "text-foreground/60 hover:text-foreground"
-              } transition-colors p-2 -m-2 flex items-center justify-center cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-sm`}
-              aria-label={isSoundEnabled ? "Disable sound" : "Enable sound"}
-            >
-              {isSoundEnabled ? <Volume2 size={16} strokeWidth={2} /> : <VolumeX size={16} strokeWidth={2} />}
-            </button>
-          </div>
-
-          <div className="pointer-events-auto">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className={`p-2 -mr-2 transition-colors relative w-10 h-10 flex items-center justify-center ${
-                (isCaseStudy && !scrolled && !isMenuOpen) ? "text-white" : "text-black dark:text-white"
-              }`}
-              aria-label="Toggle menu"
-            >
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={isMenuOpen ? "close" : "menu"}
-                  initial={{ opacity: 0, rotate: -90, scale: 0.8 }}
-                  animate={{ opacity: 1, rotate: 0, scale: 1 }}
-                  exit={{ opacity: 0, rotate: 90, scale: 0.8 }}
-                  transition={{ duration: 0.12, ease: "linear" }}
-                  className="absolute inset-0 flex items-center justify-center"
-                >
-                  {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-                </motion.div>
-              </AnimatePresence>
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Menu Overlay */}
-        <AnimatePresence>
-          {isMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2, ease: "circOut" }}
-              className="lg:hidden fixed inset-0 z-[999] bg-background/80 backdrop-blur-3xl flex flex-col pt-32 px-[var(--page-px)] pointer-events-auto"
-            >
-              <nav className="flex flex-col gap-8 flex-1">
-                {NAV_ITEMS.map((item) => {
-                  const isActive = activeHref === item.href;
-                  return (
-                    <TransitionLink
-                      key={item.href}
-                      href={item.href}
-                      label={item.label}
-                      data-cursor="pointer"
-                      onClick={(e) => {
-                        setIsMenuOpen(false);
-                        if (item.label === "Archive") {
-                          e.preventDefault();
-                          setArchiveOpen(true);
-                        } else if (item.label === "Info") {
-                          e.preventDefault();
-                          setInfoOpen(true);
-                        }
-                      }}
-                      className={`text-4xl font-normal tracking-tight transition-opacity block ${
-                        isActive ? "text-foreground" : "text-foreground/40 hover:opacity-60"
-                      }`}
-                    >
-                      {item.label}
-                    </TransitionLink>
-                  );
-                })}
-              </nav>
-
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
     </header>
   );

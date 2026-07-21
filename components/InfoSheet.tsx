@@ -156,7 +156,7 @@ export default function InfoSheet({ content, isOpen, onClose }: InfoSheetProps) 
         variants={panelVariants}
         initial="hidden"
         animate={isOpen ? "visible" : "hidden"}
-        className="fixed bottom-0 left-0 right-0 z-[950] w-full h-[82dvh] bg-background rounded-t-[24px] shadow-2xl overflow-hidden text-base"
+        className="fixed bottom-0 left-0 right-0 z-[950] w-full h-[90dvh] bg-background rounded-t-[24px] shadow-2xl overflow-hidden text-base"
         style={{ willChange: "transform" }}
         aria-hidden={!isOpen}
         aria-label="Info panel"
@@ -170,154 +170,164 @@ export default function InfoSheet({ content, isOpen, onClose }: InfoSheetProps) 
           <X size={14} />
         </button>
 
-        {/* 3-column grid — fills full panel height */}
-        <div className="h-full grid grid-cols-1 md:grid-cols-3">
+        {/* Single scroll area for all content with fade-out edges */}
+        <div 
+          className="h-full overflow-y-auto px-8 md:px-12 py-16 md:py-20"
+          style={{
+            maskImage: 'linear-gradient(to bottom, transparent, black 40px, black calc(100% - 40px), transparent)',
+            WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 40px, black calc(100% - 40px), transparent)',
+          }}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12 items-start max-w-[1200px] mx-auto pb-10">
 
-          {/* ── Col 1: Info ── */}
-          <div className="flex flex-col justify-between px-8 md:px-10 py-6 md:py-8 overflow-y-auto scrollbar-hide">
-            <div className="flex flex-col gap-4">
-              <p className="text-foreground/40 text-base">Info</p>
-              <div className="flex flex-col gap-4 text-foreground/70 text-lg leading-relaxed">
+            {/* ── Col 1: Info ── */}
+            <div className="flex flex-col gap-4 md:gap-6">
+              <p className="text-foreground/40 text-xs sm:text-sm">Info</p>
+              <div className="flex flex-col gap-4 text-foreground/70 text-sm sm:text-base leading-relaxed">
                 {content.info.map((paragraph, i) => (
                   <p key={i}>{paragraph}</p>
                 ))}
               </div>
             </div>
-            {content.lastUpdated && (
-              <p className="text-foreground/25 text-sm mt-6">Last updated: {content.lastUpdated}</p>
-            )}
-          </div>
 
-          {/* ── Col 2: Experience ── */}
-          <div className="flex flex-col gap-4 px-8 md:px-10 py-6 md:py-8 overflow-y-auto scrollbar-hide">
-            <p className="text-foreground/40 text-base">Experience</p>
-            <div className="flex flex-col gap-4 text-foreground/70 text-lg leading-relaxed">
-              {content.experience.map((paragraph, i) => (
-                <p key={i}>{paragraph}</p>
-              ))}
-            </div>
-
-            <div className="flex flex-col gap-3 mt-2">
-              <p className="text-foreground/40 text-base">Things i geek about</p>
-              <div className="flex flex-wrap gap-1.5">
-                {content.geekTags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="border border-foreground/10 hover:border-foreground/25 px-[9px] py-[3px] rounded-full text-sm text-foreground/50 hover:text-foreground/80 transition-all duration-200 select-none cursor-default"
-                  >
-                    {tag}
-                  </span>
-                ))}
+            {/* ── Col 2: Experience ── */}
+            <div className="flex flex-col gap-6 md:gap-8">
+              <div className="flex flex-col gap-4">
+                <p className="text-foreground/40 text-xs sm:text-sm">Experience</p>
+                <div className="flex flex-col gap-4 text-foreground/70 text-sm sm:text-base leading-relaxed">
+                  {content.experience.map((paragraph, i) => (
+                    <p key={i}>{paragraph}</p>
+                  ))}
+                </div>
               </div>
-            </div>
-          </div>
 
-          {/* ── Col 3: Connect (top) + Spotify (bottom-right) ── */}
-          <div className="flex flex-col justify-between px-8 md:px-10 py-6 md:py-8 overflow-y-auto scrollbar-hide">
-            {/* Connect */}
-            <div className="flex flex-col gap-3">
-              <p className="text-foreground/40 text-base">Connect</p>
-              <div className="flex flex-col gap-0.5">
-                {content.connectLinks.map((link) => (
-                  <a
-                    key={link.label}
-                    href={link.url}
-                    target={link.url.startsWith("http") ? "_blank" : undefined}
-                    rel={link.url.startsWith("http") ? "noopener noreferrer" : undefined}
-                    className="text-foreground/50 hover:text-foreground text-lg py-0.5 transition-colors duration-150 w-fit"
-                  >
-                    {link.label}
-                  </a>
-                ))}
+              <div className="flex flex-col gap-3">
+                <p className="text-foreground/40 text-xs sm:text-sm">Things i geek about</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {content.geekTags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="border border-foreground/10 hover:border-foreground/25 px-[9px] py-[3px] rounded-full text-xs sm:text-sm text-foreground/50 hover:text-foreground/80 transition-all duration-200 select-none cursor-default"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
 
-             {/* Spotify/Last.fm scrobbler — fixed size, bottom-right */}
-             <div className="flex justify-end">
-               <div className="flex flex-col gap-2">
-                 <p className="text-foreground/40 text-xs select-none">
-                   {trackLoading ? "\u00a0" : track?.nowPlaying ? "Blasting my ears with:" : "Recently listened to:"}
-                 </p>
-                 {/* Album art */}
-                 {trackLoading ? (
-                   <div className="w-[128px] h-[128px] rounded-xl bg-foreground/8 animate-pulse" />
-                 ) : (
-                   <a
-                     href={track?.url}
-                     target="_blank"
-                     rel="noopener noreferrer"
-                     className="group block"
-                   >
-                     <div className="relative w-[128px] h-[128px] rounded-xl overflow-hidden bg-foreground/5 cursor-pointer shadow-sm transition-all duration-500 hover:shadow-md">
-                       <Image
-                         src={track?.albumArt ?? "/spotify-album-art.png"}
-                         alt={`Album art — ${track?.name} by ${track?.artist}`}
-                         fill
-                         sizes="128px"
-                         className="object-cover transition-transform duration-700 group-hover:scale-105"
-                         priority
-                       />
-                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                         <div className="w-9 h-9 rounded-full bg-[#1DB954] flex items-center justify-center text-white shadow-lg scale-90 group-hover:scale-100 transition-transform duration-300">
-                           <Play size={14} fill="currentColor" className="ml-0.5" />
-                         </div>
-                       </div>
-                     </div>
-                   </a>
-                 )}
-                 {/* Track info */}
-                 <div className="flex flex-col gap-0.5 max-w-[128px] overflow-hidden">
-                   {trackLoading ? (
-                     <>
-                       <div className="h-4 w-24 rounded bg-foreground/8 animate-pulse mb-1" />
-                       <div className="h-3 w-16 rounded bg-foreground/5 animate-pulse" />
-                     </>
-                   ) : (
-                     <>
-                       <a
-                         href={track?.url}
-                         target="_blank"
-                         rel="noopener noreferrer"
-                         className="text-foreground font-medium text-base leading-snug hover:underline block w-full overflow-hidden"
-                         title={track?.name}
-                       >
-                         {(track?.name?.length ?? 0) > 15 ? (
-                           <div className="overflow-hidden whitespace-nowrap w-full relative">
-                             <div
-                               className="inline-flex animate-marquee-text"
-                               style={{ animationDuration: `${Math.max((track?.name?.length ?? 0) * 0.35, 6)}s` }}
-                             >
-                               <span className="pr-6">{track?.name}</span>
-                               <span className="pr-6">{track?.name}</span>
-                             </div>
-                           </div>
-                         ) : (
-                           <div className="truncate">{track?.name}</div>
-                         )}
-                       </a>
-                       <div className="flex items-center justify-between gap-1.5">
-                         <span
-                           className="text-foreground/40 text-sm leading-normal truncate flex-1"
-                           title={track?.artist}
-                         >
-                           {track?.artist}
-                         </span>
-                         {track?.nowPlaying && (
-                           <div className="flex items-end gap-[2px] h-3 flex-shrink-0 mb-0.5" aria-hidden="true">
-                             <div className="w-[2px] bg-foreground/40 rounded-full animate-wave-1 origin-bottom" />
-                             <div className="w-[2px] bg-foreground/40 rounded-full animate-wave-2 origin-bottom" />
-                             <div className="w-[2px] bg-foreground/40 rounded-full animate-wave-3 origin-bottom" />
-                             <div className="w-[2px] bg-foreground/40 rounded-full animate-wave-4 origin-bottom" />
-                           </div>
-                         )}
-                       </div>
-                     </>
-                   )}
-                 </div>
-               </div>
-             </div>
-          </div>
+            {/* ── Col 3: Connect + Spotify ── */}
+            <div className="flex flex-col gap-10 md:gap-12 justify-between">
+              {/* Connect */}
+              <div className="flex flex-col gap-4">
+                <p className="text-foreground/40 text-xs sm:text-sm">Connect</p>
+                <div className="flex flex-col gap-0.5">
+                  {content.connectLinks.map((link) => (
+                    <a
+                      key={link.label}
+                      href={link.url}
+                      target={link.url.startsWith("http") ? "_blank" : undefined}
+                      rel={link.url.startsWith("http") ? "noopener noreferrer" : undefined}
+                      className="text-foreground/50 hover:text-foreground text-sm sm:text-base py-0.5 transition-colors duration-150 w-fit"
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
 
+              {/* Spotify/Last.fm scrobbler — fixed size, bottom-right */}
+              <div className="flex justify-start md:justify-end">
+                <div className="flex flex-col gap-2">
+                  <p className="text-foreground/40 text-xs select-none">
+                    {trackLoading ? "\u00a0" : track?.nowPlaying ? "Blasting my ears with:" : "Recently listened to:"}
+                  </p>
+                  {/* Album art */}
+                  {trackLoading ? (
+                    <div className="w-[128px] h-[128px] rounded-xl bg-foreground/8 animate-pulse" />
+                  ) : (
+                    <a
+                      href={track?.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group block"
+                    >
+                      <div className="relative w-[128px] h-[128px] rounded-xl overflow-hidden bg-foreground/5 cursor-pointer shadow-sm transition-all duration-500 hover:shadow-md">
+                        <Image
+                          src={track?.albumArt ?? "/spotify-album-art.png"}
+                          alt={`Album art — ${track?.name} by ${track?.artist}`}
+                          fill
+                          sizes="128px"
+                          className="object-cover transition-transform duration-700 group-hover:scale-105"
+                          priority
+                        />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                          <div className="w-9 h-9 rounded-full bg-[#1DB954] flex items-center justify-center text-white shadow-lg scale-90 group-hover:scale-100 transition-transform duration-300">
+                            <Play size={14} fill="currentColor" className="ml-0.5" />
+                          </div>
+                        </div>
+                      </div>
+                    </a>
+                  )}
+                  {/* Track info */}
+                  <div className="flex flex-col gap-0.5 max-w-[128px] overflow-hidden">
+                    {trackLoading ? (
+                      <>
+                        <div className="h-4 w-24 rounded bg-foreground/8 animate-pulse mb-1" />
+                        <div className="h-3 w-16 rounded bg-foreground/5 animate-pulse" />
+                      </>
+                    ) : (
+                      <>
+                        <a
+                          href={track?.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-foreground font-medium text-base leading-snug hover:underline block w-full overflow-hidden"
+                          title={track?.name}
+                        >
+                          {(track?.name?.length ?? 0) > 15 ? (
+                            <div className="overflow-hidden whitespace-nowrap w-full relative">
+                              <div
+                                className="inline-flex animate-marquee-text"
+                                style={{ animationDuration: `${Math.max((track?.name?.length ?? 0) * 0.35, 6)}s` }}
+                              >
+                                <span className="pr-6">{track?.name}</span>
+                                <span className="pr-6">{track?.name}</span>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="truncate">{track?.name}</div>
+                          )}
+                        </a>
+                        <div className="flex items-center justify-between gap-1.5">
+                          <span
+                            className="text-foreground/40 text-sm leading-normal truncate flex-1"
+                            title={track?.artist}
+                          >
+                            {track?.artist}
+                          </span>
+                          {track?.nowPlaying && (
+                            <div className="flex items-end gap-[2px] h-3 flex-shrink-0 mb-0.5" aria-hidden="true">
+                              <div className="w-[2px] bg-foreground/40 rounded-full animate-wave-1 origin-bottom" />
+                              <div className="w-[2px] bg-foreground/40 rounded-full animate-wave-2 origin-bottom" />
+                              <div className="w-[2px] bg-foreground/40 rounded-full animate-wave-3 origin-bottom" />
+                              <div className="w-[2px] bg-foreground/40 rounded-full animate-wave-4 origin-bottom" />
+                            </div>
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          {content.lastUpdated && (
+            <div className="max-w-[1200px] mx-auto mt-10 border-t border-foreground/5 pt-4 pb-12">
+              <p className="text-foreground/25 text-xs sm:text-sm text-left md:text-right">Last updated: {content.lastUpdated}</p>
+            </div>
+          )}
         </div>
       </motion.div>
     </>

@@ -163,7 +163,7 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
   };
 
   return (
-    <div className="self-stretch flex flex-col justify-start items-start gap-8">
+    <div className="self-stretch flex flex-col justify-start items-start gap-6 sm:gap-8">
       <div className="w-full relative grid [grid-template-areas:'stack'] overflow-hidden">
         <AnimatePresence mode="popLayout">
           <motion.h1
@@ -175,7 +175,7 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             exit={{ opacity: 0, y: -10, filter: 'blur(10px)' }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="[grid-area:stack] text-2xl text-foreground font-normal font-heading leading-[1.4] tracking-tight text-left w-full m-0 relative tabular-nums"
+            className="[grid-area:stack] text-xl sm:text-2xl text-foreground font-normal font-heading leading-[1.4] tracking-tight text-left w-full m-0 relative tabular-nums"
           >
             {active === 3 ? (
               <>
@@ -252,7 +252,7 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
               aria-controls="tabs-content"
               onClick={() => handleTabClick(i)}
               data-cursor="pointer"
-              className={`text-center shrink-0 whitespace-nowrap justify-start text-[1rem] font-normal font-sans leading-5 transition-all duration-300 outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-sm ${active === i
+              className={`text-center shrink-0 whitespace-nowrap justify-start text-sm sm:text-base font-normal font-sans leading-5 transition-all duration-300 outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-sm ${active === i
                 ? "text-foreground opacity-100"
                 : "text-foreground opacity-35 hover:opacity-60"
                 }`}
