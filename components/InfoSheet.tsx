@@ -246,9 +246,9 @@ export default function InfoSheet({ content, isOpen, onClose }: InfoSheetProps) 
               </div>
 
               {/* Spotify/Last.fm scrobbler — fixed size, bottom-right */}
-              <div className="flex justify-start md:justify-end">
-                <div className="flex flex-col gap-2">
-                  <p className="text-foreground/40 text-xs select-none">
+              <div className="flex justify-end w-full">
+                <div className="flex flex-col items-end gap-2 text-right">
+                  <p className="text-foreground/40 text-xs select-none text-right">
                     {trackLoading ? "\u00a0" : track?.nowPlaying ? "Blasting my ears with:" : "Recently listened to:"}
                   </p>
                   {/* Album art */}
