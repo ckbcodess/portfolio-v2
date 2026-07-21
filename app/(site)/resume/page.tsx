@@ -15,7 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="text-sm font-normal text-muted-foreground md:pt-1">{children}</h2>
+    <h2 className="text-xs font-medium uppercase tracking-wider text-muted-foreground md:pt-0.5">{children}</h2>
   );
 }
 
@@ -27,18 +27,18 @@ export default async function ResumePage() {
   }
 
   return (
-    <div className="bg-background min-h-screen pt-32 md:pt-40 pb-24 w-full selection:bg-primary selection:text-primary-foreground flex flex-col items-center">
+    <div className="bg-background min-h-screen pt-24 sm:pt-28 md:pt-36 pb-20 w-full selection:bg-primary selection:text-primary-foreground flex flex-col items-center">
       <main className="w-full max-w-[960px] px-[var(--page-px)] flex flex-col">
         {/* Download */}
-        <div className="flex justify-end mb-10 md:mb-14">
+        <div className="flex justify-end mb-8 md:mb-12">
           {resume.pdf && (
             <a
               href={resume.pdf}
               download={`${resume.name.replace(/\s+/g, "-")}-CV.pdf`}
               data-cursor="pointer"
-              className="inline-flex items-center gap-2 rounded-full border border-foreground/10 px-5 py-2.5 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-foreground/5 transition-all duration-300"
+              className="inline-flex items-center gap-2 rounded-full border border-foreground/10 px-4 py-2 text-xs sm:text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-foreground/5 transition-all duration-300"
             >
-              <Download size={14} strokeWidth={2} />
+              <Download size={13} strokeWidth={2} />
               Download PDF
             </a>
           )}
@@ -46,28 +46,28 @@ export default async function ResumePage() {
 
         {/* Header */}
         <MaskReveal delay={0.1}>
-          <header className="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
+          <header className="flex flex-col md:flex-row md:items-start md:justify-between gap-6 md:gap-8">
             <div className="flex items-start gap-4">
               <Image
                 src="/avatar.webp"
                 alt={resume.name}
-                width={52}
-                height={52}
-                className="rounded-full mt-1"
+                width={44}
+                height={44}
+                className="rounded-full mt-0.5"
                 priority
               />
-              <div className="flex flex-col gap-1">
-                <h1 className="text-foreground text-xl font-semibold tracking-tight">
+              <div className="flex flex-col gap-0.5">
+                <h1 className="text-foreground text-lg sm:text-xl font-semibold tracking-tight">
                   {resume.name}
                 </h1>
-                <p className="text-foreground/70 text-sm font-normal">{resume.title}</p>
+                <p className="text-foreground/70 text-xs sm:text-sm font-normal">{resume.title}</p>
                 {resume.location && (
-                  <p className="text-muted-foreground text-sm font-normal">{resume.location}</p>
+                  <p className="text-muted-foreground text-xs sm:text-sm font-normal">{resume.location}</p>
                 )}
               </div>
             </div>
 
-            <div className="flex flex-col gap-1.5 md:items-end">
+            <div className="flex flex-col gap-1 md:items-end">
               {resume.contacts.map((contact) =>
                 contact.url ? (
                   <a
@@ -75,16 +75,16 @@ export default async function ResumePage() {
                     href={contact.url}
                     target={contact.url.startsWith("http") ? "_blank" : undefined}
                     rel={contact.url.startsWith("http") ? "noopener noreferrer" : undefined}
-                    className="group inline-flex items-center gap-1 text-sm text-foreground/60 hover:text-foreground transition-colors"
+                    className="group inline-flex items-center gap-1 text-xs sm:text-sm text-foreground/60 hover:text-foreground transition-colors"
                   >
                     {contact.label}
                     <ArrowUpRight
-                      size={12}
+                      size={11}
                       className="opacity-40 group-hover:opacity-100 transition-opacity"
                     />
                   </a>
                 ) : (
-                  <span key={contact.label} className="text-sm text-foreground/60">
+                  <span key={contact.label} className="text-xs sm:text-sm text-foreground/60">
                     {contact.label}
                   </span>
                 )
@@ -93,14 +93,14 @@ export default async function ResumePage() {
           </header>
         </MaskReveal>
 
-        <div className="border-t border-foreground/10 mt-10 md:mt-12 mb-12 md:mb-16" />
+        <div className="border-t border-foreground/10 mt-8 md:mt-10 mb-10 md:mb-14" />
 
-        <div className="flex flex-col gap-16 md:gap-20">
+        <div className="flex flex-col gap-12 md:gap-16">
           {/* About */}
           {resume.summary && (
-            <section className="grid grid-cols-1 md:grid-cols-[160px_1fr] gap-4 md:gap-8">
+            <section className="grid grid-cols-1 md:grid-cols-[160px_1fr] gap-3 md:gap-8">
               <SectionLabel>About</SectionLabel>
-              <p className="text-foreground/80 text-base leading-relaxed max-w-[620px]">
+              <p className="text-foreground/80 text-xs sm:text-sm leading-relaxed max-w-[620px]">
                 {resume.summary}
               </p>
             </section>
@@ -108,27 +108,27 @@ export default async function ResumePage() {
 
           {/* Experience */}
           {resume.experience.length > 0 && (
-            <section className="grid grid-cols-1 md:grid-cols-[160px_1fr] gap-6 md:gap-8">
+            <section className="grid grid-cols-1 md:grid-cols-[160px_1fr] gap-4 md:gap-8">
               <SectionLabel>Experience</SectionLabel>
-              <div className="flex flex-col gap-12 md:gap-14">
+              <div className="flex flex-col gap-10 md:gap-12">
                 {resume.experience.map((job) => (
                   <div
                     key={`${job.company}-${job.period}`}
-                    className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-3 md:gap-8"
+                    className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-2.5 md:gap-8"
                   >
                     <div className="flex flex-col gap-0.5">
-                      <h3 className="text-foreground text-sm font-semibold">{job.role}</h3>
-                      <p className="text-foreground/70 text-sm">{job.company}</p>
+                      <h3 className="text-foreground text-xs sm:text-sm font-semibold">{job.role}</h3>
+                      <p className="text-foreground/70 text-xs sm:text-sm">{job.company}</p>
                       {job.meta && (
-                        <p className="text-muted-foreground text-sm">{job.meta}</p>
+                        <p className="text-muted-foreground text-xs sm:text-sm">{job.meta}</p>
                       )}
-                      <p className="text-muted-foreground text-sm">{job.period}</p>
+                      <p className="text-muted-foreground text-xs sm:text-sm">{job.period}</p>
                     </div>
-                    <ul className="flex flex-col gap-3">
+                    <ul className="flex flex-col gap-2.5">
                       {job.bullets.map((bullet, i) => (
                         <li
                           key={i}
-                          className="flex gap-3 text-sm text-foreground/70 leading-relaxed max-w-[520px]"
+                          className="flex gap-2.5 text-xs sm:text-sm text-foreground/70 leading-relaxed max-w-[520px]"
                         >
                           <span className="text-muted-foreground/60 mt-px shrink-0">•</span>
                           <span>{bullet}</span>
@@ -143,13 +143,13 @@ export default async function ResumePage() {
 
           {/* Skills */}
           {resume.skills.length > 0 && (
-            <section className="grid grid-cols-1 md:grid-cols-[160px_1fr] gap-4 md:gap-8">
+            <section className="grid grid-cols-1 md:grid-cols-[160px_1fr] gap-3 md:gap-8">
               <SectionLabel>Skills</SectionLabel>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
                 {resume.skills.map((skill) => (
-                  <div key={skill.category} className="flex flex-col gap-1">
-                    <h3 className="text-foreground text-sm font-semibold">{skill.category}</h3>
-                    <p className="text-foreground/70 text-sm leading-relaxed">{skill.items}</p>
+                  <div key={skill.category} className="flex flex-col gap-0.5">
+                    <h3 className="text-foreground text-xs sm:text-sm font-semibold">{skill.category}</h3>
+                    <p className="text-foreground/70 text-xs sm:text-sm leading-relaxed">{skill.items}</p>
                   </div>
                 ))}
               </div>
@@ -158,13 +158,13 @@ export default async function ResumePage() {
 
           {/* Achievements */}
           {resume.achievements.length > 0 && (
-            <section className="grid grid-cols-1 md:grid-cols-[160px_1fr] gap-4 md:gap-8">
+            <section className="grid grid-cols-1 md:grid-cols-[160px_1fr] gap-3 md:gap-8">
               <SectionLabel>Achievements</SectionLabel>
-              <ul className="flex flex-col gap-3">
+              <ul className="flex flex-col gap-2.5">
                 {resume.achievements.map((achievement, i) => (
                   <li
                     key={i}
-                    className="flex gap-3 text-sm text-foreground/70 leading-relaxed max-w-[620px]"
+                    className="flex gap-2.5 text-xs sm:text-sm text-foreground/70 leading-relaxed max-w-[620px]"
                   >
                     <span className="text-muted-foreground/60 mt-px shrink-0">•</span>
                     <span>{achievement}</span>
@@ -176,14 +176,14 @@ export default async function ResumePage() {
 
           {/* Education */}
           {resume.education.length > 0 && (
-            <section className="grid grid-cols-1 md:grid-cols-[160px_1fr] gap-4 md:gap-8">
+            <section className="grid grid-cols-1 md:grid-cols-[160px_1fr] gap-3 md:gap-8">
               <SectionLabel>Education</SectionLabel>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-5">
                 {resume.education.map((item) => (
-                  <div key={item.title} className="flex flex-col gap-1">
-                    <h3 className="text-foreground text-sm font-semibold">{item.title}</h3>
+                  <div key={item.title} className="flex flex-col gap-0.5">
+                    <h3 className="text-foreground text-xs sm:text-sm font-semibold">{item.title}</h3>
                     {item.detail && (
-                      <p className="text-muted-foreground text-sm">{item.detail}</p>
+                      <p className="text-muted-foreground text-xs sm:text-sm">{item.detail}</p>
                     )}
                   </div>
                 ))}
@@ -194,12 +194,12 @@ export default async function ResumePage() {
 
         {/* Footer */}
         {resume.footnote && (
-          <p className="text-muted-foreground text-sm text-center mt-20 md:mt-24">
+          <p className="text-muted-foreground text-xs sm:text-sm text-center mt-16 md:mt-20">
             {resume.footnote}
           </p>
         )}
-        <div className="border-t border-foreground/10 mt-8 mb-6" />
-        <p className="text-muted-foreground/60 text-xs text-center">
+        <div className="border-t border-foreground/10 mt-6 mb-5" />
+        <p className="text-muted-foreground/60 text-[11px] sm:text-xs text-center">
           {resume.name} · rgyasi.vercel.app · ransfordgyasi98@gmail.com
         </p>
       </main>

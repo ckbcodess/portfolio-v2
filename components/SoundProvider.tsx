@@ -167,7 +167,7 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
 
       // Reduced volume for a more subtle mechanical feel
       const gain = ctx.createGain();
-      gain.gain.value = 0.15;
+      gain.gain.value = 0.03;
       source.connect(gain);
       gain.connect(ctx.destination);
 
