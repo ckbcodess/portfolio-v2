@@ -35,7 +35,7 @@ const NAV_ITEMS = [
 export default function Header({ backLink = "/", scrolled: scrolledProp }: HeaderProps) {
   const pathname = usePathname();
   const { isSoundEnabled, toggleSound } = useSound();
-  const { pendingHref, isTransitioning, setArchiveOpen, setInfoOpen } = useTransition();
+  const { pendingHref, isTransitioning, setArchiveOpen, setInfoOpen, isInfoOpen } = useTransition();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [internalScrolled, setInternalScrolled] = useState(false);
 
