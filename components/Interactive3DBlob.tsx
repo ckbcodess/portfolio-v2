@@ -716,6 +716,8 @@ export default function Interactive3DBlob() {
   const isPressedRef = useRef(false);
   const pointerRef = useRef(new THREE.Vector2(0, 0));
   const lastPointerPosRef = useRef<{ x: number; y: number } | null>(null);
+  const touchStartPosRef = useRef<{ x: number; y: number } | null>(null);
+  const holdBufferTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const globeTargetRotRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const globeCurrentRotRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const globeInertiaRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -1352,30 +1354,40 @@ export default function Interactive3DBlob() {
   }, [radius]);
 
   // Pointer Handlers
+  // Pointer Handlers
   const handlePointerDown = (e: React.PointerEvent) => {
-    isPressedRef.current = true;
+    touchStartPosRef.current = { x: e.clientX, y: e.clientY };
     lastPointerPosRef.current = { x: e.clientX, y: e.clientY };
     globeInertiaRef.current = { x: 0, y: 0 };
-    if (canvasRef.current) canvasRef.current.style.cursor = "grabbing";
-    setShowText(true);
 
-    // Check if the current hold is a gold hold
-    // Since holdCount represents the number of holds COMPLETED, the current hold is (holdCount + 1)
-    const currentHoldNumber = holdCount + 1;
+    if (holdBufferTimerRef.current) clearTimeout(holdBufferTimerRef.current);
 
-    if (currentHoldNumber % 6 === 0) {
-      // 6th hold: Gold shader variation while holding
-      const goldColor = "#d4af37";
-      const goldCore = "#fff5cc";
-      moltenColorRef.current = goldColor;
-      moltenCoreColorRef.current = goldCore;
-      setMoltenColor(goldColor);
-      setMoltenCoreColor(goldCore);
-    }
+    // 200ms press delay buffer before hold morphing activates to allow normal mobile page scrolling
+    holdBufferTimerRef.current = setTimeout(() => {
+      isPressedRef.current = true;
+      if (canvasRef.current) canvasRef.current.style.cursor = "grabbing";
+      setShowText(true);
+
+      const currentHoldNumber = holdCount + 1;
+      if (currentHoldNumber % 6 === 0) {
+        const goldColor = "#d4af37";
+        const goldCore = "#fff5cc";
+        moltenColorRef.current = goldColor;
+        moltenCoreColorRef.current = goldCore;
+        setMoltenColor(goldColor);
+        setMoltenCoreColor(goldCore);
+      }
+    }, 200);
   };
 
   const handlePointerUp = () => {
+    if (holdBufferTimerRef.current) {
+      clearTimeout(holdBufferTimerRef.current);
+      holdBufferTimerRef.current = null;
+    }
+    touchStartPosRef.current = null;
     lastPointerPosRef.current = null;
+
     if (!isPressedRef.current) return;
 
     isPressedRef.current = false;
@@ -1409,6 +1421,11 @@ export default function Interactive3DBlob() {
   };
 
   const handlePointerOut = () => {
+    if (holdBufferTimerRef.current) {
+      clearTimeout(holdBufferTimerRef.current);
+      holdBufferTimerRef.current = null;
+    }
+    touchStartPosRef.current = null;
     lastPointerPosRef.current = null;
     if (canvasRef.current) canvasRef.current.style.cursor = "default";
     setShowText(false); // Hide when mouse leaves
@@ -1421,6 +1438,18 @@ export default function Interactive3DBlob() {
     const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
     const y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
     pointerRef.current.set(x, y);
+
+    // If user moves finger > 8px before timer fires, cancel hold buffer to allow page scroll
+    if (!isPressedRef.current && touchStartPosRef.current) {
+      const dist = Math.hypot(e.clientX - touchStartPosRef.current.x, e.clientY - touchStartPosRef.current.y);
+      if (dist > 8) {
+        if (holdBufferTimerRef.current) {
+          clearTimeout(holdBufferTimerRef.current);
+          holdBufferTimerRef.current = null;
+        }
+        touchStartPosRef.current = null;
+      }
+    }
 
     if (isPressedRef.current && lastPointerPosRef.current) {
       const deltaX = e.clientX - lastPointerPosRef.current.x;

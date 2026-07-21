@@ -127,12 +127,12 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
   const navHideStyle = { duration: 0 };
 
   // Whether each nav should be visible right now
-  const showDefaultNav = !showBack && !isNavHidden;
-  const showBackNav = showBack && !isNavHidden;
+  const showDefaultNav = !showBack;
+  const showBackNav = showBack;
 
   return (
-    <header className="w-full fixed top-0 left-0 z-[1000] pointer-events-none pt-4 sm:pt-6 md:pt-[48px]">
-      <div className="w-full px-[var(--page-px)] flex items-center justify-center relative h-20 max-w-[1400px] mx-auto">
+    <header className="fixed top-4 sm:top-6 inset-x-0 z-[1000] pointer-events-none flex justify-center px-[var(--page-px)]">
+      <div className="w-full flex items-center justify-center relative max-w-[1400px] mx-auto">
         {/* ─── Navigation: Centered single pill ─── */}
         <div className="flex items-center justify-center pointer-events-auto relative max-w-[620px] mx-auto w-full">
           {/* Default Navigation */}
