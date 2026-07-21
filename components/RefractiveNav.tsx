@@ -64,9 +64,9 @@ const RefractiveNav = forwardRef<HTMLElement, {
       role="navigation"
       aria-label="Main Floating Navigation"
     >
-      {/* Dynamic Scroll Progress Background Indicator Fill - Increased opacity for visibility on dark glass */}
+      {/* Dynamic Scroll Progress Background Indicator Fill - Reduced opacity to 8% for subtle visibility */}
       <div
-        className="absolute inset-0 origin-left pointer-events-none transition-transform duration-100 ease-out bg-white/[0.15] rounded-[14px] z-10"
+        className="absolute inset-0 origin-left pointer-events-none transition-transform duration-100 ease-out bg-white/[0.08] rounded-[14px] z-10"
         style={{ transform: `scaleX(${scrollProgress})` }}
       />
 
