@@ -161,10 +161,19 @@ export default function InfoSheet({ content, isOpen, onClose }: InfoSheetProps) 
         aria-hidden={!isOpen}
         aria-label="Info panel"
       >
-        {/* Close button — absolute top right */}
+        {/* Drag handle bar for mobile bottom sheet indicator */}
+        <div 
+          onClick={onClose}
+          className="w-full flex items-center justify-center pt-3 pb-1 md:hidden select-none cursor-pointer group"
+          aria-label="Close bottom sheet"
+        >
+          <div className="w-12 h-1.5 rounded-full bg-foreground/25 group-hover:bg-foreground/40 transition-colors" />
+        </div>
+
+        {/* Close button — absolute top right (desktop only) */}
         <button
           onClick={onClose}
-          className="absolute right-6 top-6 md:right-8 md:top-8 w-8 h-8 rounded-full flex items-center justify-center bg-foreground/5 hover:bg-foreground/10 text-foreground/40 hover:text-foreground transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-foreground/20 z-10"
+          className="hidden md:flex absolute right-6 top-6 md:right-8 md:top-8 w-8 h-8 rounded-full items-center justify-center bg-foreground/5 hover:bg-foreground/10 text-foreground/40 hover:text-foreground transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-foreground/20 z-10"
           aria-label="Close Info"
         >
           <X size={14} />

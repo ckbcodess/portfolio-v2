@@ -154,21 +154,27 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
               className="relative rounded-[14px] overflow-hidden w-full text-white"
             >
               <div className="px-3 py-2 sm:px-6 sm:py-3 flex items-center justify-between gap-2 sm:gap-6 md:gap-8 whitespace-nowrap w-full">
-                {/* Left group: Home, Archive, Resume */}
-                <div className="flex items-center gap-2 sm:gap-4 md:gap-6">
-                  {NAV_ITEMS.slice(0, 3).map((item) => {
+                {/* Left group: Home, Archive, Resume, Info */}
+                <div className="flex items-center gap-2 sm:gap-3.5 md:gap-5">
+                  {NAV_ITEMS.map((item) => {
                     const isActive = activeHref === item.href || (item.href === "/" && activeHref === "/");
                     const isArchive = item.label === "Archive";
+                    const isInfo = item.label === "Info";
                     return (
                       <TransitionLink
                         key={item.href}
                         href={item.href}
                         label={item.label}
                         data-cursor="pointer"
-                        onClick={isArchive ? (e) => {
-                          e.preventDefault();
-                          setArchiveOpen(true);
-                        } : undefined}
+                        onClick={(e) => {
+                          if (isArchive) {
+                            e.preventDefault();
+                            setArchiveOpen(true);
+                          } else if (isInfo) {
+                            e.preventDefault();
+                            setInfoOpen(true);
+                          }
+                        }}
                         className={`text-xs sm:text-sm font-normal tracking-tight transition-all duration-300 ${
                           isActive ? "opacity-100 font-semibold text-white" : "opacity-50 text-white/90 hover:opacity-100"
                         }`}
@@ -179,31 +185,8 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
                   })}
                 </div>
 
-                {/* Right group: Info, Theme, Volume, Clock */}
-                <div className="flex items-center gap-2.5 sm:gap-4 md:gap-6">
-                  {/* Info Link */}
-                  {(() => {
-                    const item = NAV_ITEMS[3];
-                    const isActive = activeHref === item.href;
-                    return (
-                      <TransitionLink
-                        key={item.href}
-                        href={item.href}
-                        label={item.label}
-                        data-cursor="pointer"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setInfoOpen(true);
-                        }}
-                        className={`text-xs sm:text-sm font-normal tracking-tight transition-all duration-300 ${
-                          isActive ? "opacity-100 font-semibold text-white" : "opacity-50 text-white/90 hover:opacity-100"
-                        }`}
-                      >
-                        {item.label}
-                      </TransitionLink>
-                    );
-                  })()}
-
+                {/* Right group: Theme, Volume, Clock */}
+                <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
                   {/* Theme controls */}
                   <ThemeControls isHero={true} />
 

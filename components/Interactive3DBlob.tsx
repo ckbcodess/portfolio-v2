@@ -712,9 +712,11 @@ export default function Interactive3DBlob() {
   const [moltenColor, setMoltenColor] = useState(presets.Soft.moltenColor ?? "#2b65ee");
   const [moltenCoreColor, setMoltenCoreColor] = useState(presets.Soft.moltenCoreColor ?? "#38f2ff");
 
-  // Animation Refs
+  // Animation & Drag Rotation Refs
   const isPressedRef = useRef(false);
   const pointerRef = useRef(new THREE.Vector2(0, 0));
+  const lastPointerPosRef = useRef<{ x: number; y: number } | null>(null);
+  const dragRotationRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const heatRef = useRef(0.0);
   const timeOffsetRef = useRef(0.0);
   const themeRef = useRef(resolvedTheme);
@@ -1048,7 +1050,7 @@ export default function Interactive3DBlob() {
     
     // Position camera slightly outward to guarantee no geometry clipping
     const camera = new THREE.PerspectiveCamera(42, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
-    camera.position.set(0, 0, 6.5);
+    camera.position.set(0, 0, 7.2);
 
     const renderer = new THREE.WebGLRenderer({
       canvas,
@@ -1056,11 +1058,11 @@ export default function Interactive3DBlob() {
       alpha: true,
       powerPreference: "high-performance"
     });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2.0));
     renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
 
-    // Create detailed sphere and merge seam vertices using official Three.js utility
-    const baseGeo = new THREE.SphereGeometry(radius, 80, 80);
+    // Create detailed sphere and merge seam vertices using official Three.js utility (44x44 optimized)
+    const baseGeo = new THREE.SphereGeometry(radius, 44, 44);
     baseGeo.deleteAttribute("uv");
     baseGeo.deleteAttribute("normal");
     const geometry = mergeVertices(baseGeo);
@@ -1218,6 +1220,14 @@ export default function Interactive3DBlob() {
       mainMesh.rotation.y += autoRotationSpeedRef.current;
       glowMesh.rotation.y += autoRotationSpeedRef.current;
 
+      // Apply touch / mouse drag rotation
+      mainMesh.rotation.x += dragRotationRef.current.x;
+      mainMesh.rotation.y += dragRotationRef.current.y;
+      glowMesh.rotation.x += dragRotationRef.current.x;
+      glowMesh.rotation.y += dragRotationRef.current.y;
+      dragRotationRef.current.x *= 0.92;
+      dragRotationRef.current.y *= 0.92;
+
       if (followPointerRef.current) {
         const followEase = Math.min(1.0, dt * pointerFollowRef.current);
         const targetRotX = -pointerRef.current.y * pointerTiltRef.current;
@@ -1333,8 +1343,9 @@ export default function Interactive3DBlob() {
   }, [radius]);
 
   // Pointer Handlers
-  const handlePointerDown = () => {
+  const handlePointerDown = (e: React.PointerEvent) => {
     isPressedRef.current = true;
+    lastPointerPosRef.current = { x: e.clientX, y: e.clientY };
     if (canvasRef.current) canvasRef.current.style.cursor = "grabbing";
     setShowText(true);
 
@@ -1354,6 +1365,7 @@ export default function Interactive3DBlob() {
   };
 
   const handlePointerUp = () => {
+    lastPointerPosRef.current = null;
     if (!isPressedRef.current) return;
 
     isPressedRef.current = false;
@@ -1387,6 +1399,7 @@ export default function Interactive3DBlob() {
   };
 
   const handlePointerOut = () => {
+    lastPointerPosRef.current = null;
     if (canvasRef.current) canvasRef.current.style.cursor = "default";
     setShowText(false); // Hide when mouse leaves
   };
@@ -1398,6 +1411,14 @@ export default function Interactive3DBlob() {
     const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
     const y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
     pointerRef.current.set(x, y);
+
+    if (isPressedRef.current && lastPointerPosRef.current) {
+      const deltaX = e.clientX - lastPointerPosRef.current.x;
+      const deltaY = e.clientY - lastPointerPosRef.current.y;
+      dragRotationRef.current.x += deltaY * 0.008;
+      dragRotationRef.current.y += deltaX * 0.008;
+      lastPointerPosRef.current = { x: e.clientX, y: e.clientY };
+    }
   };
 
   // --- 4. Sidebar Content Portal Template ---

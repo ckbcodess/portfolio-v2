@@ -17,7 +17,7 @@ export default async function SiteLayout({
   ]);
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem={true}>
       <ThemeColorProvider>
         <SoundProvider>
           <TooltipProvider delay={300}>

@@ -94,7 +94,7 @@ export default function HomeClient({ caseStudies }: { caseStudies: CaseStudyCard
   return (
     <div
       ref={pageRef}
-      className="bg-background min-h-screen pt-28 sm:pt-36 md:pt-48 pb-16 md:pb-24 w-full selection:bg-primary selection:text-primary-foreground flex flex-col items-center"
+      className="bg-background min-h-screen pt-20 sm:pt-24 md:pt-32 pb-16 md:pb-24 w-full selection:bg-primary selection:text-primary-foreground flex flex-col items-center"
     >
       <motion.main
         variants={containerVariants}
@@ -170,7 +170,7 @@ export default function HomeClient({ caseStudies }: { caseStudies: CaseStudyCard
           </div>
 
           {/* Floating Polygons */}
-          <div className="relative w-[320px] max-w-full h-[280px] shrink-0 overflow-hidden mx-auto md:mx-0" aria-hidden="true">
+          <div className="relative w-[260px] sm:w-[280px] h-[230px] sm:h-[250px] max-w-full shrink-0 overflow-visible mx-auto md:mx-0 touch-none" aria-hidden="true">
             {/* 3D Interactive Distorted Glass Blob */}
             <div className="absolute inset-0 z-10 pointer-events-auto">
               <Interactive3DBlob />
@@ -179,7 +179,7 @@ export default function HomeClient({ caseStudies }: { caseStudies: CaseStudyCard
         </section>
 
         {/* Case Studies Section */}
-        <section id="case-studies" className="flex flex-col gap-8 items-start w-full">
+        <section id="case-studies" className="flex flex-col gap-8 items-start w-full pt-12 sm:pt-16 border-t border-foreground/10">
           <div className="flex items-center gap-3 overflow-visible">
             <MaskReveal delay={0.35}>
               <h2 className="text-foreground text-base font-medium tracking-tight">Case studies</h2>
@@ -196,7 +196,7 @@ export default function HomeClient({ caseStudies }: { caseStudies: CaseStudyCard
             </motion.div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 w-full">
             {caseStudies.map((study, idx) => (
               <MaskReveal key={study.slug} delay={0.4 + idx * 0.05} className="h-full">
                 <ProjectItem
@@ -217,22 +217,10 @@ export default function HomeClient({ caseStudies }: { caseStudies: CaseStudyCard
         </section>
 
         {/* Connect Section */}
-        <section id="connect" className="flex flex-col gap-8 items-start w-full pt-16 border-t border-foreground/10 relative">
-          <div className="flex items-center gap-3 overflow-visible">
-            <MaskReveal delay={0.5}>
-              <h2 className="text-foreground text-base font-medium tracking-tight">Connect</h2>
-            </MaskReveal>
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={canAnimate ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
-              transition={{ duration: 0.5, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className="overflow-visible"
-            >
-              <InteractiveSectionBadge>
-                <span>05</span>
-              </InteractiveSectionBadge>
-            </motion.div>
-          </div>
+        <section id="connect" className="flex flex-col gap-8 items-start w-full">
+          <MaskReveal delay={0.65}>
+            <h2 className="text-foreground text-base font-medium tracking-tight">Connect</h2>
+          </MaskReveal>
 
           <div className="flex flex-row justify-between w-full relative min-h-[240px] items-start pb-8" data-node-id="2820:12786">
             {/* Links Column */}
@@ -241,8 +229,6 @@ export default function HomeClient({ caseStudies }: { caseStudies: CaseStudyCard
                 { id: "mail", label: "Mail", href: "mailto:rnsfordgyasi@gmail.com", external: false },
                 { id: "linkedin", label: "Linkedin", href: "https://www.linkedin.com/in/ransford-gyasi/", external: true },
                 { id: "github", label: "Github", href: "https://github.com/ckbcodess", external: true },
-                { id: "x", label: "X (Twitter)", href: "https://x.com/ckbdidit?lang=en", external: true },
-                { id: "instagram", label: "Instagram", href: "https://www.instagram.com/ckb.didit/?hl=en", external: true },
               ].map((link) => {
                 const isLinkDimmed = hoveredLink !== null && hoveredLink !== link.id;
                 return (
@@ -262,21 +248,45 @@ export default function HomeClient({ caseStudies }: { caseStudies: CaseStudyCard
                 );
               })}
 
-              {/* Bracket & label annotation for X and Instagram */}
-              <div
-                className="absolute left-[110px] md:left-[120px] top-[120px] md:top-[148px] flex items-center pointer-events-none transition-all duration-300"
-                style={{
-                  height: "46px",
-                  opacity: hoveredLink !== null && hoveredLink !== "x" && hoveredLink !== "instagram" ? 0.3 : 1,
-                }}
-              >
-                <BracketSVG />
-                <span 
-                  className="ml-3 text-[10px] text-foreground/45 font-normal tracking-[-0.2px] whitespace-nowrap"
-                  style={{ fontFamily: "var(--font-handwriting, 'Georgia', cursive)", fontStyle: "italic" }}
+              {/* Group for X and Instagram with bracket attached dynamically to its height */}
+              <div className="flex flex-col gap-6 md:gap-8 relative w-full">
+                {[
+                  { id: "x", label: "X (Twitter)", href: "https://x.com/ckbdidit?lang=en", external: true },
+                  { id: "instagram", label: "Instagram", href: "https://www.instagram.com/ckb.didit/?hl=en", external: true },
+                ].map((link) => {
+                  const isLinkDimmed = hoveredLink !== null && hoveredLink !== link.id;
+                  return (
+                    <a
+                      key={link.id}
+                      href={link.href}
+                      target={link.external ? "_blank" : undefined}
+                      rel={link.external ? "noopener noreferrer" : undefined}
+                      onMouseEnter={() => setHoveredLink(link.id)}
+                      onMouseLeave={() => setHoveredLink(null)}
+                      className={`text-foreground hover:text-foreground text-sm sm:text-base font-medium transition-all duration-300 leading-none tracking-[-0.32px] block w-full ${
+                        isLinkDimmed ? "opacity-30" : "opacity-100"
+                      }`}
+                    >
+                      {link.label}
+                    </a>
+                  );
+                })}
+
+                {/* Bracket & label annotation for X and Instagram */}
+                <div
+                  className="absolute left-[110px] sm:left-[130px] md:left-[140px] top-0 bottom-0 flex items-center pointer-events-none transition-all duration-300"
+                  style={{
+                    opacity: hoveredLink !== null && hoveredLink !== "x" && hoveredLink !== "instagram" ? 0.3 : 1,
+                  }}
                 >
-                  my art
-                </span>
+                  <BracketSVG />
+                  <span 
+                    className="ml-2 sm:ml-3 text-[10px] text-foreground/45 font-normal tracking-[-0.2px] whitespace-nowrap"
+                    style={{ fontFamily: "var(--font-handwriting, 'Georgia', cursive)", fontStyle: "italic" }}
+                  >
+                    my art
+                  </span>
+                </div>
               </div>
             </div>
 
