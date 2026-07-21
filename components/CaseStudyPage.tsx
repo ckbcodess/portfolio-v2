@@ -9,7 +9,6 @@ import CaseStudySidebar from "@/components/CaseStudySidebar";
 import { motion } from "motion/react";
 import { MaskReveal } from "@/components/MaskReveal";
 import LockedCaseStudy from "@/components/LockedCaseStudy";
-import MobileCaseStudyNav from "@/components/MobileCaseStudyNav";
 import TransitionLink from "@/components/TransitionLink";
 
 
@@ -116,10 +115,7 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
         visible={showSidebar}
         links={sidebarLinks} 
       />
-      <MobileCaseStudyNav 
-        links={sidebarLinks}
-      />
-      
+
       <div className="pt-[128px] md:pt-[220px] pb-20 px-[var(--page-px)] w-full overflow-x-hidden relative z-10">
         {/* Prominent Hero Section */}
         <section ref={introRef} id="intro" aria-labelledby="case-study-title" className="text-white">

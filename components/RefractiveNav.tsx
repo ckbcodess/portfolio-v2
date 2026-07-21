@@ -55,22 +55,18 @@ const RefractiveNav = forwardRef<HTMLElement, {
     <nav
       ref={ref}
       className={className}
-      style={style}
+      style={{
+        ...style,
+        backdropFilter: "blur(40px) saturate(1.6)",
+        WebkitBackdropFilter: "blur(40px) saturate(1.6)",
+        backgroundColor: isDark ? "rgba(0, 0, 0, 0.75)" : "rgba(0, 0, 0, 0.6)"
+      }}
       role="navigation"
       aria-label="Main Floating Navigation"
     >
-      {/* Core Glass Atmosphere Layer - High blur and darker frosty glass for maximum readability */}
+      {/* Dynamic Scroll Progress Background Indicator Fill - Increased opacity for visibility on dark glass */}
       <div
-        className="absolute inset-0 pointer-events-none rounded-[14px] bg-black/60 dark:bg-black/75"
-        style={{
-          backdropFilter: "blur(40px) saturate(1.6)",
-          WebkitBackdropFilter: "blur(40px) saturate(1.6)"
-        }}
-      />
-
-      {/* Dynamic Scroll Progress Background Indicator Fill */}
-      <div
-        className="absolute inset-0 origin-left pointer-events-none transition-transform duration-100 ease-out bg-black/[0.04] dark:bg-white/[0.04] rounded-[14px] z-10"
+        className="absolute inset-0 origin-left pointer-events-none transition-transform duration-100 ease-out bg-white/[0.15] rounded-[14px] z-10"
         style={{ transform: `scaleX(${scrollProgress})` }}
       />
 
