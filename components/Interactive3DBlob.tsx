@@ -1234,11 +1234,11 @@ export default function Interactive3DBlob() {
         globeInertiaRef.current.x *= 0.92;
         globeInertiaRef.current.y *= 0.92;
 
-        // Auto-spin on idle
+        // Auto-spin on idle smoothly advances both current and target angles in sync
         globeTargetRotRef.current.y += autoRotationSpeedRef.current;
+        globeCurrentRotRef.current.y += autoRotationSpeedRef.current;
 
         globeCurrentRotRef.current.x += (globeTargetRotRef.current.x - globeCurrentRotRef.current.x) * 0.1;
-        globeCurrentRotRef.current.y += (globeTargetRotRef.current.y - globeCurrentRotRef.current.y) * 0.1;
       }
 
       // Pointer tilt calculation relative to current globe orientation
@@ -1354,10 +1354,22 @@ export default function Interactive3DBlob() {
   }, [radius]);
 
   // Pointer Handlers
-  // Pointer Handlers
   const handlePointerDown = (e: React.PointerEvent) => {
+    const container = containerRef.current;
+    if (container) {
+      const rect = container.getBoundingClientRect();
+      const cx = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      const cy = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+      // If tap is in outer padding (> 65% radius), ignore so user can scroll page smoothly
+      if (Math.hypot(cx, cy) > 0.65) {
+        return;
+      }
+    }
+
     touchStartPosRef.current = { x: e.clientX, y: e.clientY };
     lastPointerPosRef.current = { x: e.clientX, y: e.clientY };
+    globeTargetRotRef.current.x = globeCurrentRotRef.current.x;
+    globeTargetRotRef.current.y = globeCurrentRotRef.current.y;
     globeInertiaRef.current = { x: 0, y: 0 };
 
     if (holdBufferTimerRef.current) clearTimeout(holdBufferTimerRef.current);

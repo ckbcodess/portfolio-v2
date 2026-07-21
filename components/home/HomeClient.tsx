@@ -170,7 +170,7 @@ export default function HomeClient({ caseStudies }: { caseStudies: CaseStudyCard
           </div>
 
           {/* Floating Polygons */}
-          <div className="relative w-[260px] sm:w-[280px] h-[230px] sm:h-[250px] max-w-full shrink-0 overflow-visible mx-auto md:mx-0 touch-none" aria-hidden="true">
+          <div className="relative w-[190px] sm:w-[230px] md:w-[260px] h-[170px] sm:h-[200px] md:h-[230px] max-w-full shrink-0 overflow-visible mx-auto md:mx-0 touch-none" aria-hidden="true">
             {/* 3D Interactive Distorted Glass Blob */}
             <div className="absolute inset-0 z-10 pointer-events-auto">
               <Interactive3DBlob />
