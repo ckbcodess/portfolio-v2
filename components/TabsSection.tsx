@@ -162,12 +162,34 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
     setIsScrolled(e.currentTarget.scrollLeft > 10);
   };
 
+  const [containerHeight, setContainerHeight] = useState<number | "auto">("auto");
+  const contentRef = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.contentRect.height > 0) {
+          setContainerHeight(entry.contentRect.height);
+        }
+      }
+    });
+    resizeObserver.observe(el);
+    return () => resizeObserver.disconnect();
+  }, [active]);
+
   return (
     <div className="self-stretch flex flex-col justify-start items-start gap-6 sm:gap-8">
-      <div className="w-full relative grid [grid-template-areas:'stack'] overflow-hidden">
+      <motion.div
+        animate={{ height: containerHeight }}
+        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        className="w-full relative grid [grid-template-areas:'stack'] overflow-hidden"
+      >
         <AnimatePresence mode="popLayout">
           <motion.h1
             key={active}
+            ref={contentRef}
             id="tabs-content"
             role="tabpanel"
             aria-labelledby={`tab-${active}`}
@@ -175,7 +197,7 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
             exit={{ opacity: 0, y: -10, filter: 'blur(10px)' }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="[grid-area:stack] text-xl sm:text-2xl text-foreground font-normal font-heading leading-[1.4] tracking-tight text-left w-full m-0 relative tabular-nums"
+            className="[grid-area:stack] text-xl sm:text-2xl text-foreground font-normal font-heading leading-[1.4] tracking-tight text-left w-full m-0 relative tabular-nums h-fit"
           >
             {active === 3 ? (
               <>
@@ -221,7 +243,7 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
             )}
           </motion.h1>
         </AnimatePresence>
-      </div>
+      </motion.div>
 
       <div
         ref={scrollRef}
