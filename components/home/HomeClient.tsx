@@ -217,7 +217,7 @@ export default function HomeClient({ caseStudies }: { caseStudies: CaseStudyCard
         </section>
 
         {/* Connect Section */}
-        <section id="connect" className="flex flex-col gap-8 items-start w-full">
+        <section id="connect" className="flex flex-col gap-8 items-start w-full pt-12 sm:pt-16 border-t border-foreground/10">
           <MaskReveal delay={0.65}>
             <h2 className="text-foreground text-base font-medium tracking-tight">Connect</h2>
           </MaskReveal>
