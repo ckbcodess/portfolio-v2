@@ -712,11 +712,13 @@ export default function Interactive3DBlob() {
   const [moltenColor, setMoltenColor] = useState(presets.Soft.moltenColor ?? "#2b65ee");
   const [moltenCoreColor, setMoltenCoreColor] = useState(presets.Soft.moltenCoreColor ?? "#38f2ff");
 
-  // Animation & Drag Rotation Refs
+  // Animation & 3D Globe Drag Rotation Refs
   const isPressedRef = useRef(false);
   const pointerRef = useRef(new THREE.Vector2(0, 0));
   const lastPointerPosRef = useRef<{ x: number; y: number } | null>(null);
-  const dragRotationRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const globeTargetRotRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const globeCurrentRotRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const globeInertiaRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const heatRef = useRef(0.0);
   const timeOffsetRef = useRef(0.0);
   const themeRef = useRef(resolvedTheme);
@@ -1217,31 +1219,38 @@ export default function Interactive3DBlob() {
       mainMesh.scale.setScalar(currentMeshScale * loadScale);
       glowMesh.scale.setScalar(currentMeshScale * (1.0 + glowWidthRef.current) * loadScale);
 
-      mainMesh.rotation.y += autoRotationSpeedRef.current;
-      glowMesh.rotation.y += autoRotationSpeedRef.current;
-
-      // Apply touch / mouse drag rotation
-      mainMesh.rotation.x += dragRotationRef.current.x;
-      mainMesh.rotation.y += dragRotationRef.current.y;
-      glowMesh.rotation.x += dragRotationRef.current.x;
-      glowMesh.rotation.y += dragRotationRef.current.y;
-      dragRotationRef.current.x *= 0.92;
-      dragRotationRef.current.y *= 0.92;
-
-      if (followPointerRef.current) {
-        const followEase = Math.min(1.0, dt * pointerFollowRef.current);
-        const targetRotX = -pointerRef.current.y * pointerTiltRef.current;
-        const targetRotY = pointerRef.current.x * pointerTiltRef.current;
-
-        mainMesh.rotation.x += (targetRotX - mainMesh.rotation.x) * followEase;
-        mainMesh.rotation.y += (targetRotY - mainMesh.rotation.y) * followEase;
-        glowMesh.rotation.x += (targetRotX - glowMesh.rotation.x) * followEase;
-        glowMesh.rotation.y += (targetRotY - glowMesh.rotation.y) * followEase;
+      if (isPressedRef.current) {
+        // Direct smooth lerp to target drag orientation while holding
+        globeCurrentRotRef.current.x += (globeTargetRotRef.current.x - globeCurrentRotRef.current.x) * 0.25;
+        globeCurrentRotRef.current.y += (globeTargetRotRef.current.y - globeCurrentRotRef.current.y) * 0.25;
       } else {
-        const returnEase = Math.min(1.0, dt * 4.0);
-        mainMesh.rotation.x += (0 - mainMesh.rotation.x) * returnEase;
-        glowMesh.rotation.x += (0 - glowMesh.rotation.x) * returnEase;
+        // Apply decay momentum on release
+        globeTargetRotRef.current.x += globeInertiaRef.current.x;
+        globeTargetRotRef.current.y += globeInertiaRef.current.y;
+        globeTargetRotRef.current.x = Math.max(-Math.PI * 0.45, Math.min(Math.PI * 0.45, globeTargetRotRef.current.x));
+
+        globeInertiaRef.current.x *= 0.92;
+        globeInertiaRef.current.y *= 0.92;
+
+        // Auto-spin on idle
+        globeTargetRotRef.current.y += autoRotationSpeedRef.current;
+
+        globeCurrentRotRef.current.x += (globeTargetRotRef.current.x - globeCurrentRotRef.current.x) * 0.1;
+        globeCurrentRotRef.current.y += (globeTargetRotRef.current.y - globeCurrentRotRef.current.y) * 0.1;
       }
+
+      // Pointer tilt calculation relative to current globe orientation
+      let tiltX = 0;
+      let tiltY = 0;
+      if (followPointerRef.current && !isPressedRef.current) {
+        tiltX = -pointerRef.current.y * pointerTiltRef.current * 0.2;
+        tiltY = pointerRef.current.x * pointerTiltRef.current * 0.2;
+      }
+
+      mainMesh.rotation.x = globeCurrentRotRef.current.x + tiltX;
+      mainMesh.rotation.y = globeCurrentRotRef.current.y + tiltY;
+      glowMesh.rotation.x = globeCurrentRotRef.current.x + tiltX;
+      glowMesh.rotation.y = globeCurrentRotRef.current.y + tiltY;
 
       // CPU Simplex Noise & Heightmap Displacement Texture deformation
       const currentNoiseScale = noiseScaleRef.current * currentNoiseScaleScale;
@@ -1346,6 +1355,7 @@ export default function Interactive3DBlob() {
   const handlePointerDown = (e: React.PointerEvent) => {
     isPressedRef.current = true;
     lastPointerPosRef.current = { x: e.clientX, y: e.clientY };
+    globeInertiaRef.current = { x: 0, y: 0 };
     if (canvasRef.current) canvasRef.current.style.cursor = "grabbing";
     setShowText(true);
 
@@ -1415,8 +1425,18 @@ export default function Interactive3DBlob() {
     if (isPressedRef.current && lastPointerPosRef.current) {
       const deltaX = e.clientX - lastPointerPosRef.current.x;
       const deltaY = e.clientY - lastPointerPosRef.current.y;
-      dragRotationRef.current.x += deltaY * 0.008;
-      dragRotationRef.current.y += deltaX * 0.008;
+
+      const sensitivity = 0.007;
+      const rotY = deltaX * sensitivity;
+      const rotX = deltaY * sensitivity;
+
+      globeTargetRotRef.current.y += rotY;
+      globeTargetRotRef.current.x += rotX;
+
+      // Clamp X tilt to prevent upside down flip
+      globeTargetRotRef.current.x = Math.max(-Math.PI * 0.45, Math.min(Math.PI * 0.45, globeTargetRotRef.current.x));
+
+      globeInertiaRef.current = { x: rotX, y: rotY };
       lastPointerPosRef.current = { x: e.clientX, y: e.clientY };
     }
   };
