@@ -1355,17 +1355,6 @@ export default function Interactive3DBlob() {
 
   // Pointer Handlers
   const handlePointerDown = (e: React.PointerEvent) => {
-    const container = containerRef.current;
-    if (container) {
-      const rect = container.getBoundingClientRect();
-      const cx = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      const cy = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-      // If tap is in outer padding (> 65% radius), ignore so user can scroll page smoothly
-      if (Math.hypot(cx, cy) > 0.65) {
-        return;
-      }
-    }
-
     touchStartPosRef.current = { x: e.clientX, y: e.clientY };
     lastPointerPosRef.current = { x: e.clientX, y: e.clientY };
     globeTargetRotRef.current.x = globeCurrentRotRef.current.x;
@@ -1374,7 +1363,7 @@ export default function Interactive3DBlob() {
 
     if (holdBufferTimerRef.current) clearTimeout(holdBufferTimerRef.current);
 
-    // 200ms press delay buffer before hold morphing activates to allow normal mobile page scrolling
+    // 250ms intentional press delay buffer before hold morphing activates (allows normal page scrolling on vertical swipes)
     holdBufferTimerRef.current = setTimeout(() => {
       isPressedRef.current = true;
       if (canvasRef.current) canvasRef.current.style.cursor = "grabbing";
@@ -1389,7 +1378,7 @@ export default function Interactive3DBlob() {
         setMoltenColor(goldColor);
         setMoltenCoreColor(goldCore);
       }
-    }, 200);
+    }, 250);
   };
 
   const handlePointerUp = () => {
@@ -1451,10 +1440,10 @@ export default function Interactive3DBlob() {
     const y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
     pointerRef.current.set(x, y);
 
-    // If user moves finger > 8px before timer fires, cancel hold buffer to allow page scroll
+    // If user moves finger > 6px before timer fires, cancel hold buffer to allow page scroll
     if (!isPressedRef.current && touchStartPosRef.current) {
       const dist = Math.hypot(e.clientX - touchStartPosRef.current.x, e.clientY - touchStartPosRef.current.y);
-      if (dist > 8) {
+      if (dist > 6) {
         if (holdBufferTimerRef.current) {
           clearTimeout(holdBufferTimerRef.current);
           holdBufferTimerRef.current = null;
