@@ -152,7 +152,7 @@ export default function HomeClient({ caseStudies }: { caseStudies: CaseStudyCard
                       exit={{ opacity: 0, y: -15, filter: "blur(4px)" }}
                       transition={{ type: "spring", stiffness: 400, damping: 25 }}
                       className={`text-foreground text-sm font-medium tracking-tight whitespace-nowrap absolute ${
-                        clickCount === 0 ? "shimmer" : ""
+                        clickCount === 0 ? "shimmer shimmer-color-bg shimmer-periodic" : ""
                       }`}
                     >
                       {messages[clickCount]}

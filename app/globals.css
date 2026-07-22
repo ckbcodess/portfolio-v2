@@ -336,28 +336,37 @@ body {
 }
 
 @keyframes cursor-watchdog-tick {
-  0%, 90% {
+
+  0%,
+  90% {
     cursor: auto !important;
   }
+
   100% {
     cursor: auto !important;
   }
 }
 
 @keyframes cursor-watchdog-tock {
-  0%, 90% {
+
+  0%,
+  90% {
     cursor: auto !important;
   }
+
   100% {
     cursor: auto !important;
   }
 }
 
 @keyframes custom-cursor-element-tick {
-  0%, 90% {
+
+  0%,
+  90% {
     opacity: 1;
     visibility: visible;
   }
+
   100% {
     opacity: 0 !important;
     visibility: hidden !important;
@@ -365,10 +374,13 @@ body {
 }
 
 @keyframes custom-cursor-element-tock {
-  0%, 90% {
+
+  0%,
+  90% {
     opacity: 1;
     visibility: visible;
   }
+
   100% {
     opacity: 0 !important;
     visibility: hidden !important;
@@ -538,8 +550,15 @@ header {
 
 /* --- Custom Cursor Flash Animation --- */
 @keyframes cursor-flash {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.25; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.25;
+  }
 }
 
 .animate-cursor-flash {
@@ -548,39 +567,78 @@ header {
 
 /* --- Music Waveform Keyframes --- */
 @keyframes wave-bounce-1 {
-  0%, 100% { height: 4px; }
-  50% { height: 12px; }
+
+  0%,
+  100% {
+    height: 4px;
+  }
+
+  50% {
+    height: 12px;
+  }
 }
+
 @keyframes wave-bounce-2 {
-  0%, 100% { height: 12px; }
-  50% { height: 5px; }
+
+  0%,
+  100% {
+    height: 12px;
+  }
+
+  50% {
+    height: 5px;
+  }
 }
+
 @keyframes wave-bounce-3 {
-  0%, 100% { height: 7px; }
-  50% { height: 14px; }
+
+  0%,
+  100% {
+    height: 7px;
+  }
+
+  50% {
+    height: 14px;
+  }
 }
+
 @keyframes wave-bounce-4 {
-  0%, 100% { height: 14px; }
-  50% { height: 3px; }
+
+  0%,
+  100% {
+    height: 14px;
+  }
+
+  50% {
+    height: 3px;
+  }
 }
 
 .animate-wave-1 {
   animation: wave-bounce-1 0.85s ease-in-out infinite;
 }
+
 .animate-wave-2 {
   animation: wave-bounce-2 0.7s ease-in-out infinite;
 }
+
 .animate-wave-3 {
   animation: wave-bounce-3 0.9s ease-in-out infinite;
 }
+
 .animate-wave-4 {
   animation: wave-bounce-4 0.75s ease-in-out infinite;
 }
 
 /* --- Music Marquee Keyframes --- */
 @keyframes marquee-text {
-  0% { transform: translate3d(0, 0, 0); }
-  100% { transform: translate3d(-50%, 0, 0); }
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
 }
 
 .animate-marquee-text {
@@ -595,6 +653,7 @@ header {
     mask-position: 100% 0;
     -webkit-mask-position: 100% 0;
   }
+
   100% {
     mask-position: 0% 0;
     -webkit-mask-position: 0% 0;
@@ -606,11 +665,14 @@ header {
     mask-position: 100% 0;
     -webkit-mask-position: 100% 0;
   }
+
   20% {
     mask-position: 0% 0;
     -webkit-mask-position: 0% 0;
   }
-  21%, 100% {
+
+  21%,
+  100% {
     mask-position: 100% 0;
     -webkit-mask-position: 100% 0;
   }
@@ -619,26 +681,22 @@ header {
 .ui-shimmer-text {
   position: relative;
   display: inline-block;
-  -webkit-mask-image: linear-gradient(
-    120deg,
-    rgba(0, 0, 0, 1) 0%,
-    rgba(0, 0, 0, 1) 35%,
-    rgba(0, 0, 0, 0.5) 45%,
-    rgba(0, 0, 0, 1) 50%,
-    rgba(0, 0, 0, 0.5) 55%,
-    rgba(0, 0, 0, 1) 65%,
-    rgba(0, 0, 0, 1) 100%
-  );
-  mask-image: linear-gradient(
-    120deg,
-    rgba(0, 0, 0, 1) 0%,
-    rgba(0, 0, 0, 1) 35%,
-    rgba(0, 0, 0, 0.5) 45%,
-    rgba(0, 0, 0, 1) 50%,
-    rgba(0, 0, 0, 0.5) 55%,
-    rgba(0, 0, 0, 1) 65%,
-    rgba(0, 0, 0, 1) 100%
-  );
+  -webkit-mask-image: linear-gradient(120deg,
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 1) 35%,
+      rgba(0, 0, 0, 0.5) 45%,
+      rgba(0, 0, 0, 1) 50%,
+      rgba(0, 0, 0, 0.5) 55%,
+      rgba(0, 0, 0, 1) 65%,
+      rgba(0, 0, 0, 1) 100%);
+  mask-image: linear-gradient(120deg,
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 1) 35%,
+      rgba(0, 0, 0, 0.5) 45%,
+      rgba(0, 0, 0, 1) 50%,
+      rgba(0, 0, 0, 0.5) 55%,
+      rgba(0, 0, 0, 1) 65%,
+      rgba(0, 0, 0, 1) 100%);
   -webkit-mask-size: 300% 100%;
   mask-size: 300% 100%;
   animation: ui-shimmer-ambient 10s ease-in-out infinite;
@@ -653,20 +711,16 @@ header {
   :root {
     --scroll-fade-size: 36px;
     --scroll-fade-reveal: 96px;
-    --scroll-fade-block: linear-gradient(
-      to bottom,
-      transparent 0px,
-      black var(--scroll-fade-size),
-      black calc(100% - var(--scroll-fade-size)),
-      transparent 100%
-    );
-    --scroll-fade-inline: linear-gradient(
-      to right,
-      transparent 0px,
-      black var(--scroll-fade-size),
-      black calc(100% - var(--scroll-fade-size)),
-      transparent 100%
-    );
+    --scroll-fade-block: linear-gradient(to bottom,
+        transparent 0px,
+        black var(--scroll-fade-size),
+        black calc(100% - var(--scroll-fade-size)),
+        transparent 100%);
+    --scroll-fade-inline: linear-gradient(to right,
+        transparent 0px,
+        black var(--scroll-fade-size),
+        black calc(100% - var(--scroll-fade-size)),
+        transparent 100%);
     --scroll-fade-top: linear-gradient(to bottom, transparent 0px, black var(--scroll-fade-size));
     --scroll-fade-bottom: linear-gradient(to top, transparent 0px, black var(--scroll-fade-size));
     --scroll-fade-left: linear-gradient(to right, transparent 0px, black var(--scroll-fade-size));
@@ -710,12 +764,21 @@ header {
     -webkit-mask-image: none !important;
   }
 
-  /* ─── shadcn shimmer utilities ─── */
+  /* ─── Official shadcn shimmer utilities ─── */
   @keyframes tw-shimmer {
+    0% {
+      background-position: var(--shimmer-start, 200% 0);
+    }
+    100% {
+      background-position: var(--shimmer-end, -200% 0);
+    }
+  }
+
+  @keyframes tw-shimmer-periodic {
     0% {
       background-position: 200% 0;
     }
-    33.33% {
+    28.57% {
       background-position: -200% 0;
     }
     100% {
@@ -724,22 +787,33 @@ header {
   }
 
   .shimmer {
-    --shimmer-duration: 7500ms;
+    --shimmer-duration: 2000ms;
     --shimmer-angle: 20deg;
-    --shimmer-spread: 30px;
-    background-image: linear-gradient(
+    --shimmer-spread: calc(3ch + 40px);
+    --shimmer-color: color-mix(in oklch, currentColor 40%, white);
+    --shimmer-image: linear-gradient(
       calc(90deg + var(--shimmer-angle, 20deg)),
-      var(--color-foreground) 0%,
-      var(--color-foreground) calc(50% - var(--shimmer-spread, 30px)),
-      var(--color-background) 50%,
-      var(--color-foreground) calc(50% + var(--shimmer-spread, 30px)),
-      var(--color-foreground) 100%
+      currentColor 0%,
+      currentColor calc(50% - var(--shimmer-spread, calc(3ch + 40px))),
+      var(--shimmer-color) 50%,
+      currentColor calc(50% + var(--shimmer-spread, calc(3ch + 40px))),
+      currentColor 100%
     );
-    background-size: 200% 100%;
+    --shimmer-text-fill: transparent;
+
+    background-image: var(--shimmer-image);
+    background-size: 250% 100%;
     background-clip: text;
     -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: tw-shimmer var(--shimmer-duration, 7.5s) linear infinite;
+    -webkit-text-fill-color: var(--shimmer-text-fill);
+    animation: tw-shimmer var(--shimmer-duration, 2000ms) linear infinite;
+  }
+
+  .shimmer-none {
+    --shimmer-image: none;
+    --shimmer-text-fill: currentColor;
+    -webkit-text-fill-color: currentColor;
+    animation: none;
   }
 
   .shimmer-once {
@@ -750,12 +824,12 @@ header {
     animation-direction: reverse;
   }
 
-  .shimmer-none {
-    background-image: none !important;
-    background-clip: border-box !important;
-    -webkit-background-clip: border-box !important;
-    color: currentColor !important;
-    animation: none !important;
+  .shimmer-color-bg {
+    --shimmer-color: var(--color-background);
+  }
+
+  .shimmer-periodic {
+    --shimmer-duration: 7000ms;
+    animation-name: tw-shimmer-periodic;
   }
 }
-
