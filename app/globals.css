@@ -721,24 +721,23 @@ header {
   }
 
   .shimmer {
-    --shimmer-duration: 2200ms;
-    --shimmer-spread: calc(3ch + 40px);
+    --shimmer-duration: 2500ms;
+    --shimmer-spread: 40px;
     --shimmer-angle: 20deg;
-    --shimmer-color: color-mix(in oklch, currentColor 45%, transparent);
-    --shimmer-bg: linear-gradient(
+    background-image: linear-gradient(
       calc(90deg + var(--shimmer-angle, 20deg)),
-      currentColor 0%,
-      currentColor calc(50% - var(--shimmer-spread, 40px)),
-      var(--shimmer-color, color-mix(in oklch, currentColor 70%, white)) 50%,
-      currentColor calc(50% + var(--shimmer-spread, 40px)),
-      currentColor 100%
+      var(--color-foreground, #ffffff) 0%,
+      var(--color-foreground, #ffffff) calc(50% - var(--shimmer-spread, 40px)),
+      color-mix(in srgb, var(--color-foreground, #ffffff) 20%, #ffffff) 50%,
+      var(--color-foreground, #ffffff) calc(50% + var(--shimmer-spread, 40px)),
+      var(--color-foreground, #ffffff) 100%
     );
-    background-image: var(--shimmer-bg);
     background-size: 250% 100%;
     background-clip: text;
     -webkit-background-clip: text;
-    color: transparent !important;
-    animation: tw-shimmer var(--shimmer-duration, 2.2s) linear infinite;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: tw-shimmer var(--shimmer-duration, 2.5s) linear infinite;
   }
 
   .shimmer-once {
