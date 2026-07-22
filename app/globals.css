@@ -713,30 +713,30 @@ header {
   /* ─── shadcn shimmer utilities ─── */
   @keyframes tw-shimmer {
     0% {
-      background-position: 200% 0;
+      background-position: 150% 0;
     }
     100% {
-      background-position: -200% 0;
+      background-position: -150% 0;
     }
   }
 
   .shimmer {
-    --shimmer-duration: 2500ms;
+    --shimmer-duration: 3000ms;
     --shimmer-angle: 20deg;
-    --shimmer-spread: 45px;
+    --shimmer-spread: 50px;
     background-image: linear-gradient(
       calc(90deg + var(--shimmer-angle, 20deg)),
       color-mix(in srgb, currentColor 55%, transparent) 0%,
-      color-mix(in srgb, currentColor 55%, transparent) calc(50% - var(--shimmer-spread, 45px)),
+      color-mix(in srgb, currentColor 55%, transparent) calc(50% - var(--shimmer-spread, 50px)),
       currentColor 50%,
-      color-mix(in srgb, currentColor 55%, transparent) calc(50% + var(--shimmer-spread, 45px)),
+      color-mix(in srgb, currentColor 55%, transparent) calc(50% + var(--shimmer-spread, 50px)),
       color-mix(in srgb, currentColor 55%, transparent) 100%
     );
-    background-size: 250% 100%;
+    background-size: 300% 100%;
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: tw-shimmer var(--shimmer-duration, 2.5s) linear infinite;
+    animation: tw-shimmer var(--shimmer-duration, 3s) linear infinite;
   }
 
   .shimmer-once {
