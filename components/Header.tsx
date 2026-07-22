@@ -38,6 +38,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
   const { pendingHref, isTransitioning, setArchiveOpen, setInfoOpen, isInfoOpen } = useTransition();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [internalScrolled, setInternalScrolled] = useState(false);
+  const [isPastHero, setIsPastHero] = useState(false);
 
   const isCaseStudy = pathname.startsWith("/work/");
   const scrolled = scrolledProp ?? internalScrolled;
@@ -84,6 +85,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
         window.requestAnimationFrame(() => {
           if (!isTransitioning) {
             setInternalScrolled(window.scrollY > 50);
+            setIsPastHero(window.scrollY > 480);
           }
           ticking = false;
         });
@@ -131,7 +133,15 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
   const showBackNav = showBack && !isInfoOpen;
 
   return (
-    <header className={`fixed top-4 sm:top-6 inset-x-0 z-[1000] pointer-events-none flex justify-center px-[var(--page-px)] transition-opacity duration-300 ${isInfoOpen ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
+    <>
+      {/* Top Scroll Fade Mask: Active on scroll for regular pages, or once hero gradient disappears (scrollY > 480) on case studies */}
+      <div
+        className={`fixed top-0 inset-x-0 h-28 sm:h-36 z-[999] pointer-events-none transition-opacity duration-500 ease-out backdrop-blur-md bg-gradient-to-b from-[var(--background)]/80 via-[var(--background)]/40 to-transparent [mask-image:linear-gradient(to_bottom,black_0%,rgba(0,0,0,0.987)_8.1%,rgba(0,0,0,0.951)_15.5%,rgba(0,0,0,0.896)_22.5%,rgba(0,0,0,0.825)_29%,rgba(0,0,0,0.741)_35.3%,rgba(0,0,0,0.648)_41.4%,rgba(0,0,0,0.55)_47.5%,rgba(0,0,0,0.45)_53.7%,rgba(0,0,0,0.352)_60%,rgba(0,0,0,0.259)_66.5%,rgba(0,0,0,0.175)_73.3%,rgba(0,0,0,0.104)_80.4%,rgba(0,0,0,0.049)_87.9%,rgba(0,0,0,0.013)_95.8%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_0%,rgba(0,0,0,0.987)_8.1%,rgba(0,0,0,0.951)_15.5%,rgba(0,0,0,0.896)_22.5%,rgba(0,0,0,0.825)_29%,rgba(0,0,0,0.741)_35.3%,rgba(0,0,0,0.648)_41.4%,rgba(0,0,0,0.55)_47.5%,rgba(0,0,0,0.45)_53.7%,rgba(0,0,0,0.352)_60%,rgba(0,0,0,0.259)_66.5%,rgba(0,0,0,0.175)_73.3%,rgba(0,0,0,0.104)_80.4%,rgba(0,0,0,0.049)_87.9%,rgba(0,0,0,0.013)_95.8%,transparent_100%)] ${
+          isCaseStudy ? (isPastHero ? "opacity-100" : "opacity-0") : (scrolled ? "opacity-100" : "opacity-0")
+        }`}
+      />
+
+      <header className={`fixed top-4 sm:top-6 inset-x-0 z-[1000] pointer-events-none flex justify-center px-[var(--page-px)] transition-opacity duration-300 ${isInfoOpen ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
       <div className="w-full flex items-center justify-center relative max-w-[1400px] mx-auto">
         {/* ─── Navigation: Centered single pill ─── */}
         <div className={`flex items-center justify-center relative max-w-[620px] mx-auto w-full ${isInfoOpen ? "pointer-events-none hidden" : "pointer-events-auto"}`}>
@@ -243,5 +253,6 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
         </div>
       </div>
     </header>
+    </>
   );
 }

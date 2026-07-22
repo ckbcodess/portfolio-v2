@@ -3,6 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ArrowUpRight, Download } from "lucide-react";
 import { MaskReveal } from "@/components/MaskReveal";
+import { AnimatedDivider } from "@/components/AnimatedDivider";
 import { getResume } from "@/lib/content";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -51,9 +52,10 @@ export default async function ResumePage() {
               <Image
                 src="/avatar.webp"
                 alt={resume.name}
-                width={44}
-                height={44}
-                className="rounded-full mt-0.5"
+                width={160}
+                height={160}
+                quality={95}
+                className="w-11 h-11 rounded-full mt-0.5 object-cover"
                 priority
               />
               <div className="flex flex-col gap-0.5">
@@ -93,7 +95,7 @@ export default async function ResumePage() {
           </header>
         </MaskReveal>
 
-        <div className="border-t border-foreground/10 mt-8 md:mt-10 mb-10 md:mb-14" />
+        <AnimatedDivider delay={0.2} className="mt-8 md:mt-10 mb-10 md:mb-14" />
 
         <div className="flex flex-col gap-12 md:gap-16">
           {/* About */}

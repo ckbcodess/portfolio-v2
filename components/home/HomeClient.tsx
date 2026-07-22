@@ -14,7 +14,7 @@ import NumberTicker from "@/components/NumberTicker";
 import { MaskReveal } from "@/components/MaskReveal";
 import TabsSection from "@/components/TabsSection";
 import InteractiveSectionBadge from "@/components/InteractiveSectionBadge";
-import { TextShimmer } from "@/components/core/text-shimmer";
+import AnimatedDivider from "@/components/AnimatedDivider";
 
 // three.js is heavy — load the blob after hydration instead of shipping it in the main bundle
 const Interactive3DBlob = dynamic(() => import("@/components/Interactive3DBlob"), {
@@ -108,7 +108,7 @@ export default function HomeClient({ caseStudies }: { caseStudies: CaseStudyCard
             {/* Profile Avatar & Interactive Message */}
             <MaskReveal delay={0.1} className="rounded-full">
               <motion.div
-                className="inline-flex items-center gap-3 group rounded-full cursor-pointer select-none hover-shimmer-trigger"
+                className="inline-flex items-center gap-3 group rounded-full cursor-pointer select-none"
                 onClick={handleAvatarClick}
               >
                 <TooltipProvider>
@@ -128,11 +128,12 @@ export default function HomeClient({ caseStudies }: { caseStudies: CaseStudyCard
                         }
                       >
                         <Image
-                          className="w-8 h-8 rounded-full group-hover:shadow-md transition-shadow"
+                          className="w-8 h-8 rounded-full group-hover:shadow-md transition-shadow object-cover"
                           src="/avatar.webp"
                           alt="Ransford Gyasi"
-                          width={32}
-                          height={32}
+                          width={128}
+                          height={128}
+                          quality={95}
                           priority
                           decoding="async"
                           draggable={false}
@@ -154,11 +155,7 @@ export default function HomeClient({ caseStudies }: { caseStudies: CaseStudyCard
                       transition={{ type: "spring", stiffness: 400, damping: 25 }}
                       className="text-foreground text-sm font-medium tracking-tight whitespace-nowrap absolute"
                     >
-                      {clickCount === 0 ? (
-                        <TextShimmer duration={2.5}>{messages[0]}</TextShimmer>
-                      ) : (
-                        messages[clickCount]
-                      )}
+                      {messages[clickCount]}
                     </motion.h1>
                   </AnimatePresence>
                 </div>
@@ -179,7 +176,8 @@ export default function HomeClient({ caseStudies }: { caseStudies: CaseStudyCard
         </section>
 
         {/* Case Studies Section */}
-        <section id="case-studies" className="flex flex-col gap-8 items-start w-full pt-12 sm:pt-16 border-t border-foreground/10">
+        <section id="case-studies" className="flex flex-col gap-8 items-start w-full pt-12 sm:pt-16 relative">
+          <AnimatedDivider delay={0.25} />
           <div className="flex items-center gap-3 overflow-visible">
             <MaskReveal delay={0.35}>
               <h2 className="text-foreground text-base font-medium tracking-tight">Case studies</h2>
@@ -217,7 +215,8 @@ export default function HomeClient({ caseStudies }: { caseStudies: CaseStudyCard
         </section>
 
         {/* Connect Section */}
-        <section id="connect" className="flex flex-col gap-8 items-start w-full pt-12 sm:pt-16 border-t border-foreground/10">
+        <section id="connect" className="flex flex-col gap-8 items-start w-full pt-12 sm:pt-16 relative">
+          <AnimatedDivider delay={0.55} />
           <MaskReveal delay={0.65}>
             <h2 className="text-foreground text-base font-medium tracking-tight">Connect</h2>
           </MaskReveal>
