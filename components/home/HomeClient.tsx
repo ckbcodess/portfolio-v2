@@ -14,6 +14,7 @@ import NumberTicker from "@/components/NumberTicker";
 import { MaskReveal } from "@/components/MaskReveal";
 import TabsSection from "@/components/TabsSection";
 import InteractiveSectionBadge from "@/components/InteractiveSectionBadge";
+import { TextShimmer } from "@/components/core/text-shimmer";
 
 // three.js is heavy — load the blob after hydration instead of shipping it in the main bundle
 const Interactive3DBlob = dynamic(() => import("@/components/Interactive3DBlob"), {
@@ -151,11 +152,15 @@ export default function HomeClient({ caseStudies }: { caseStudies: CaseStudyCard
                       animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                       exit={{ opacity: 0, y: -15, filter: "blur(4px)" }}
                       transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                      className={`text-foreground text-sm font-medium tracking-tight whitespace-nowrap absolute ${
-                        clickCount === 0 ? "shimmer shimmer-color-bg shimmer-periodic" : ""
-                      }`}
+                      className="text-foreground text-sm font-medium tracking-tight whitespace-nowrap absolute"
                     >
-                      {messages[clickCount]}
+                      {clickCount === 0 ? (
+                        <TextShimmer duration={2.5}>
+                          {messages[0]}
+                        </TextShimmer>
+                      ) : (
+                        messages[clickCount]
+                      )}
                     </motion.h1>
                   </AnimatePresence>
                 </div>
