@@ -764,25 +764,25 @@ header {
     -webkit-mask-image: none !important;
   }
 
-  /* ─── Official shadcn shimmer utilities ─── */
+  /* ─── Official shadcn shimmer utilities (WebKit-safe tile continuous) ─── */
   @keyframes tw-shimmer {
     0% {
-      background-position: var(--shimmer-start, 200% 0);
+      background-position: 100% 0;
     }
     100% {
-      background-position: var(--shimmer-end, -200% 0);
+      background-position: -100% 0;
     }
   }
 
   @keyframes tw-shimmer-periodic {
     0% {
-      background-position: 200% 0;
+      background-position: 100% 0;
     }
-    28.57% {
-      background-position: -200% 0;
+    30% {
+      background-position: -100% 0;
     }
     100% {
-      background-position: -200% 0;
+      background-position: -100% 0;
     }
   }
 
@@ -802,7 +802,7 @@ header {
     --shimmer-text-fill: transparent;
 
     background-image: var(--shimmer-image);
-    background-size: 250% 100%;
+    background-size: 200% 100%;
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: var(--shimmer-text-fill);
