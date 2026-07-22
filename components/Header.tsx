@@ -151,7 +151,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
           >
             <RefractiveNav
               isCaseStudyHero={isCaseStudy}
-              className="relative rounded-[14px] overflow-hidden w-full text-foreground"
+              className="relative rounded-[14px] overflow-hidden w-full text-white"
             >
               <div className="px-3 py-2 sm:px-6 sm:py-3 flex items-center justify-between gap-2 sm:gap-6 md:gap-8 whitespace-nowrap w-full">
                 {/* Left group: Home, Archive, Resume, Info */}
@@ -176,7 +176,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
                           }
                         }}
                         className={`text-xs sm:text-sm font-normal tracking-tight transition-all duration-300 ${
-                          isActive ? "opacity-100 font-medium text-foreground" : "opacity-60 text-foreground hover:opacity-100"
+                          isActive ? "opacity-100 font-medium text-white" : "opacity-70 text-white hover:opacity-100"
                         }`}
                       >
                         {item.label}
@@ -194,14 +194,14 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
                   <button
                     onClick={toggleSound}
                     data-cursor="pointer"
-                    className="transition-all duration-300 p-1 -m-1 flex items-center justify-center cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-sm text-foreground/60 hover:text-foreground"
+                    className="transition-all duration-300 p-1 -m-1 flex items-center justify-center cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-white/20 rounded-sm text-white/70 hover:text-white"
                     aria-label={isSoundEnabled ? "Disable sound" : "Enable sound"}
                   >
                     {isSoundEnabled ? <Volume2 size={13} strokeWidth={2} /> : <VolumeX size={13} strokeWidth={2} />}
                   </button>
 
                   {/* Clock */}
-                  <div className="hidden sm:block text-[10px] sm:text-xs font-normal tabular-nums select-none text-foreground/70">
+                  <div className="hidden sm:block text-[10px] sm:text-xs font-normal tabular-nums select-none text-white/80">
                     <Clock />
                   </div>
                 </div>
@@ -223,7 +223,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
           >
             <RefractiveNav
               isScrolled={scrolled}
-              className="relative rounded-[14px] overflow-hidden text-foreground"
+              className="relative rounded-[14px] overflow-hidden text-white"
             >
               <div className="px-4 py-2 sm:px-5 sm:py-3 flex items-center justify-center whitespace-nowrap">
                 <TransitionLink
