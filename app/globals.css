@@ -159,6 +159,7 @@ body {
   --nav-accent: #FFFFFF;
   --nav-pill-bg: #0f1014;
   --foreground: oklch(0.98 0 0);
+  --shimmer-highlight: #ffffff;
   --muted: oklch(0.20 0 0);
   --muted-foreground: color-mix(in srgb, var(--foreground), transparent 45%);
   --secondary-foreground: oklch(0.98 0 0);

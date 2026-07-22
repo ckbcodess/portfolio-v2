@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useMemo, type JSX } from "react";
+import React, { useMemo } from "react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
 export type TextShimmerProps = {
-  children: string;
+  children: React.ReactNode;
   as?: React.ElementType;
   className?: string;
   duration?: number;
@@ -23,11 +23,15 @@ export function TextShimmer({
   baseColor,
   highlightColor,
 }: TextShimmerProps) {
-  const MotionComponent = motion.create(Component as keyof JSX.IntrinsicElements);
-
   const dynamicSpread = useMemo(() => {
-    return children.length * spread;
+    const text = typeof children === "string" ? children : String(children ?? "");
+    return text.length * spread;
   }, [children, spread]);
+
+  const MotionComponent =
+    typeof Component === "string"
+      ? (motion as unknown as Record<string, typeof motion.span>)[Component] || motion.span
+      : motion.span;
 
   return (
     <MotionComponent
