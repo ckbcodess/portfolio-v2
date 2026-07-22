@@ -715,13 +715,16 @@ header {
     0% {
       background-position: 200% 0;
     }
+    40% {
+      background-position: -200% 0;
+    }
     100% {
       background-position: -200% 0;
     }
   }
 
   .shimmer {
-    --shimmer-duration: 2500ms;
+    --shimmer-duration: 5000ms;
     --shimmer-angle: 20deg;
     --shimmer-spread: 30px;
     background-image: linear-gradient(
@@ -736,7 +739,7 @@ header {
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: tw-shimmer var(--shimmer-duration, 2.5s) linear infinite;
+    animation: tw-shimmer var(--shimmer-duration, 5s) linear infinite;
   }
 
   .shimmer-once {
