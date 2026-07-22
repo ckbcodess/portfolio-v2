@@ -145,13 +145,21 @@ export default function InfoSheet({ content, isOpen, onClose }: InfoSheetProps) 
             transition={{ duration: 0.3, ease: "easeOut" }}
             onClick={onClose}
             onPointerDown={onClose}
-            className="fixed inset-0 z-[940] bg-black/30 backdrop-blur-xs cursor-pointer pointer-events-auto w-screen h-screen"
+            onTouchStart={(e) => {
+              e.preventDefault();
+              onClose();
+            }}
+            onTouchEnd={(e) => {
+              e.preventDefault();
+              onClose();
+            }}
+            className="fixed inset-0 z-[940] bg-black/40 backdrop-blur-xs cursor-pointer pointer-events-auto w-full h-full touch-none"
             aria-hidden="true"
           />
         )}
       </AnimatePresence>
 
-      {/* Bottom sheet — full width, 90dvh tall */}
+      {/* Bottom sheet — full width, 84dvh tall */}
       <motion.div
         key="info-panel"
         variants={panelVariants}
@@ -165,7 +173,7 @@ export default function InfoSheet({ content, isOpen, onClose }: InfoSheetProps) 
             onClose();
           }
         }}
-        className="fixed bottom-0 left-0 right-0 z-[950] w-full h-[90dvh] bg-background rounded-t-[24px] shadow-2xl overflow-hidden text-base touch-pan-y"
+        className="fixed bottom-0 left-0 right-0 z-[950] w-full h-[84dvh] bg-background rounded-t-[24px] shadow-2xl overflow-hidden text-base touch-pan-y"
         style={{ willChange: "transform" }}
         aria-hidden={!isOpen}
         aria-label="Info panel"
