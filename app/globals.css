@@ -724,13 +724,14 @@ header {
     --shimmer-duration: 3000ms;
     --shimmer-angle: 20deg;
     --shimmer-spread: 50px;
+    --shimmer-color: var(--color-background);
     background-image: linear-gradient(
       calc(90deg + var(--shimmer-angle, 20deg)),
-      color-mix(in srgb, currentColor 55%, transparent) 0%,
-      color-mix(in srgb, currentColor 55%, transparent) calc(50% - var(--shimmer-spread, 50px)),
-      currentColor 50%,
-      color-mix(in srgb, currentColor 55%, transparent) calc(50% + var(--shimmer-spread, 50px)),
-      color-mix(in srgb, currentColor 55%, transparent) 100%
+      var(--color-foreground) 0%,
+      var(--color-foreground) calc(50% - var(--shimmer-spread, 50px)),
+      var(--shimmer-color) 50%,
+      var(--color-foreground) calc(50% + var(--shimmer-spread, 50px)),
+      var(--color-foreground) 100%
     );
     background-size: 300% 100%;
     background-clip: text;
