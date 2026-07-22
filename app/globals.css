@@ -647,4 +647,67 @@ header {
 .hover-shimmer-trigger:hover .ui-shimmer-text {
   animation: ui-shimmer-sweep 2.2s ease-in-out forwards;
 }
+
+/* ─── shadcn scroll-fade utilities ─── */
+@layer utilities {
+  :root {
+    --scroll-fade-size: 36px;
+    --scroll-fade-reveal: 96px;
+    --scroll-fade-block: linear-gradient(
+      to bottom,
+      transparent 0px,
+      black var(--scroll-fade-size),
+      black calc(100% - var(--scroll-fade-size)),
+      transparent 100%
+    );
+    --scroll-fade-inline: linear-gradient(
+      to right,
+      transparent 0px,
+      black var(--scroll-fade-size),
+      black calc(100% - var(--scroll-fade-size)),
+      transparent 100%
+    );
+    --scroll-fade-top: linear-gradient(to bottom, transparent 0px, black var(--scroll-fade-size));
+    --scroll-fade-bottom: linear-gradient(to top, transparent 0px, black var(--scroll-fade-size));
+    --scroll-fade-left: linear-gradient(to right, transparent 0px, black var(--scroll-fade-size));
+    --scroll-fade-right: linear-gradient(to left, transparent 0px, black var(--scroll-fade-size));
+  }
+
+  .scroll-fade,
+  .scroll-fade-y {
+    mask-image: var(--scroll-fade-mask, var(--scroll-fade-block));
+    -webkit-mask-image: var(--scroll-fade-mask, var(--scroll-fade-block));
+  }
+
+  .scroll-fade-x {
+    mask-image: var(--scroll-fade-mask, var(--scroll-fade-inline));
+    -webkit-mask-image: var(--scroll-fade-mask, var(--scroll-fade-inline));
+  }
+
+  .scroll-fade-t {
+    mask-image: var(--scroll-fade-mask, var(--scroll-fade-top));
+    -webkit-mask-image: var(--scroll-fade-mask, var(--scroll-fade-top));
+  }
+
+  .scroll-fade-b {
+    mask-image: var(--scroll-fade-mask, var(--scroll-fade-bottom));
+    -webkit-mask-image: var(--scroll-fade-mask, var(--scroll-fade-bottom));
+  }
+
+  .scroll-fade-l {
+    mask-image: var(--scroll-fade-mask, var(--scroll-fade-left));
+    -webkit-mask-image: var(--scroll-fade-mask, var(--scroll-fade-left));
+  }
+
+  .scroll-fade-r {
+    mask-image: var(--scroll-fade-mask, var(--scroll-fade-right));
+    -webkit-mask-image: var(--scroll-fade-mask, var(--scroll-fade-right));
+  }
+
+  .scroll-fade-none {
+    --scroll-fade-mask: none;
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+  }
+}
 

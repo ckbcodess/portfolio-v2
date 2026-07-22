@@ -250,15 +250,7 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
         onScroll={handleScroll}
         role="tablist"
         aria-label="Content filters"
-        style={{
-          maskImage: isScrolled
-            ? 'linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent)'
-            : 'linear-gradient(to right, black calc(100% - 16px), transparent)',
-          WebkitMaskImage: isScrolled
-            ? 'linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent)'
-            : 'linear-gradient(to right, black calc(100% - 16px), transparent)',
-        }}
-        className="flex flex-row items-center self-stretch overflow-x-auto lg:overflow-x-visible justify-start gap-4 pb-2 md:pb-0 scrollbar-hide [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-[var(--page-px)] px-[var(--page-px)] lg:!mask-none lg:mx-0 lg:px-0"
+        className="flex flex-row items-center self-stretch overflow-x-auto lg:overflow-x-visible justify-start gap-4 pb-2 md:pb-0 scroll-fade-x scrollbar-hide [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-[var(--page-px)] px-[var(--page-px)] lg:scroll-fade-none lg:mx-0 lg:px-0"
       >
         {tabsData.map((tab, i) => (
           <MaskReveal 

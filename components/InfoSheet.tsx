@@ -198,11 +198,7 @@ export default function InfoSheet({ content, isOpen, onClose }: InfoSheetProps) 
 
         {/* Single scroll area for all content with fade-out edges */}
         <div 
-          className="h-full overflow-y-auto px-5 sm:px-8 md:px-10 py-6 sm:py-8 md:py-10"
-          style={{
-            maskImage: 'linear-gradient(to bottom, transparent, black 40px, black calc(100% - 40px), transparent)',
-            WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 40px, black calc(100% - 40px), transparent)',
-          }}
+          className="h-full overflow-y-auto scroll-fade-y px-5 sm:px-8 md:px-10 py-6 sm:py-8 md:py-10"
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12 items-start max-w-[1200px] mx-auto pb-10">
 

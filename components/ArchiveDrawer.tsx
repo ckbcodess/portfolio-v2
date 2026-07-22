@@ -53,7 +53,7 @@ export default function ArchiveDrawer({ rows, isOpen, onClose }: ArchiveDrawerPr
             </div>
 
             {/* Project Log Table */}
-            <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+            <div className="flex-1 overflow-y-auto scroll-fade-y pr-2 custom-scrollbar">
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="border-b border-black/5 dark:border-white/5 text-xs text-muted-foreground font-semibold tracking-wider uppercase">
