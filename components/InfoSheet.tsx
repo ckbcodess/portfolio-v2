@@ -46,8 +46,25 @@ export default function InfoSheet({ content, isOpen, onClose }: InfoSheetProps) 
     nowPlaying: boolean;
   }
 
+  const RECENTLY_LISTENED_VARIANTS = [
+    "Recently listened to:",
+    "What I've been bumping:",
+    "Lately on loop:",
+    "Recent rotation:",
+    "Fresh out the speakers:",
+    "On repeat lately:",
+  ];
+
+  const [headerIndex, setHeaderIndex] = useState(0);
   const [track, setTrack] = useState<TrackInfo | null>(null);
   const [trackLoading, setTrackLoading] = useState(true);
+
+  // Cycle the header label whenever the sheet is opened
+  useEffect(() => {
+    if (isOpen) {
+      setHeaderIndex((prev) => (prev + 1) % RECENTLY_LISTENED_VARIANTS.length);
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -198,9 +215,9 @@ export default function InfoSheet({ content, isOpen, onClose }: InfoSheetProps) 
 
         {/* Single scroll area for all content with fade-out edges */}
         <div 
-          className="h-full overflow-y-auto scroll-fade-y px-5 sm:px-8 md:px-10 py-6 sm:py-8 md:py-10"
+          className="h-full overflow-y-auto scroll-fade-y px-5 sm:px-8 md:px-10 py-6 sm:py-8 md:py-10 flex flex-col justify-between"
         >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12 items-start max-w-[1200px] mx-auto pb-10">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12 items-start max-w-[1200px] w-full mx-auto pb-10 flex-1">
 
             {/* ── Col 1: Info ── */}
             <div className="flex flex-col gap-4 md:gap-6">
@@ -239,7 +256,7 @@ export default function InfoSheet({ content, isOpen, onClose }: InfoSheetProps) 
             </div>
 
             {/* ── Col 3: Connect + Spotify ── */}
-            <div className="flex flex-col gap-10 md:gap-12 justify-between">
+            <div className="flex flex-col gap-10 md:gap-12 justify-between h-full">
               {/* Connect */}
               <div className="flex flex-col gap-4">
                 <p className="text-foreground/40 text-xs sm:text-sm">Connect</p>
@@ -259,10 +276,10 @@ export default function InfoSheet({ content, isOpen, onClose }: InfoSheetProps) 
               </div>
 
               {/* Spotify/Last.fm scrobbler — fixed size, bottom-right */}
-              <div className="flex justify-end w-full">
-                <div className="flex flex-col items-end gap-2 text-right">
-                  <p className="text-foreground/40 text-xs select-none text-right">
-                    {trackLoading ? "\u00a0" : track?.nowPlaying ? "Blasting my ears with:" : "Recently listened to:"}
+              <div className="flex justify-start md:justify-end w-full mt-auto">
+                <div className="flex flex-col items-start md:items-end gap-2 text-left md:text-right">
+                  <p className="text-foreground/40 text-xs select-none text-left md:text-right">
+                    {trackLoading ? "\u00a0" : track?.nowPlaying ? "Blasting my ears with:" : RECENTLY_LISTENED_VARIANTS[headerIndex]}
                   </p>
                   {/* Album art */}
                   {trackLoading ? (
@@ -346,7 +363,7 @@ export default function InfoSheet({ content, isOpen, onClose }: InfoSheetProps) 
 
           </div>
           {content.lastUpdated && (
-            <div className="max-w-[1200px] mx-auto mt-10 border-t border-foreground/5 pt-4 pb-12">
+            <div className="max-w-[1200px] w-full mx-auto mt-10 border-t border-foreground/5 pt-4 pb-12">
               <p className="text-foreground/25 text-xs sm:text-sm text-left md:text-right">Last updated: {content.lastUpdated}</p>
             </div>
           )}
