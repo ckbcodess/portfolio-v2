@@ -764,25 +764,25 @@ header {
     -webkit-mask-image: none !important;
   }
 
-  /* ─── Official shadcn shimmer utilities (1 single smooth sweep + 5s pause) ─── */
+  /* ─── Official shadcn shimmer utilities (100% solid off-screen pause position) ─── */
   @keyframes tw-shimmer {
     0% {
-      background-position: 100% 0;
+      background-position: 250% 0;
     }
     100% {
-      background-position: -100% 0;
+      background-position: -150% 0;
     }
   }
 
   @keyframes tw-shimmer-periodic {
     0% {
-      background-position: 100% 0;
+      background-position: 250% 0;
     }
     28.57% {
-      background-position: -100% 0;
+      background-position: -150% 0;
     }
     100% {
-      background-position: -100% 0;
+      background-position: -150% 0;
     }
   }
 
@@ -802,7 +802,7 @@ header {
     --shimmer-text-fill: transparent;
 
     background-image: var(--shimmer-image);
-    background-size: 200% 100%;
+    background-size: 300% 100%;
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: var(--shimmer-text-fill);
