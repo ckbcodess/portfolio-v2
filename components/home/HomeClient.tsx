@@ -155,9 +155,7 @@ export default function HomeClient({ caseStudies }: { caseStudies: CaseStudyCard
                       className="text-foreground text-sm font-medium tracking-tight whitespace-nowrap absolute"
                     >
                       {clickCount === 0 ? (
-                        <TextShimmer duration={2.5}>
-                          {messages[0]}
-                        </TextShimmer>
+                        <TextShimmer duration={2.5}>{messages[0]}</TextShimmer>
                       ) : (
                         messages[clickCount]
                       )}
