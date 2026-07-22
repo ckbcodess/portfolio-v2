@@ -255,7 +255,7 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
         {tabsData.map((tab, i) => (
           <MaskReveal 
             key={tab.name} 
-            delay={0.8 + i * 0.08} 
+            delay={0.1 + i * 0.06} 
             duration={0.6}
             className="shrink-0"
           >

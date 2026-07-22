@@ -105,7 +105,7 @@ export default function HomeClient({ caseStudies }: { caseStudies: CaseStudyCard
         <section className="flex flex-col md:flex-row items-center justify-between gap-10 md:gap-12 w-full relative">
           <div className="flex flex-col gap-3 sm:gap-4 items-start w-full md:w-[460px] shrink-0 text-left">
             {/* Profile Avatar & Interactive Message */}
-            <MaskReveal delay={0.1} className="rounded-full">
+            <MaskReveal delay={0.85} className="rounded-full">
               <motion.div
                 className="inline-flex items-center gap-3 group rounded-full cursor-pointer select-none hover-shimmer-trigger"
                 onClick={handleAvatarClick}
