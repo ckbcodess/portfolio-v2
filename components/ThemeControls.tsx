@@ -28,7 +28,7 @@ export default function ThemeControls({ isHero = true }: { isHero?: boolean }) {
           type="button"
           onClick={toggleTheme}
           data-cursor="pointer"
-          className="transition-colors p-1 -m-1 flex items-center justify-center cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-white/20 rounded-sm text-white/70 hover:text-white"
+          className="transition-colors p-1 -m-1 flex items-center justify-center cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-sm text-foreground/70 hover:text-foreground"
           aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
         >
           <div className="flex items-center justify-center">

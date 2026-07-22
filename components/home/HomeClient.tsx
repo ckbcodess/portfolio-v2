@@ -271,7 +271,7 @@ export default function HomeClient({ caseStudies }: { caseStudies: CaseStudyCard
 
                 {/* Bracket & label annotation for X and Instagram */}
                 <div
-                  className="absolute left-[110px] sm:left-[130px] md:left-[140px] top-0 bottom-0 flex items-center pointer-events-none transition-all duration-300"
+                  className="hidden sm:flex absolute left-[110px] sm:left-[130px] md:left-[140px] top-0 bottom-0 items-center pointer-events-none transition-all duration-300"
                   style={{
                     opacity: hoveredLink !== null && hoveredLink !== "x" && hoveredLink !== "instagram" ? 0.3 : 1,
                   }}

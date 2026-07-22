@@ -150,8 +150,8 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
             className="w-full flex justify-center animate-fade-in"
           >
             <RefractiveNav
-              isCaseStudyHero={true}
-              className="relative rounded-[14px] overflow-hidden w-full text-white"
+              isCaseStudyHero={isCaseStudy}
+              className="relative rounded-[14px] overflow-hidden w-full text-foreground border border-foreground/10 dark:border-white/10"
             >
               <div className="px-3 py-2 sm:px-6 sm:py-3 flex items-center justify-between gap-2 sm:gap-6 md:gap-8 whitespace-nowrap w-full">
                 {/* Left group: Home, Archive, Resume, Info */}
@@ -176,7 +176,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
                           }
                         }}
                         className={`text-xs sm:text-sm font-normal tracking-tight transition-all duration-300 ${
-                          isActive ? "opacity-100 font-semibold text-white" : "opacity-50 text-white/90 hover:opacity-100"
+                          isActive ? "opacity-100 font-medium text-foreground" : "opacity-60 text-foreground hover:opacity-100"
                         }`}
                       >
                         {item.label}
@@ -194,14 +194,14 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
                   <button
                     onClick={toggleSound}
                     data-cursor="pointer"
-                    className="transition-all duration-300 p-1 -m-1 flex items-center justify-center cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-sm text-white/50 hover:text-white"
+                    className="transition-all duration-300 p-1 -m-1 flex items-center justify-center cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-sm text-foreground/60 hover:text-foreground"
                     aria-label={isSoundEnabled ? "Disable sound" : "Enable sound"}
                   >
                     {isSoundEnabled ? <Volume2 size={13} strokeWidth={2} /> : <VolumeX size={13} strokeWidth={2} />}
                   </button>
 
                   {/* Clock */}
-                  <div className="hidden sm:block text-[10px] sm:text-xs font-normal tabular-nums select-none opacity-80 text-white">
+                  <div className="hidden sm:block text-[10px] sm:text-xs font-normal tabular-nums select-none text-foreground/70">
                     <Clock />
                   </div>
                 </div>
