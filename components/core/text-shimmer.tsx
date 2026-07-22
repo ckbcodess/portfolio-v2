@@ -10,6 +10,8 @@ export type TextShimmerProps = {
   className?: string;
   duration?: number;
   spread?: number;
+  baseColor?: string;
+  highlightColor?: string;
 };
 
 export function TextShimmer({
@@ -18,6 +20,8 @@ export function TextShimmer({
   className,
   duration = 2,
   spread = 2,
+  baseColor,
+  highlightColor,
 }: TextShimmerProps) {
   const MotionComponent = motion.create(Component as keyof JSX.IntrinsicElements);
 
@@ -29,7 +33,6 @@ export function TextShimmer({
     <MotionComponent
       className={cn(
         "relative inline-block bg-[length:250%_100%] bg-clip-text text-transparent select-none",
-        "bg-[linear-gradient(90deg,var(--base-color)_0%,var(--base-color)_calc(50%-var(--spread)),var(--highlight-color)_50%,var(--base-color)_calc(50%+var(--spread)),var(--base-color)_100%)]",
         className
       )}
       initial={{ backgroundPosition: "100% 0" }}
@@ -41,9 +44,11 @@ export function TextShimmer({
       }}
       style={
         {
+          backgroundImage:
+            "linear-gradient(90deg, var(--base-color) 0%, var(--base-color) calc(50% - var(--spread)), var(--highlight-color) 50%, var(--base-color) calc(50% + var(--spread)), var(--base-color) 100%)",
           "--spread": `${dynamicSpread}px`,
-          "--base-color": "var(--color-foreground)",
-          "--highlight-color": "var(--color-background)",
+          "--base-color": baseColor || "var(--foreground)",
+          "--highlight-color": highlightColor || "var(--shimmer-highlight, var(--muted-foreground))",
         } as React.CSSProperties
       }
     >

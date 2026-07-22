@@ -59,7 +59,7 @@ const RefractiveNav = forwardRef<HTMLElement, {
         ...style,
         backdropFilter: "blur(32px) saturate(1.8)",
         WebkitBackdropFilter: "blur(32px) saturate(1.8)",
-        backgroundColor: isDark ? "rgba(10, 10, 14, 0.65)" : "rgba(0, 0, 0, 0.15)"
+        backgroundColor: isDark ? "rgba(5, 5, 8, 0.85)" : "rgba(0, 0, 0, 0.45)"
       }}
       role="navigation"
       aria-label="Main Floating Navigation"
