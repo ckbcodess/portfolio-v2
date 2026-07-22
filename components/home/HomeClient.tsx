@@ -13,7 +13,6 @@ import Lightbox from "@/components/Lightbox";
 import NumberTicker from "@/components/NumberTicker";
 import { MaskReveal } from "@/components/MaskReveal";
 import TabsSection from "@/components/TabsSection";
-import { ShimmeringText } from "@/components/ui/shimmering-text";
 import InteractiveSectionBadge from "@/components/InteractiveSectionBadge";
 
 // three.js is heavy — load the blob after hydration instead of shipping it in the main bundle
@@ -152,13 +151,11 @@ export default function HomeClient({ caseStudies }: { caseStudies: CaseStudyCard
                       animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                       exit={{ opacity: 0, y: -15, filter: "blur(4px)" }}
                       transition={{ type: "spring", stiffness: 400, damping: 25 }}
-                      className="text-foreground text-sm font-medium tracking-tight whitespace-nowrap absolute"
+                      className={`text-foreground text-sm font-medium tracking-tight whitespace-nowrap absolute ${
+                        clickCount === 0 ? "shimmer shimmer-duration-2200" : ""
+                      }`}
                     >
-                      {clickCount === 0 ? (
-                        <ShimmeringText>{messages[clickCount]}</ShimmeringText>
-                      ) : (
-                        messages[clickCount]
-                      )}
+                      {messages[clickCount]}
                     </motion.h1>
                   </AnimatePresence>
                 </div>

@@ -709,5 +709,52 @@ header {
     mask-image: none !important;
     -webkit-mask-image: none !important;
   }
+
+  /* ─── shadcn shimmer utilities ─── */
+  @keyframes tw-shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  .shimmer {
+    --shimmer-duration: 2200ms;
+    --shimmer-spread: calc(3ch + 40px);
+    --shimmer-angle: 20deg;
+    --shimmer-color: color-mix(in oklch, currentColor 45%, transparent);
+    --shimmer-bg: linear-gradient(
+      calc(90deg + var(--shimmer-angle, 20deg)),
+      currentColor 0%,
+      currentColor calc(50% - var(--shimmer-spread, 40px)),
+      var(--shimmer-color, color-mix(in oklch, currentColor 70%, white)) 50%,
+      currentColor calc(50% + var(--shimmer-spread, 40px)),
+      currentColor 100%
+    );
+    background-image: var(--shimmer-bg);
+    background-size: 250% 100%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent !important;
+    animation: tw-shimmer var(--shimmer-duration, 2.2s) linear infinite;
+  }
+
+  .shimmer-once {
+    animation-iteration-count: 1;
+  }
+
+  .shimmer-reverse {
+    animation-direction: reverse;
+  }
+
+  .shimmer-none {
+    background-image: none !important;
+    background-clip: border-box !important;
+    -webkit-background-clip: border-box !important;
+    color: currentColor !important;
+    animation: none !important;
+  }
 }
 
