@@ -215,14 +215,14 @@ export default function InfoSheet({ content, isOpen, onClose }: InfoSheetProps) 
 
         {/* Single scroll area for all content with fade-out edges */}
         <div 
-          className="h-full overflow-y-auto scroll-fade-y px-5 sm:px-8 md:px-10 py-6 sm:py-8 md:py-10 flex flex-col justify-between"
+          className="h-full overflow-y-auto scroll-fade-y px-5 sm:px-8 md:px-12 py-5 sm:py-6 md:py-8 flex flex-col justify-between"
         >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12 items-start max-w-[1200px] w-full mx-auto pb-10 flex-1">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 lg:gap-14 items-start max-w-[1200px] w-full mx-auto flex-1">
 
             {/* ── Col 1: Info ── */}
-            <div className="flex flex-col gap-4 md:gap-6">
-              <p className="text-foreground/40 text-xs sm:text-sm">Info</p>
-              <div className="flex flex-col gap-4 text-foreground/70 text-sm sm:text-base leading-relaxed">
+            <div className="flex flex-col gap-3 md:gap-4">
+              <p className="text-foreground/40 text-xs sm:text-sm font-medium">Info</p>
+              <div className="flex flex-col gap-3 text-foreground/70 text-sm sm:text-base leading-relaxed">
                 {content.info.map((paragraph, i) => (
                   <p key={i}>{paragraph}</p>
                 ))}
@@ -230,18 +230,18 @@ export default function InfoSheet({ content, isOpen, onClose }: InfoSheetProps) 
             </div>
 
             {/* ── Col 2: Experience ── */}
-            <div className="flex flex-col gap-6 md:gap-8">
-              <div className="flex flex-col gap-4">
-                <p className="text-foreground/40 text-xs sm:text-sm">Experience</p>
-                <div className="flex flex-col gap-4 text-foreground/70 text-sm sm:text-base leading-relaxed">
+            <div className="flex flex-col gap-5 md:gap-6">
+              <div className="flex flex-col gap-3 md:gap-4">
+                <p className="text-foreground/40 text-xs sm:text-sm font-medium">Experience</p>
+                <div className="flex flex-col gap-3 text-foreground/70 text-sm sm:text-base leading-relaxed">
                   {content.experience.map((paragraph, i) => (
                     <p key={i}>{paragraph}</p>
                   ))}
                 </div>
               </div>
 
-              <div className="flex flex-col gap-3">
-                <p className="text-foreground/40 text-xs sm:text-sm">Things i geek about</p>
+              <div className="flex flex-col gap-2.5">
+                <p className="text-foreground/40 text-xs sm:text-sm font-medium">Things i geek about</p>
                 <div className="flex flex-wrap gap-1.5">
                   {content.geekTags.map((tag) => (
                     <span
@@ -256,10 +256,10 @@ export default function InfoSheet({ content, isOpen, onClose }: InfoSheetProps) 
             </div>
 
             {/* ── Col 3: Connect + Spotify ── */}
-            <div className="flex flex-col gap-10 md:gap-12 justify-between h-full">
+            <div className="flex flex-col gap-6 md:gap-8 justify-between h-full">
               {/* Connect */}
-              <div className="flex flex-col gap-4">
-                <p className="text-foreground/40 text-xs sm:text-sm">Connect</p>
+              <div className="flex flex-col gap-3 md:gap-4">
+                <p className="text-foreground/40 text-xs sm:text-sm font-medium">Connect</p>
                 <div className="flex flex-col gap-0.5">
                   {content.connectLinks.map((link) => (
                     <a
@@ -276,14 +276,14 @@ export default function InfoSheet({ content, isOpen, onClose }: InfoSheetProps) 
               </div>
 
               {/* Spotify/Last.fm scrobbler — fixed size, bottom-right */}
-              <div className="flex justify-start md:justify-end w-full mt-auto">
-                <div className="flex flex-col items-start md:items-end gap-2 text-left md:text-right">
+              <div className="flex justify-start md:justify-end w-full mt-auto pt-2">
+                <div className="flex flex-col items-start md:items-end gap-1.5 text-left md:text-right">
                   <p className="text-foreground/40 text-xs select-none text-left md:text-right">
                     {trackLoading ? "\u00a0" : track?.nowPlaying ? "Blasting my ears with:" : RECENTLY_LISTENED_VARIANTS[headerIndex]}
                   </p>
                   {/* Album art */}
                   {trackLoading ? (
-                    <div className="w-[128px] h-[128px] rounded-xl bg-foreground/8 animate-pulse" />
+                    <div className="w-[100px] h-[100px] md:w-[112px] md:h-[112px] rounded-xl bg-foreground/8 animate-pulse" />
                   ) : (
                     <a
                       href={track?.url}
@@ -291,29 +291,29 @@ export default function InfoSheet({ content, isOpen, onClose }: InfoSheetProps) 
                       rel="noopener noreferrer"
                       className="group block"
                     >
-                      <div className="relative w-[128px] h-[128px] rounded-xl overflow-hidden bg-foreground/5 cursor-pointer shadow-sm transition-all duration-500 hover:shadow-md">
+                      <div className="relative w-[100px] h-[100px] md:w-[112px] md:h-[112px] rounded-xl overflow-hidden bg-foreground/5 cursor-pointer shadow-sm transition-all duration-500 hover:shadow-md">
                         <Image
                           src={track?.albumArt ?? "/spotify-album-art.png"}
                           alt={`Album art — ${track?.name} by ${track?.artist}`}
                           fill
-                          sizes="128px"
+                          sizes="(max-width: 768px) 100px, 112px"
                           className="object-cover transition-transform duration-700 group-hover:scale-105"
                           priority
                         />
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                          <div className="w-9 h-9 rounded-full bg-[#1DB954] flex items-center justify-center text-white shadow-lg scale-90 group-hover:scale-100 transition-transform duration-300">
-                            <Play size={14} fill="currentColor" className="ml-0.5" />
+                          <div className="w-8 h-8 rounded-full bg-[#1DB954] flex items-center justify-center text-white shadow-lg scale-90 group-hover:scale-100 transition-transform duration-300">
+                            <Play size={13} fill="currentColor" className="ml-0.5" />
                           </div>
                         </div>
                       </div>
                     </a>
                   )}
                   {/* Track info */}
-                  <div className="flex flex-col gap-0.5 max-w-[128px] overflow-hidden">
+                  <div className="flex flex-col gap-0.5 max-w-[100px] md:max-w-[112px] overflow-hidden">
                     {trackLoading ? (
                       <>
-                        <div className="h-4 w-24 rounded bg-foreground/8 animate-pulse mb-1" />
-                        <div className="h-3 w-16 rounded bg-foreground/5 animate-pulse" />
+                        <div className="h-4 w-20 rounded bg-foreground/8 animate-pulse mb-1" />
+                        <div className="h-3 w-14 rounded bg-foreground/5 animate-pulse" />
                       </>
                     ) : (
                       <>
@@ -321,7 +321,7 @@ export default function InfoSheet({ content, isOpen, onClose }: InfoSheetProps) 
                           href={track?.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-foreground font-medium text-base leading-snug hover:underline block w-full overflow-hidden"
+                          className="text-foreground font-medium text-sm md:text-base leading-snug hover:underline block w-full overflow-hidden"
                           title={track?.name}
                         >
                           {(track?.name?.length ?? 0) > 15 ? (
@@ -340,7 +340,7 @@ export default function InfoSheet({ content, isOpen, onClose }: InfoSheetProps) 
                         </a>
                         <div className="flex items-center justify-between gap-1.5">
                           <span
-                            className="text-foreground/40 text-sm leading-normal truncate flex-1"
+                            className="text-foreground/40 text-xs md:text-sm leading-normal truncate flex-1"
                             title={track?.artist}
                           >
                             {track?.artist}
@@ -363,7 +363,7 @@ export default function InfoSheet({ content, isOpen, onClose }: InfoSheetProps) 
 
           </div>
           {content.lastUpdated && (
-            <div className="max-w-[1200px] w-full mx-auto mt-10 border-t border-foreground/5 pt-4 pb-12">
+            <div className="max-w-[1200px] w-full mx-auto mt-4 border-t border-foreground/5 pt-3 pb-4">
               <p className="text-foreground/25 text-xs sm:text-sm text-left md:text-right">Last updated: {content.lastUpdated}</p>
             </div>
           )}
