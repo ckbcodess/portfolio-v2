@@ -151,7 +151,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
           >
             <RefractiveNav
               isCaseStudyHero={isCaseStudy}
-              className="relative rounded-[14px] overflow-hidden w-full text-foreground border border-foreground/10 dark:border-white/10"
+              className="relative rounded-[14px] overflow-hidden w-full text-foreground"
             >
               <div className="px-3 py-2 sm:px-6 sm:py-3 flex items-center justify-between gap-2 sm:gap-6 md:gap-8 whitespace-nowrap w-full">
                 {/* Left group: Home, Archive, Resume, Info */}

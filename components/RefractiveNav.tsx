@@ -59,7 +59,7 @@ const RefractiveNav = forwardRef<HTMLElement, {
         ...style,
         backdropFilter: "blur(32px) saturate(1.8)",
         WebkitBackdropFilter: "blur(32px) saturate(1.8)",
-        backgroundColor: isDark ? "rgba(10, 10, 14, 0.45)" : "rgba(255, 255, 255, 0.45)"
+        backgroundColor: isDark ? "rgba(10, 10, 14, 0.65)" : "rgba(0, 0, 0, 0.15)"
       }}
       role="navigation"
       aria-label="Main Floating Navigation"
@@ -69,9 +69,6 @@ const RefractiveNav = forwardRef<HTMLElement, {
         className="absolute inset-0 origin-left pointer-events-none transition-transform duration-100 ease-out bg-white/[0.08] rounded-[14px] z-10"
         style={{ transform: `scaleX(${scrollProgress})` }}
       />
-
-      {/* Crisp Inner Rim / Specular Border */}
-      <div className="absolute inset-0 rounded-[14px] border-[0.5px] border-white/10 dark:border-white/5 pointer-events-none z-30" />
 
 
       {/* Local noise texture overlay for high-fidelity glass */}
