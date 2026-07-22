@@ -158,8 +158,23 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
     }
   };
 
+  const [scrollState, setScrollState] = useState<'start' | 'middle' | 'end'>('start');
+
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    setIsScrolled(e.currentTarget.scrollLeft > 10);
+    const el = e.currentTarget;
+    const scrollLeft = el.scrollLeft;
+    const maxScroll = el.scrollWidth - el.clientWidth;
+    if (maxScroll <= 5) {
+      setScrollState('start');
+      return;
+    }
+    if (scrollLeft <= 5) {
+      setScrollState('start');
+    } else if (scrollLeft >= maxScroll - 5) {
+      setScrollState('end');
+    } else {
+      setScrollState('middle');
+    }
   };
 
   const [containerHeight, setContainerHeight] = useState<number | "auto">("auto");
@@ -250,7 +265,21 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
         onScroll={handleScroll}
         role="tablist"
         aria-label="Content filters"
-        className="flex flex-row items-center self-stretch overflow-x-auto lg:overflow-x-visible justify-start gap-4 pb-2 md:pb-0 scroll-fade-x scrollbar-hide [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-[var(--page-px)] px-[var(--page-px)] lg:scroll-fade-none lg:mx-0 lg:px-0"
+        style={{
+          maskImage:
+            scrollState === 'start'
+              ? 'linear-gradient(to right, black 0%, black calc(100% - 36px), transparent 100%)'
+              : scrollState === 'end'
+              ? 'linear-gradient(to right, transparent 0%, black 36px, black 100%)'
+              : 'linear-gradient(to right, transparent 0%, black 36px, black calc(100% - 36px), transparent 100%)',
+          WebkitMaskImage:
+            scrollState === 'start'
+              ? 'linear-gradient(to right, black 0%, black calc(100% - 36px), transparent 100%)'
+              : scrollState === 'end'
+              ? 'linear-gradient(to right, transparent 0%, black 36px, black 100%)'
+              : 'linear-gradient(to right, transparent 0%, black 36px, black calc(100% - 36px), transparent 100%)',
+        }}
+        className="flex flex-row items-center self-stretch overflow-x-auto lg:overflow-x-visible justify-start gap-4 pb-2 md:pb-0 scrollbar-hide [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden -mx-[var(--page-px)] px-[var(--page-px)] lg:!mask-none lg:mx-0 lg:px-0"
       >
         {tabsData.map((tab, i) => (
           <MaskReveal 
