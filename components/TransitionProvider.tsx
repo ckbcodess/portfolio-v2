@@ -244,23 +244,25 @@ export default function TransitionProvider({
             </Suspense>
             <PageCurtain ref={curtainRef} label={currentLabel} />
             
-            <SmoothScroll>
-                <div
-                    id="smooth-wrapper"
-                    ref={contentRef}
-                    className={`w-full relative z-10 transition-transform duration-[750ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${isMaskActive ? 'case-study-mask' : ''} ${isArchiveOpen ? 'md:-translate-x-[200px]' : ''} ${isInfoOpen ? '-translate-y-10' : ''}`}
-                    style={{ opacity: initialLoadDone ? 1 : 0, visibility: initialLoadDone ? 'visible' : 'hidden' }}
-                >
-                    <div id="smooth-content" className="w-full">
-                        {children}
-                    </div>
-                    {/* Dim overlay when info sheet is open */}
+            <div className="w-full min-h-screen bg-black overflow-hidden">
+                <SmoothScroll>
                     <div
-                        className={`pointer-events-none fixed inset-0 z-[5] bg-black/85 transition-opacity duration-500 ease-out ${isInfoOpen ? 'opacity-100' : 'opacity-0'}`}
-                        aria-hidden="true"
-                    />
-                </div>
-            </SmoothScroll>
+                        id="smooth-wrapper"
+                        ref={contentRef}
+                        className={`w-full relative z-10 transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] origin-top ${isMaskActive ? 'case-study-mask' : ''} ${isArchiveOpen ? 'md:-translate-x-[200px]' : ''} ${isInfoOpen ? 'scale-[0.93] sm:scale-[0.95] rounded-[20px] sm:rounded-[24px] overflow-hidden shadow-2xl brightness-[0.85]' : ''}`}
+                        style={{ opacity: initialLoadDone ? 1 : 0, visibility: initialLoadDone ? 'visible' : 'hidden' }}
+                    >
+                        <div id="smooth-content" className="w-full">
+                            {children}
+                        </div>
+                        {/* Dim overlay when info sheet is open */}
+                        <div
+                            className={`pointer-events-none fixed inset-0 z-[5] bg-black/60 transition-opacity duration-500 ease-out ${isInfoOpen ? 'opacity-100' : 'opacity-0'}`}
+                            aria-hidden="true"
+                        />
+                    </div>
+                </SmoothScroll>
+            </div>
 
             <LoadingScreen />
             <CustomCursor isTransitioning={isTransitioning} />
