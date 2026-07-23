@@ -8,7 +8,7 @@ import { motion, AnimatePresence, Variants } from "motion/react";
 import { useTransition } from "@/components/TransitionProvider";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { Lock } from "lucide-react";
-import type { CaseStudyCard } from "@/lib/types";
+import type { CaseStudyCard, TabItem } from "@/lib/types";
 import Lightbox from "@/components/Lightbox";
 import NumberTicker from "@/components/NumberTicker";
 import { MaskReveal } from "@/components/MaskReveal";
@@ -21,7 +21,13 @@ const Interactive3DBlob = dynamic(() => import("@/components/Interactive3DBlob")
   ssr: false,
 });
 
-export default function HomeClient({ caseStudies }: { caseStudies: CaseStudyCard[] }) {
+export default function HomeClient({
+  caseStudies,
+  tabs,
+}: {
+  caseStudies: CaseStudyCard[];
+  tabs?: TabItem[];
+}) {
   const pageRef = useRef<HTMLDivElement>(null);
   const [clickCount, setClickCount] = useState(0);
   const [isDisabled, setIsDisabled] = useState(false);
@@ -163,7 +169,7 @@ export default function HomeClient({ caseStudies }: { caseStudies: CaseStudyCard
             </MaskReveal>
 
             {/* Tabs & Bio Section */}
-            <TabsSection canAnimate={canAnimate} />
+            <TabsSection canAnimate={canAnimate} tabs={tabs} />
           </div>
 
           {/* Floating Polygons */}

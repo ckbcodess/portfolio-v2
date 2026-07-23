@@ -143,6 +143,37 @@ export default config({
         }),
       },
     }),
+    tabsSection: singleton({
+      label: "Tabs Section",
+      path: "content/tabs-section",
+      format: { data: "json" },
+      schema: {
+        tabs: fields.array(
+          fields.object({
+            name: fields.text({
+              label: "Tab Name",
+              description: "e.g. For all, Recruiters, Vibe Coders",
+              validation: { isRequired: true },
+            }),
+            text: fields.text({
+              label: "Tab Quote / Content",
+              description: "The statement shown when this tab is selected",
+              multiline: true,
+              validation: { isRequired: true },
+            }),
+            isScramble: fields.checkbox({
+              label: "Enable Scramble Effect",
+              description: "Applies a matrix-style text scramble animation when selected",
+              defaultValue: false,
+            }),
+          }),
+          {
+            label: "Tabs",
+            itemLabel: (props) => props.fields.name.value || "(empty)",
+          }
+        ),
+      },
+    }),
   },
   collections: {
     caseStudies: collection({

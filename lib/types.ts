@@ -45,6 +45,16 @@ export interface CaseStudyCard {
   color: string;
 }
 
+export interface TabItem {
+  name: string;
+  text: string;
+  isScramble?: boolean;
+}
+
+export interface TabsSectionContent {
+  tabs: TabItem[];
+}
+
 export interface InfoSheetContent {
   info: string[];
   lastUpdated?: string;

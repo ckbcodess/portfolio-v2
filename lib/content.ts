@@ -8,6 +8,7 @@ import type {
   CaseStudyContent,
   InfoSheetContent,
   ResumeContent,
+  TabItem,
 } from "@/lib/types";
 
 const reader = createReader(process.cwd(), keystaticConfig);
@@ -143,3 +144,48 @@ export const getArchiveRows = cache(async (): Promise<ArchiveRow[]> => {
 
   return [...caseStudyRows, ...supplementalRows];
 });
+
+export const DEFAULT_TABS: TabItem[] = [
+  {
+    name: "For all",
+    text: "I find the simple version that was hiding the whole time.",
+    isScramble: false,
+  },
+  {
+    name: "Recruiters",
+    text: "I've spent three years proving that you don't ever have to choose between speed and craft.",
+    isScramble: false,
+  },
+  {
+    name: "Product Designers",
+    text: "I know every rule in the system, and exactly when to break one.",
+    isScramble: false,
+  },
+  {
+    name: "Vibe Coders",
+    text: "I prompted a full portfolio in 48 hours... and I'll do it again :)",
+    isScramble: true,
+  },
+  {
+    name: "Artists",
+    text: "Eight years an artist before this. same craft, new problems.",
+    isScramble: false,
+  },
+];
+
+export const getTabsSection = cache(async (): Promise<TabItem[]> => {
+  try {
+    const entry = await reader.singletons.tabsSection.read();
+    if (!entry || !entry.tabs || entry.tabs.length === 0) {
+      return DEFAULT_TABS;
+    }
+    return entry.tabs.map((t) => ({
+      name: t.name,
+      text: t.text,
+      isScramble: Boolean(t.isScramble),
+    }));
+  } catch (e) {
+    return DEFAULT_TABS;
+  }
+});
+

@@ -1,11 +1,15 @@
 import HomeClient from "@/components/home/HomeClient";
-import { getCaseStudies } from "@/lib/content";
+import { getCaseStudies, getTabsSection } from "@/lib/content";
 
 export default async function Home() {
-  const caseStudies = await getCaseStudies();
+  const [caseStudies, tabs] = await Promise.all([
+    getCaseStudies(),
+    getTabsSection(),
+  ]);
 
   return (
     <HomeClient
+      tabs={tabs}
       caseStudies={caseStudies.map((study) => ({
         slug: study.slug,
         title: study.title,

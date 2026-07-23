@@ -5,31 +5,43 @@ import { motion, AnimatePresence } from "motion/react";
 import { animate, createTimer } from 'animejs';
 import { scrambleText } from 'animejs/text';
 import { MaskReveal } from "@/components/MaskReveal";
+import type { TabItem } from "@/lib/types";
 
-const tabsData = [
+const DEFAULT_TABS_DATA: TabItem[] = [
   {
     name: "For all",
     text: "I find the simple version that was hiding the whole time.",
+    isScramble: false,
   },
   {
     name: "Recruiters",
     text: "I've spent three years proving that you don't ever have to choose between speed and craft.",
+    isScramble: false,
   },
   {
     name: "Product Designers",
     text: "I know every rule in the system, and exactly when to break one.",
+    isScramble: false,
   },
   {
     name: "Vibe Coders",
     text: "I prompted a full portfolio in 48 hours... and I'll do it again :)",
+    isScramble: true,
   },
   {
     name: "Artists",
     text: "Eight years an artist before this. same craft, new problems.",
+    isScramble: false,
   },
 ];
 
-export default function TabsSection({ canAnimate = true }: { canAnimate?: boolean }) {
+interface TabsSectionProps {
+  canAnimate?: boolean;
+  tabs?: TabItem[];
+}
+
+export default function TabsSection({ canAnimate = true, tabs }: TabsSectionProps) {
+  const tabsData = tabs && tabs.length > 0 ? tabs : DEFAULT_TABS_DATA;
   const [active, setActive] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isScrambling, setIsScrambling] = useState(false);
@@ -39,6 +51,9 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
   const audioCtxRef = useRef<AudioContext | null>(null);
   const allowSoundRef = useRef(false);
   const soundTimerRef = useRef<any>(null);
+
+  const currentTab = tabsData[active] || tabsData[0];
+  const isCurrentTabScramble = Boolean(currentTab?.isScramble);
 
   useEffect(() => {
     if (typeof window !== "undefined" && !audioCtxRef.current) {
@@ -83,7 +98,7 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
   const animeInstanceRef = useRef<any>(null);
 
   const runScramble = (force = false) => {
-    if (!textRef.current || (isAnimatingRef.current && !force)) return;
+    if (!textRef.current || (isAnimatingRef.current && !force) || !currentTab) return;
 
     if (animeInstanceRef.current) {
       animeInstanceRef.current.pause();
@@ -93,7 +108,7 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
     isAnimatingRef.current = true;
     animeInstanceRef.current = animate(textRef.current, {
       innerHTML: scrambleText({
-        text: tabsData[3].text,
+        text: currentTab.text,
         chars: '01<>[]{}_—=+*^?#&$!/\\|;:',
         from: 'left',
         duration: 400,
@@ -117,7 +132,7 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
   }, []);
 
   useEffect(() => {
-    if (active === 3) {
+    if (isCurrentTabScramble) {
       // Wait for ref to be available (especially important with AnimatePresence mode="wait")
       let rafId: number;
       const checkAndRun = () => {
@@ -143,7 +158,7 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
       setIsScrambling(false);
       isAnimatingRef.current = false;
     }
-  }, [active]);
+  }, [active, isCurrentTabScramble]);
   useEffect(() => {
     if (canAnimate) {
       const timer = setTimeout(() => setIsInitialLoad(false), 0);
@@ -214,11 +229,11 @@ export default function TabsSection({ canAnimate = true }: { canAnimate?: boolea
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
             className="[grid-area:stack] text-xl sm:text-2xl text-foreground font-normal font-heading leading-[1.4] tracking-tight text-left w-full m-0 relative tabular-nums h-fit"
           >
-            {active === 3 ? (
+            {isCurrentTabScramble ? (
               <>
                 {/* Ghost text to hold the layout volume */}
                 <span className="invisible select-none pointer-events-none block" aria-hidden="true">
-                  {tabsData[active].text}
+                  {tabsData[active]?.text ?? ""}
                 </span>
                 {/* Scramble reveal layer */}
                 <span
