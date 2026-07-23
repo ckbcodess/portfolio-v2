@@ -23,6 +23,15 @@ const panelVariants = {
   },
 };
 
+const RECENTLY_LISTENED_VARIANTS = [
+  "Recently listened to:",
+  "What I've been bumping:",
+  "Lately on loop:",
+  "Recent rotation:",
+  "Fresh out the speakers:",
+  "On repeat lately:",
+];
+
 export default function InfoSheet({ content, isOpen, onClose }: InfoSheetProps) {
   // Lock scroll while open
   useEffect(() => {
@@ -46,16 +55,7 @@ export default function InfoSheet({ content, isOpen, onClose }: InfoSheetProps) 
     nowPlaying: boolean;
   }
 
-  const RECENTLY_LISTENED_VARIANTS = [
-    "Recently listened to:",
-    "What I've been bumping:",
-    "Lately on loop:",
-    "Recent rotation:",
-    "Fresh out the speakers:",
-    "On repeat lately:",
-  ];
-
-  const [headerIndex, setHeaderIndex] = useState(0);
+  const [headerIndex, setHeaderIndex] = useState(-1);
   const [track, setTrack] = useState<TrackInfo | null>(null);
   const [trackLoading, setTrackLoading] = useState(true);
 
@@ -279,7 +279,7 @@ export default function InfoSheet({ content, isOpen, onClose }: InfoSheetProps) 
               <div className="flex justify-start md:justify-end w-full mt-auto pt-2">
                 <div className="flex flex-col items-start md:items-end gap-1.5 text-left md:text-right">
                   <p className="text-foreground/40 text-xs select-none text-left md:text-right">
-                    {trackLoading ? "\u00a0" : track?.nowPlaying ? "Blasting my ears with:" : RECENTLY_LISTENED_VARIANTS[headerIndex]}
+                    {trackLoading ? "\u00a0" : track?.nowPlaying ? "Blasting my ears with:" : RECENTLY_LISTENED_VARIANTS[Math.max(0, headerIndex) % RECENTLY_LISTENED_VARIANTS.length]}
                   </p>
                   {/* Album art */}
                   {trackLoading ? (
