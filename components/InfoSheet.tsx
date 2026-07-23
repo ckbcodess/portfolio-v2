@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { X, Play } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import Image from "next/image";
+import { useLenis } from "lenis/react";
 import type { InfoSheetContent } from "@/lib/types";
 
 interface InfoSheetProps {
@@ -33,11 +34,44 @@ const RECENTLY_LISTENED_VARIANTS = [
 ];
 
 export default function InfoSheet({ content, isOpen, onClose }: InfoSheetProps) {
-  // Lock scroll while open
+  const lenis = useLenis();
+  const [isScrolling, setIsScrolling] = useState(false);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Lock main page scroll (body, html, & Lenis) while open
   useEffect(() => {
-    document.body.style.overflow = isOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
-  }, [isOpen]);
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
+      lenis?.stop();
+    } else {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+      lenis?.start();
+    }
+    return () => {
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+      lenis?.start();
+    };
+  }, [isOpen, lenis]);
+
+  // Clean up scroll timeout
+  useEffect(() => {
+    return () => {
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+    };
+  }, []);
+
+  const handleScroll = () => {
+    setIsScrolling(true);
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+    scrollTimeoutRef.current = setTimeout(() => {
+      setIsScrolling(false);
+    }, 800);
+  };
 
   // Close on Escape
   useEffect(() => {
@@ -162,6 +196,8 @@ export default function InfoSheet({ content, isOpen, onClose }: InfoSheetProps) 
             transition={{ duration: 0.3, ease: "easeOut" }}
             onClick={onClose}
             onPointerDown={onClose}
+            onWheel={(e) => e.stopPropagation()}
+            onTouchMove={(e) => e.stopPropagation()}
             onTouchStart={(e) => {
               e.preventDefault();
               onClose();
@@ -215,7 +251,11 @@ export default function InfoSheet({ content, isOpen, onClose }: InfoSheetProps) 
 
         {/* Single scroll area for all content with fade-out edges */}
         <div 
-          className="h-full overflow-y-auto scroll-fade-y px-5 sm:px-8 md:px-12 py-5 sm:py-6 md:py-8 flex flex-col justify-between"
+          data-lenis-prevent
+          onScroll={handleScroll}
+          className={`h-full overflow-y-auto overscroll-y-contain scroll-fade-y px-5 sm:px-8 md:px-12 py-5 sm:py-6 md:py-8 flex flex-col justify-between scrollbar-auto-hide ${
+            isScrolling ? "is-scrolling" : ""
+          }`}
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 lg:gap-14 items-start max-w-[1200px] w-full mx-auto flex-1">
 
