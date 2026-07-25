@@ -121,7 +121,7 @@ export default function InteractiveSectionBadge({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       data-cursor="pointer"
-      className={`relative inline-flex items-center justify-center cursor-pointer select-none overflow-visible outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-full w-7 h-7 aspect-square shrink-0 transition-all duration-300 font-sans text-xs font-medium leading-none ${className}`}
+      className={`relative inline-flex items-center justify-center cursor-pointer select-none overflow-visible outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-full w-7 h-7 aspect-square shrink-0 transition-transform duration-200 font-sans text-xs font-medium leading-none ${className}`}
       style={{
         background: isHovered && currentPreset ? currentPreset.bg : defaultBg,
         color: isHovered && currentPreset ? currentPreset.text : defaultText,

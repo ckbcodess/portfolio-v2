@@ -31,17 +31,23 @@ const RefractiveNav = forwardRef<HTMLElement, {
 }, ref) => {
   const { resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const progressRef = React.useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
 
+    let ticking = false;
     const handleScroll = () => {
-      const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
-      if (totalScroll > 0) {
-        setScrollProgress(window.scrollY / totalScroll);
-      } else {
-        setScrollProgress(0);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
+          const ratio = totalScroll > 0 ? Math.min(Math.max(window.scrollY / totalScroll, 0), 1) : 0;
+          if (progressRef.current) {
+            progressRef.current.style.transform = `scaleX(${ratio})`;
+          }
+          ticking = false;
+        });
+        ticking = true;
       }
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -64,11 +70,17 @@ const RefractiveNav = forwardRef<HTMLElement, {
       role="navigation"
       aria-label="Main Floating Navigation"
     >
-      {/* Dynamic Scroll Progress Background Indicator Fill - Reduced opacity to 8% for subtle visibility */}
+      {/* Dynamic Scroll Progress Background Indicator Fill */}
       <div
-        className="absolute inset-0 origin-left pointer-events-none transition-transform duration-100 ease-out bg-white/[0.08] rounded-[14px] z-10"
-        style={{ transform: `scaleX(${scrollProgress})` }}
-      />
+        className="absolute inset-0 rounded-[inherit] overflow-hidden pointer-events-none z-10"
+        style={{ WebkitMaskImage: "-webkit-radial-gradient(white, black)" }}
+      >
+        <div
+          ref={progressRef}
+          className="w-full h-full origin-left bg-white/[0.08] dark:bg-white/[0.06] transition-transform duration-75 ease-out transform-gpu will-change-transform"
+          style={{ transform: "scaleX(0)" }}
+        />
+      </div>
 
 
       {/* Local noise texture overlay for high-fidelity glass */}

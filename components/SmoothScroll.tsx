@@ -26,23 +26,17 @@ export default function SmoothScroll({ children }: SmoothScrollProps) {
     }
   }, [pathname, lenis]);
 
-  // Connect Lenis to GSAP scroll updates
+  // Connect Lenis to GSAP scroll updates safely
   useEffect(() => {
     if (!lenis) return;
     
-    // Connect ScrollTrigger to Lenis scroll updates
-    lenis.on("scroll", ScrollTrigger.update);
-    
-    // Use GSAP's ticker to drive Lenis RAF
-    const tick = (time: number) => {
-      lenis.raf(time * 1000);
+    const handleScroll = () => {
+      ScrollTrigger.update();
     };
-    
-    gsap.ticker.add(tick);
-    gsap.ticker.lagSmoothing(0);
-    
+
+    lenis.on("scroll", handleScroll);
     return () => {
-      gsap.ticker.remove(tick);
+      lenis.off("scroll", handleScroll);
     };
   }, [lenis]);
 

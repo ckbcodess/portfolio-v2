@@ -408,12 +408,12 @@ export default function Interactive3DBlob() {
       lightColor2: "#d0d8e1",
       lightRimColor: "#FFFFFF",
       lightGlowColor: "#FFFFFF",
-      darkColor: "#0f4966",
-      darkColor2: "#474176",
-      darkRimColor: "#4e6179",
+      darkColor: "#007ab8",
+      darkColor2: "#110c3b",
+      darkRimColor: "#00bfff",
       darkGlowColor: "#333333",
-      rimStrength: 0.53,
-      rimPower: 1.56,
+      rimStrength: 0.77,
+      rimPower: 3.72,
       followPointer: true,
       pointerTilt: 1.00,
       pointerFollow: 5.00,
@@ -429,8 +429,8 @@ export default function Interactive3DBlob() {
       pressScale: 1.20,
       pressNoiseMultiplier: 2.50,
       pressDuration: 2.00,
-      moltenColor: "#2b65ee",
-      moltenCoreColor: "#38f2ff"
+      moltenColor: "#ff1744",
+      moltenCoreColor: "#ff6d00"
     },
     Aurora: {
       name: "Aurora",
@@ -709,8 +709,8 @@ export default function Interactive3DBlob() {
   const [pressScale, setPressScale] = useState(presets.Soft.pressScale ?? 1.20);
   const [pressNoiseMultiplier, setPressNoiseMultiplier] = useState(presets.Soft.pressNoiseMultiplier ?? 2.50);
   const [pressDuration, setPressDuration] = useState(presets.Soft.pressDuration ?? 2.00);
-  const [moltenColor, setMoltenColor] = useState(presets.Soft.moltenColor ?? "#2b65ee");
-  const [moltenCoreColor, setMoltenCoreColor] = useState(presets.Soft.moltenCoreColor ?? "#38f2ff");
+  const [moltenColor, setMoltenColor] = useState(presets.Soft.moltenColor ?? "#ff1744");
+  const [moltenCoreColor, setMoltenCoreColor] = useState(presets.Soft.moltenCoreColor ?? "#ff6d00");
 
   // Animation & 3D Globe Drag Rotation Refs
   const isPressedRef = useRef(false);

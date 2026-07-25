@@ -16,7 +16,7 @@ export function AnimatedDivider({
   delay = 0.2,
   duration = 0.75,
   origin = "left",
-  color = "bg-foreground/10",
+  color = "bg-foreground/[0.06]",
 }: AnimatedDividerProps) {
   const { canAnimate } = useTransition();
 

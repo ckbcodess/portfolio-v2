@@ -12,7 +12,7 @@ import PageCurtain from "@/components/PageCurtain";
 const SmoothScroll = dynamic(() => import("./SmoothScroll"), { ssr: false });
 const CustomCursor = dynamic(() => import("./CustomCursor"), { ssr: false });
 import LoadingScreen from "./LoadingScreen";
-import ArchiveDrawer from "@/components/ArchiveDrawer";
+import ArchiveSheet from "@/components/ArchiveSheet";
 import InfoSheet from "@/components/InfoSheet";
 import type { ArchiveRow, InfoSheetContent } from "@/lib/types";
 
@@ -25,7 +25,13 @@ interface HeaderProps {
     hidden?: boolean;
 }
 
-function SearchParamsTracker({ setInfoOpen }: { setInfoOpen: (open: boolean) => void }) {
+function SearchParamsTracker({
+    setInfoOpen,
+    setArchiveOpen
+}: {
+    setInfoOpen: (open: boolean) => void;
+    setArchiveOpen: (open: boolean) => void;
+}) {
     const searchParams = useSearchParams();
     useEffect(() => {
         if (searchParams?.get("info") === "true") {
@@ -34,7 +40,13 @@ function SearchParamsTracker({ setInfoOpen }: { setInfoOpen: (open: boolean) => 
             url.searchParams.delete("info");
             window.history.replaceState(null, "", url.pathname + url.search);
         }
-    }, [searchParams, setInfoOpen]);
+        if (searchParams?.get("archive") === "true") {
+            setArchiveOpen(true);
+            const url = new URL(window.location.href);
+            url.searchParams.delete("archive");
+            window.history.replaceState(null, "", url.pathname + url.search);
+        }
+    }, [searchParams, setInfoOpen, setArchiveOpen]);
     return null;
 }
 
@@ -110,9 +122,14 @@ export default function TransitionProvider({
         return () => window.removeEventListener("apps-loaded", handler);
     }, []);
 
+    const maskActiveRef = useRef(false);
     useEffect(() => {
         const handleScroll = () => {
-            setMaskActive(window.scrollY > 50);
+            const isScrolled = window.scrollY > 50;
+            if (isScrolled !== maskActiveRef.current) {
+                maskActiveRef.current = isScrolled;
+                setMaskActive(isScrolled);
+            }
         };
         window.addEventListener("scroll", handleScroll, { passive: true });
         handleScroll(); // Check initial scroll
@@ -148,6 +165,7 @@ export default function TransitionProvider({
     // Helper to get a label from the pathname for browser navigation
     const getLabelFromPath = (path: string) => {
         if (path === "/") return "Home";
+        if (path === "/archive") return "Archive";
         if (path === "/about") return "Bio";
         if (path === "/resume") return "Resume";
         if (path === "/playground") return "Playground";
@@ -240,24 +258,24 @@ export default function TransitionProvider({
     return (
         <TransitionContext.Provider value={contextValue}>
             <Suspense fallback={null}>
-                <SearchParamsTracker setInfoOpen={setIsInfoOpen} />
+                <SearchParamsTracker setInfoOpen={setIsInfoOpen} setArchiveOpen={setIsArchiveOpen} />
             </Suspense>
             <PageCurtain ref={curtainRef} label={currentLabel} />
             
-            <div className="w-full min-h-screen bg-black overflow-hidden">
+            <div className="w-full min-h-screen bg-background overflow-hidden">
                 <SmoothScroll>
                     <div
                         id="smooth-wrapper"
                         ref={contentRef}
-                        className={`w-full relative z-10 transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] origin-top ${isMaskActive ? 'case-study-mask' : ''} ${isArchiveOpen ? 'md:-translate-x-[200px]' : ''} ${isInfoOpen ? 'scale-[0.93] sm:scale-[0.95] rounded-[20px] sm:rounded-[24px] overflow-hidden shadow-2xl brightness-[0.85]' : ''}`}
+                        className={`w-full relative z-10 transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] origin-top ${isMaskActive ? 'case-study-mask' : ''} ${(isInfoOpen || isArchiveOpen) ? 'scale-[0.93] sm:scale-[0.95] rounded-[20px] sm:rounded-[24px] overflow-hidden shadow-2xl brightness-[0.85]' : ''}`}
                         style={{ opacity: initialLoadDone ? 1 : 0, visibility: initialLoadDone ? 'visible' : 'hidden' }}
                     >
                         <div id="smooth-content" className="w-full">
                             {children}
                         </div>
-                        {/* Dim overlay when info sheet is open */}
+                        {/* Dim overlay when info or archive sheet is open */}
                         <div
-                            className={`pointer-events-none fixed inset-0 z-[5] bg-black/60 transition-opacity duration-500 ease-out ${isInfoOpen ? 'opacity-100' : 'opacity-0'}`}
+                            className={`pointer-events-none fixed inset-0 z-[5] bg-black/60 transition-opacity duration-500 ease-out ${(isInfoOpen || isArchiveOpen) ? 'opacity-100' : 'opacity-0'}`}
                             aria-hidden="true"
                         />
                     </div>
@@ -266,10 +284,8 @@ export default function TransitionProvider({
 
             <LoadingScreen />
             <CustomCursor isTransitioning={isTransitioning} />
-            <div className={`transition-all duration-500 ease-in-out ${(!initialLoadDone || headerProps.hidden) ? 'opacity-0 invisible pointer-events-none' : 'opacity-100 visible'}`}>
-                <Header {...headerProps} />
-            </div>
-            <ArchiveDrawer rows={archiveRows} isOpen={isArchiveOpen} onClose={() => setIsArchiveOpen(false)} />
+            <Header {...headerProps} />
+            <ArchiveSheet rows={archiveRows} isOpen={isArchiveOpen} onClose={() => setIsArchiveOpen(false)} />
             <InfoSheet content={infoSheet} isOpen={isInfoOpen} onClose={() => setIsInfoOpen(false)} />
         </TransitionContext.Provider>
     );

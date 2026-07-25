@@ -85,7 +85,7 @@ export interface ResumeContent {
   pdf?: string;
 }
 
-/** A single row in the Archive drawer (case studies + supplemental entries). */
+/** A single row/card in the Archive sheet (case studies + supplemental entries). */
 export interface ArchiveRow {
   title: string;
   role: string;
@@ -99,4 +99,11 @@ export interface ArchiveRow {
   externalLink?: string;
   /** Optional thumbnail image. */
   image?: string;
+  /** Whether this item is categorized as Art / Exploration. */
+  isArt?: boolean;
+  /** Accent gradient or background color for visual card rendering. */
+  gradient?: string;
+  /** Preferred aspect ratio for visual card grid layout. */
+  aspectRatio?: "square" | "portrait" | "landscape" | "featured";
 }
+

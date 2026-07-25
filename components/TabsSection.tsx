@@ -238,7 +238,7 @@ export default function TabsSection({ canAnimate = true, tabs }: TabsSectionProp
                 {/* Scramble reveal layer */}
                 <span
                   ref={textRef}
-                  className={`absolute inset-0 w-full h-full transition-all duration-700 ${
+                  className={`absolute inset-0 w-full h-full ${
                     isScrambling 
                       ? "text-[#00FF41] drop-shadow-[0_0_8px_rgba(0,255,65,0.4)]" 
                       : "text-foreground"
@@ -310,7 +310,7 @@ export default function TabsSection({ canAnimate = true, tabs }: TabsSectionProp
               aria-controls="tabs-content"
               onClick={() => handleTabClick(i)}
               data-cursor="pointer"
-              className={`text-center shrink-0 whitespace-nowrap justify-start text-sm sm:text-base font-normal font-sans leading-5 transition-all duration-300 outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-sm ${active === i
+              className={`text-center shrink-0 whitespace-nowrap justify-start text-sm sm:text-base font-normal font-sans leading-5 transition-opacity duration-150 outline-none focus-visible:ring-1 focus-visible:ring-foreground/20 rounded-sm ${active === i
                 ? "text-foreground opacity-100"
                 : "text-foreground opacity-35 hover:opacity-60"
                 }`}

@@ -25,7 +25,7 @@ interface HeaderProps {
 
 const NAV_ITEMS = [
   { href: "/", label: "Home" },
-  { href: "/#case-studies", label: "Archive" },
+  { href: "/archive", label: "Archive" },
   { href: "/resume", label: "Resume" },
   { href: "/about", label: "Info" },
 ];
@@ -35,7 +35,7 @@ const NAV_ITEMS = [
 export default function Header({ backLink = "/", scrolled: scrolledProp }: HeaderProps) {
   const pathname = usePathname();
   const { isSoundEnabled, toggleSound } = useSound();
-  const { pendingHref, isTransitioning, setArchiveOpen, setInfoOpen, isInfoOpen } = useTransition();
+  const { pendingHref, isTransitioning, isArchiveOpen, setArchiveOpen, setInfoOpen, isInfoOpen, canAnimate } = useTransition();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [internalScrolled, setInternalScrolled] = useState(false);
   const [isPastHero, setIsPastHero] = useState(false);
@@ -78,14 +78,39 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
 
 
 
+  const topBlurRef = useRef<HTMLDivElement>(null);
+  const scrolledRef = useRef(false);
+  const pastHeroRef = useRef(false);
+
   useEffect(() => {
     let ticking = false;
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
           if (!isTransitioning) {
-            setInternalScrolled(window.scrollY > 50);
-            setIsPastHero(window.scrollY > 480);
+            const scrollY = window.scrollY;
+            const progress = Math.min(1, Math.max(0, scrollY / 140));
+
+            // Directly update top blur overlay DOM opacity for zero React re-render overhead
+            if (topBlurRef.current) {
+              topBlurRef.current.style.opacity = isCaseStudy
+                ? pastHeroRef.current
+                  ? "1"
+                  : "0"
+                : String(progress);
+            }
+
+            const newScrolled = scrollY > 50;
+            if (newScrolled !== scrolledRef.current) {
+              scrolledRef.current = newScrolled;
+              setInternalScrolled(newScrolled);
+            }
+
+            const newPastHero = scrollY > 480;
+            if (newPastHero !== pastHeroRef.current) {
+              pastHeroRef.current = newPastHero;
+              setIsPastHero(newPastHero);
+            }
           }
           ticking = false;
         });
@@ -95,7 +120,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [isTransitioning]);
+  }, [isTransitioning, isCaseStudy]);
 
   const activeHref = pendingHref || pathname;
   const logoRef = useRef<HTMLSpanElement>(null);
@@ -129,19 +154,40 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
   const navHideStyle = { duration: 0 };
 
   // Whether each nav should be visible right now
-  const showDefaultNav = !showBack && !isInfoOpen;
-  const showBackNav = showBack && !isInfoOpen;
+  const showDefaultNav = !showBack && !isInfoOpen && !isArchiveOpen;
+  const showBackNav = showBack && !isInfoOpen && !isArchiveOpen;
+
+  const [hasInitialLoaded, setHasInitialLoaded] = useState(false);
+
+  useEffect(() => {
+    if (canAnimate && !hasInitialLoaded) {
+      setHasInitialLoaded(true);
+    }
+  }, [canAnimate, hasInitialLoaded]);
+
+  // Header spring entrance configuration (initial load only)
+  const headerSpring = { type: "spring" as const, stiffness: 260, damping: 22, mass: 0.8 };
 
   return (
     <>
-      {/* Top Scroll Fade Mask: Active on scroll for regular pages, or once hero gradient disappears (scrollY > 480) on case studies */}
+      {/* Top Scroll Fade Mask: Eases in smoothly on scroll with zero React re-render overhead */}
       <div
-        className={`fixed top-0 inset-x-0 h-28 sm:h-36 z-[999] pointer-events-none transition-opacity duration-500 ease-out backdrop-blur-md bg-gradient-to-b from-[var(--background)]/80 via-[var(--background)]/40 to-transparent [mask-image:linear-gradient(to_bottom,black_0%,rgba(0,0,0,0.987)_8.1%,rgba(0,0,0,0.951)_15.5%,rgba(0,0,0,0.896)_22.5%,rgba(0,0,0,0.825)_29%,rgba(0,0,0,0.741)_35.3%,rgba(0,0,0,0.648)_41.4%,rgba(0,0,0,0.55)_47.5%,rgba(0,0,0,0.45)_53.7%,rgba(0,0,0,0.352)_60%,rgba(0,0,0,0.259)_66.5%,rgba(0,0,0,0.175)_73.3%,rgba(0,0,0,0.104)_80.4%,rgba(0,0,0,0.049)_87.9%,rgba(0,0,0,0.013)_95.8%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_0%,rgba(0,0,0,0.987)_8.1%,rgba(0,0,0,0.951)_15.5%,rgba(0,0,0,0.896)_22.5%,rgba(0,0,0,0.825)_29%,rgba(0,0,0,0.741)_35.3%,rgba(0,0,0,0.648)_41.4%,rgba(0,0,0,0.55)_47.5%,rgba(0,0,0,0.45)_53.7%,rgba(0,0,0,0.352)_60%,rgba(0,0,0,0.259)_66.5%,rgba(0,0,0,0.175)_73.3%,rgba(0,0,0,0.104)_80.4%,rgba(0,0,0,0.049)_87.9%,rgba(0,0,0,0.013)_95.8%,transparent_100%)] ${
-          isCaseStudy ? (isPastHero ? "opacity-100" : "opacity-0") : (scrolled ? "opacity-100" : "opacity-0")
-        }`}
+        ref={topBlurRef}
+        className="fixed top-0 inset-x-0 h-28 sm:h-36 z-[999] pointer-events-none transition-opacity duration-200 ease-out backdrop-blur-md bg-gradient-to-b from-[var(--background)]/80 via-[var(--background)]/40 to-transparent [mask-image:linear-gradient(to_bottom,black_0%,rgba(0,0,0,0.987)_8.1%,rgba(0,0,0,0.951)_15.5%,rgba(0,0,0,0.896)_22.5%,rgba(0,0,0,0.825)_29%,rgba(0,0,0,0.741)_35.3%,rgba(0,0,0,0.648)_41.4%,rgba(0,0,0,0.55)_47.5%,rgba(0,0,0,0.45)_53.7%,rgba(0,0,0,0.352)_60%,rgba(0,0,0,0.259)_66.5%,rgba(0,0,0,0.175)_73.3%,rgba(0,0,0,0.104)_80.4%,rgba(0,0,0,0.049)_87.9%,rgba(0,0,0,0.013)_95.8%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_0%,rgba(0,0,0,0.987)_8.1%,rgba(0,0,0,0.951)_15.5%,rgba(0,0,0,0.896)_22.5%,rgba(0,0,0,0.825)_29%,rgba(0,0,0,0.741)_35.3%,rgba(0,0,0,0.648)_41.4%,rgba(0,0,0,0.55)_47.5%,rgba(0,0,0,0.45)_53.7%,rgba(0,0,0,0.352)_60%,rgba(0,0,0,0.259)_66.5%,rgba(0,0,0,0.175)_73.3%,rgba(0,0,0,0.104)_80.4%,rgba(0,0,0,0.049)_87.9%,rgba(0,0,0,0.013)_95.8%,transparent_100%)] transform-gpu will-change-transform"
       />
 
-      <header className={`fixed top-4 sm:top-6 inset-x-0 z-[1000] pointer-events-none flex justify-center px-[var(--page-px)] transition-opacity duration-300 ${isInfoOpen ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
+      <motion.header
+        initial={hasInitialLoaded ? false : { opacity: 0, scale: 0.92, y: 0 }}
+        animate={
+          isInfoOpen || isArchiveOpen
+            ? { opacity: 0, scale: 0.96, y: 0 }
+            : !canAnimate && !hasInitialLoaded
+            ? { opacity: 0, scale: 0.92, y: 0 }
+            : { opacity: 1, scale: 1, y: 0 }
+        }
+        transition={hasInitialLoaded ? { duration: 0.2, ease: "easeOut" } : headerSpring}
+        className="fixed top-4 sm:top-6 inset-x-0 z-[1000] pointer-events-none flex justify-center px-[var(--page-px)]"
+      >
       <div className="w-full flex items-center justify-center relative max-w-[1400px] mx-auto">
         {/* ─── Navigation: Centered single pill ─── */}
         <div className={`flex items-center justify-center relative max-w-[620px] mx-auto w-full ${isInfoOpen ? "pointer-events-none hidden" : "pointer-events-auto"}`}>
@@ -168,7 +214,6 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
                 <div className="flex items-center gap-2 sm:gap-3.5 md:gap-5">
                   {NAV_ITEMS.map((item) => {
                     const isActive = activeHref === item.href || (item.href === "/" && activeHref === "/");
-                    const isArchive = item.label === "Archive";
                     const isInfo = item.label === "Info";
                     return (
                       <TransitionLink
@@ -177,10 +222,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
                         label={item.label}
                         data-cursor="pointer"
                         onClick={(e) => {
-                          if (isArchive) {
-                            e.preventDefault();
-                            setArchiveOpen(true);
-                          } else if (isInfo) {
+                          if (isInfo) {
                             e.preventDefault();
                             setInfoOpen(true);
                           }
@@ -252,7 +294,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
           </motion.div>
         </div>
       </div>
-    </header>
+    </motion.header>
     </>
   );
 }

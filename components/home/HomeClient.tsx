@@ -182,16 +182,15 @@ export default function HomeClient({
         </section>
 
         {/* Case Studies Section */}
-        <section id="case-studies" className="flex flex-col gap-8 items-start w-full pt-12 sm:pt-16 relative">
-          <AnimatedDivider delay={0.25} />
+        <section id="case-studies" className="flex flex-col gap-6 sm:gap-8 items-start w-full pt-8 sm:pt-12 relative">
           <div className="flex items-center gap-3 overflow-visible">
-            <MaskReveal delay={0.35}>
+            <MaskReveal delay={0.25}>
               <h2 className="text-foreground text-base font-medium tracking-tight">Case studies</h2>
             </MaskReveal>
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={canAnimate ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
-              transition={{ duration: 0.5, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.5, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
               className="overflow-visible"
             >
               <InteractiveSectionBadge>
@@ -199,8 +198,9 @@ export default function HomeClient({
               </InteractiveSectionBadge>
             </motion.div>
           </div>
+          <AnimatedDivider delay={0.38} />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 w-full">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 w-full pt-2">
             {caseStudies.map((study, idx) => (
               <MaskReveal key={study.slug} delay={0.4 + idx * 0.05} className="h-full">
                 <ProjectItem
@@ -221,11 +221,11 @@ export default function HomeClient({
         </section>
 
         {/* Connect Section */}
-        <section id="connect" className="flex flex-col gap-8 items-start w-full pt-12 sm:pt-16 relative">
-          <AnimatedDivider delay={0.55} />
-          <MaskReveal delay={0.65}>
+        <section id="connect" className="flex flex-col gap-6 sm:gap-8 items-start w-full pt-8 sm:pt-12 relative">
+          <MaskReveal delay={0.55}>
             <h2 className="text-foreground text-base font-medium tracking-tight">Connect</h2>
           </MaskReveal>
+          <AnimatedDivider delay={0.62} />
 
           <div className="flex flex-row justify-between w-full relative min-h-[240px] items-start pb-8" data-node-id="2820:12786">
             {/* Links Column */}
