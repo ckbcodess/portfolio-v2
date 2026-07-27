@@ -35,7 +35,7 @@ const NAV_ITEMS = [
 export default function Header({ backLink = "/", scrolled: scrolledProp }: HeaderProps) {
   const pathname = usePathname();
   const { isSoundEnabled, toggleSound } = useSound();
-  const { pendingHref, isTransitioning, isArchiveOpen, setArchiveOpen, setInfoOpen, isInfoOpen, canAnimate } = useTransition();
+  const { pendingHref, isTransitioning, isArchiveOpen, setArchiveOpen, setInfoOpen, isInfoOpen, isLightboxOpen, canAnimate, isControlsHidden } = useTransition();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [internalScrolled, setInternalScrolled] = useState(false);
   const [isPastHero, setIsPastHero] = useState(false);
@@ -179,8 +179,8 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
       <motion.header
         initial={hasInitialLoaded ? false : { opacity: 0, scale: 0.92, y: 0 }}
         animate={
-          isInfoOpen || isArchiveOpen
-            ? { opacity: 0, scale: 0.96, y: 0 }
+          isInfoOpen || isArchiveOpen || isLightboxOpen || isControlsHidden
+            ? { opacity: 0, scale: 0.96, y: 0, pointerEvents: "none" }
             : !canAnimate && !hasInitialLoaded
             ? { opacity: 0, scale: 0.92, y: 0 }
             : { opacity: 1, scale: 1, y: 0 }

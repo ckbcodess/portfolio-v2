@@ -329,17 +329,18 @@ const glowFragmentShader = `
 `;
 
 // Curated palette of vibrant molten color pairs — cycled randomly on every hold release
+// Curated palette of sophisticated molten color pairs — cycled randomly on every hold release
 const MOLTEN_PALETTES: Array<[string, string]> = [
-  ["#2b65ee", "#38f2ff"], // Electric blue / cyan  (default)
-  ["#ff3a00", "#ffd23a"], // Lava orange / gold
-  ["#9b00ff", "#ff2af0"], // Deep violet / magenta
-  ["#00e676", "#b9ff6e"], // Neon green / lime
-  ["#ff006e", "#ff8c00"], // Hot pink / amber
-  ["#00cfff", "#ffffff"], // Ice blue / white
-  ["#ff1744", "#ff6d00"], // Scarlet / tangerine
-  ["#aa00ff", "#00e5ff"], // Purple / aqua
-  ["#ffd600", "#ff6d00"], // Yellow gold / deep orange
-  ["#1de9b6", "#00b0ff"], // Teal / sky blue
+  ["#3b82f6", "#60a5fa"], // Soft electric blue / cyan (default)
+  ["#ea580c", "#fbbf24"], // Soft lava amber / gold
+  ["#8b5cf6", "#e879f9"], // Muted violet / orchid
+  ["#07a637", "#00ffb3"], // Green / emerald mint (#07a637 / #00ffb3)
+  ["#f43f5e", "#fb923c"], // Warm rose / coral
+  ["#38bdf8", "#f1f5f9"], // Ice blue / soft slate
+  ["#e11d48", "#f97316"], // Crimson / warm orange
+  ["#9333ea", "#38bdf8"], // Deep purple / aqua
+  ["#d97706", "#f97316"], // Warm gold / terracotta
+  ["#0d9488", "#38bdf8"], // Muted teal / sky blue
 ];
 
 // Statements for normal interactions
@@ -438,16 +439,16 @@ export default function Interactive3DBlob() {
       noiseScale: 0.70,
       noiseStrength: 0.10,
       speed: 0.58,
-      lightColor: "#14B8A6",
-      lightColor2: "#27D6C7",
-      lightRimColor: "#84CC16",
-      lightGlowColor: "#A3E635",
-      darkColor: "#0F766E",
-      darkColor2: "#115E59",
-      darkRimColor: "#4D7C0F",
-      darkGlowColor: "#3F6212",
-      rimStrength: 1.35,
-      rimPower: 1.90,
+      lightColor: "#07a637",
+      lightColor2: "#00ffb3",
+      lightRimColor: "#00ffb3",
+      lightGlowColor: "#07a637",
+      darkColor: "#057025",
+      darkColor2: "#00b37e",
+      darkRimColor: "#00ffb3",
+      darkGlowColor: "#057025",
+      rimStrength: 1.20,
+      rimPower: 2.20,
       followPointer: true,
       pointerTilt: 0.42,
       pointerFollow: 5.00,
@@ -467,15 +468,15 @@ export default function Interactive3DBlob() {
       noiseScale: 0.70,
       noiseStrength: 0.10,
       speed: 0.72,
-      lightColor: "#F97316",
-      lightColor2: "#EA580C",
-      lightRimColor: "#F59E0B",
-      lightGlowColor: "#FBBF24",
-      darkColor: "#C2410C",
-      darkColor2: "#9A3412",
-      darkRimColor: "#B45309",
-      darkGlowColor: "#92400E",
-      rimStrength: 2.10,
+      lightColor: "#EA580C",
+      lightColor2: "#C2410C",
+      lightRimColor: "#D97706",
+      lightGlowColor: "#F59E0B",
+      darkColor: "#7C2D12",
+      darkColor2: "#451A03",
+      darkRimColor: "#92400E",
+      darkGlowColor: "#78350F",
+      rimStrength: 1.80,
       rimPower: 2.80,
       followPointer: true,
       pointerTilt: 0.28,
@@ -496,15 +497,15 @@ export default function Interactive3DBlob() {
       noiseScale: 0.85,
       noiseStrength: 0.12,
       speed: 0.45,
-      lightColor: "#8B5CF6",
-      lightColor2: "#D946EF",
-      lightRimColor: "#F43F5E",
-      lightGlowColor: "#FB7185",
-      darkColor: "#4C1D95",
-      darkColor2: "#701A75",
-      darkRimColor: "#881337",
-      darkGlowColor: "#4C0519",
-      rimStrength: 2.50,
+      lightColor: "#7C3AED",
+      lightColor2: "#C084FC",
+      lightRimColor: "#E879F9",
+      lightGlowColor: "#F472B6",
+      darkColor: "#3B0764",
+      darkColor2: "#581C87",
+      darkRimColor: "#7E22CE",
+      darkGlowColor: "#581C87",
+      rimStrength: 2.00,
       rimPower: 2.50,
       followPointer: true,
       pointerTilt: 0.80,
@@ -525,15 +526,15 @@ export default function Interactive3DBlob() {
       noiseScale: 0.90,
       noiseStrength: 0.15,
       speed: 0.35,
-      lightColor: "#0284C7",
-      lightColor2: "#10B981",
-      lightRimColor: "#FBBF24",
-      lightGlowColor: "#FDE047",
-      darkColor: "#0369A1",
-      darkColor2: "#047857",
-      darkRimColor: "#D97706",
-      darkGlowColor: "#CA8A04",
-      rimStrength: 1.80,
+      lightColor: "#0369A1",
+      lightColor2: "#059669",
+      lightRimColor: "#6EE7B7",
+      lightGlowColor: "#A7F3D0",
+      darkColor: "#0C4A6E",
+      darkColor2: "#064E3B",
+      darkRimColor: "#059669",
+      darkGlowColor: "#047857",
+      rimStrength: 1.60,
       rimPower: 3.00,
       followPointer: true,
       pointerTilt: 0.60,
@@ -554,16 +555,16 @@ export default function Interactive3DBlob() {
       noiseScale: 1.20,
       noiseStrength: 0.18,
       speed: 0.60,
-      lightColor: "#FCA5A5",
-      lightColor2: "#93C5FD",
-      lightRimColor: "#FBCFE8",
-      lightGlowColor: "#FFFFFF",
-      darkColor: "#7F1D1D",
-      darkColor2: "#1E3A8A",
-      darkRimColor: "#701A75",
-      darkGlowColor: "#312E81",
-      rimStrength: 2.30,
-      rimPower: 2.00,
+      lightColor: "#E2E8F0",
+      lightColor2: "#CBD5E1",
+      lightRimColor: "#F472B6",
+      lightGlowColor: "#38BDF8",
+      darkColor: "#334155",
+      darkColor2: "#1E293B",
+      darkRimColor: "#A21CAF",
+      darkGlowColor: "#0369A1",
+      rimStrength: 1.90,
+      rimPower: 2.20,
       followPointer: true,
       pointerTilt: 0.90,
       pointerFollow: 6.00,
@@ -591,8 +592,8 @@ export default function Interactive3DBlob() {
       darkColor2: "#1F2937",
       darkRimColor: "#9CA3AF",
       darkGlowColor: "#6B7280",
-      rimStrength: 2.80,
-      rimPower: 1.80,
+      rimStrength: 2.40,
+      rimPower: 2.00,
       followPointer: true,
       pointerTilt: 0.70,
       pointerFollow: 5.00,
@@ -612,15 +613,15 @@ export default function Interactive3DBlob() {
       noiseScale: 1.40,
       noiseStrength: 0.22,
       speed: 0.75,
-      lightColor: "#0D9488",
+      lightColor: "#0F766E",
       lightColor2: "#10B981",
-      lightRimColor: "#DB2777",
-      lightGlowColor: "#F472B6",
-      darkColor: "#115E59",
+      lightRimColor: "#F472B6",
+      lightGlowColor: "#FBCFE8",
+      darkColor: "#134E4A",
       darkColor2: "#064E3B",
-      darkRimColor: "#9D174D",
+      darkRimColor: "#BE185D",
       darkGlowColor: "#831843",
-      rimStrength: 2.20,
+      rimStrength: 1.80,
       rimPower: 2.50,
       followPointer: true,
       pointerTilt: 1.10,
@@ -1093,11 +1094,11 @@ export default function Interactive3DBlob() {
       alpha: true,
       powerPreference: "high-performance"
     });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2.0));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 4.0));
     renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
 
-    // Create detailed sphere and merge seam vertices using official Three.js utility (44x44 optimized)
-    const baseGeo = new THREE.SphereGeometry(radius, 44, 44);
+    // Create detailed sphere and merge seam vertices using official Three.js utility (160x160 4K ultra-high resolution)
+    const baseGeo = new THREE.SphereGeometry(radius, 160, 160);
     baseGeo.deleteAttribute("uv");
     baseGeo.deleteAttribute("normal");
     const geometry = mergeVertices(baseGeo);
@@ -1363,10 +1364,11 @@ export default function Interactive3DBlob() {
 
     const resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        const width = Math.round(entry.contentRect.width * 1.6);
-        const height = Math.round(entry.contentRect.height * 1.6);
+        const width = Math.round(entry.contentRect.width * 2.0);
+        const height = Math.round(entry.contentRect.height * 2.0);
         if (width === 0 || height === 0) continue;
 
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 4.0));
         renderer.setSize(width, height, false);
         camera.aspect = width / height;
         camera.updateProjectionMatrix();
@@ -1507,7 +1509,10 @@ export default function Interactive3DBlob() {
 
   // --- 4. Sidebar Content Portal Template ---
   const sidebarContent = isOpen && (
-    <div className="fixed top-0 right-0 h-screen w-80 bg-neutral-950/90 border-l border-white/10 flex flex-col z-[100000] text-xs text-white select-none shadow-2xl animate-in slide-in-from-right duration-300">
+    <div
+      data-lenis-prevent
+      className="fixed top-0 right-0 h-screen w-80 bg-neutral-950/90 border-l border-white/10 flex flex-col z-[100000] text-xs text-white select-none shadow-2xl animate-in slide-in-from-right duration-300"
+    >
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-white/5 shrink-0">
         <div>
@@ -1527,7 +1532,11 @@ export default function Interactive3DBlob() {
         <h3 className="text-[10px] uppercase font-bold tracking-wider text-neutral-500 mb-2">Select Preset</h3>
         
         {/* Preset Selector Grid */}
-        <div className="grid grid-cols-2 gap-1 mb-3 max-h-36 overflow-y-auto pr-1 scrollbar-thin">
+        <div
+          data-lenis-prevent
+          onWheel={(e) => e.stopPropagation()}
+          className="grid grid-cols-2 gap-1 mb-3 max-h-36 overflow-y-auto pr-1 scrollbar-thin"
+        >
           {/* Built-in Presets */}
           {(Object.keys(presets) as Array<keyof typeof presets>).map((key) => (
             <button
@@ -1570,7 +1579,11 @@ export default function Interactive3DBlob() {
       </div>
 
       {/* Form Scroll Container */}
-      <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4 scrollbar-thin scrollbar-thumb-white/10">
+      <div
+        data-lenis-prevent
+        onWheel={(e) => e.stopPropagation()}
+        className="flex-1 overflow-y-auto p-4 flex flex-col gap-4 scrollbar-thin scrollbar-thumb-white/10"
+      >
         
         {/* Preset Creator / Export Panel */}
         <div className="border-b border-white/5 pb-2">

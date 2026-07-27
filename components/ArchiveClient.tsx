@@ -163,13 +163,24 @@ export default function ArchiveClient({ rows }: ArchiveClientProps) {
                     <div
                       className={`relative w-full overflow-hidden rounded-[4px] bg-transparent ${aspectClass}`}
                     >
-                      <Image
-                        src={imgSrc}
-                        alt={row.title}
-                        fill
-                        className="object-cover opacity-90"
-                        sizes="(max-width: 768px) 100vw, 25vw"
-                      />
+                      {imgSrc.endsWith(".webm") || imgSrc.endsWith(".mp4") ? (
+                        <video
+                          src={imgSrc}
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                          className="w-full h-full object-cover opacity-90"
+                        />
+                      ) : (
+                        <Image
+                          src={imgSrc}
+                          alt={row.title}
+                          fill
+                          className="object-cover opacity-90"
+                          sizes="(max-width: 768px) 100vw, 25vw"
+                        />
+                      )}
                       {/* Dark Overlay on Hover */}
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
                     </div>

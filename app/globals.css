@@ -507,9 +507,7 @@ body {
 
 .dark .scrollbar-auto-hide.is-scrolling::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.25);
-}
-
-@media (prefers-reduced-motion: reduce) {
+}@media (prefers-reduced-motion: reduce) {
   * {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;

@@ -62,6 +62,10 @@ interface TransitionContextType {
     setArchiveOpen: (open: boolean) => void;
     isInfoOpen: boolean;
     setInfoOpen: (open: boolean) => void;
+    isLightboxOpen: boolean;
+    setLightboxOpen: (open: boolean) => void;
+    isControlsHidden: boolean;
+    setControlsHidden: (hidden: boolean) => void;
 }
 
 const TransitionContext = createContext<TransitionContextType>({
@@ -76,6 +80,10 @@ const TransitionContext = createContext<TransitionContextType>({
     setArchiveOpen: () => { },
     isInfoOpen: false,
     setInfoOpen: () => { },
+    isLightboxOpen: false,
+    setLightboxOpen: () => { },
+    isControlsHidden: false,
+    setControlsHidden: () => { },
 });
 
 export const useTransition = () => useContext(TransitionContext);
@@ -99,6 +107,8 @@ export default function TransitionProvider({
     const [currentLabel, setCurrentLabel] = useState("");
     const [isArchiveOpen, setIsArchiveOpen] = useState(false);
     const [isInfoOpen, setIsInfoOpen] = useState(false);
+    const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+    const [isControlsHidden, setControlsHidden] = useState(false);
 
     // Check if we are currently mid-navigation
     const [isTransitioning, setIsTransitioning] = useState(false);
@@ -252,8 +262,12 @@ export default function TransitionProvider({
         isArchiveOpen,
         setArchiveOpen: setIsArchiveOpen,
         isInfoOpen,
-        setInfoOpen: setIsInfoOpen
-    }), [isTransitioning, pendingHref, isMaskActive, canAnimate, setMaskActive, isArchiveOpen, isInfoOpen]);
+        setInfoOpen: setIsInfoOpen,
+        isLightboxOpen,
+        setLightboxOpen: setIsLightboxOpen,
+        isControlsHidden,
+        setControlsHidden
+    }), [isTransitioning, pendingHref, isMaskActive, canAnimate, setMaskActive, isArchiveOpen, isInfoOpen, isLightboxOpen, isControlsHidden]);
 
     return (
         <TransitionContext.Provider value={contextValue}>
@@ -262,22 +276,17 @@ export default function TransitionProvider({
             </Suspense>
             <PageCurtain ref={curtainRef} label={currentLabel} />
             
-            <div className="w-full min-h-screen bg-background overflow-hidden">
+            <div className="w-full min-h-screen bg-background text-foreground overflow-hidden relative">
                 <SmoothScroll>
                     <div
                         id="smooth-wrapper"
                         ref={contentRef}
-                        className={`w-full relative z-10 transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] origin-top ${isMaskActive ? 'case-study-mask' : ''} ${(isInfoOpen || isArchiveOpen) ? 'scale-[0.93] sm:scale-[0.95] rounded-[20px] sm:rounded-[24px] overflow-hidden shadow-2xl brightness-[0.85]' : ''}`}
+                        className={`w-full relative z-10 transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] origin-top ${isMaskActive ? 'case-study-mask' : ''} ${(isInfoOpen || isArchiveOpen) ? 'scale-[0.93] sm:scale-[0.95] rounded-[20px] sm:rounded-[24px] overflow-hidden shadow-2xl' : ''}`}
                         style={{ opacity: initialLoadDone ? 1 : 0, visibility: initialLoadDone ? 'visible' : 'hidden' }}
                     >
-                        <div id="smooth-content" className="w-full">
+                        <div id="smooth-content" className="w-full bg-background min-h-screen">
                             {children}
                         </div>
-                        {/* Dim overlay when info or archive sheet is open */}
-                        <div
-                            className={`pointer-events-none fixed inset-0 z-[5] bg-black/60 transition-opacity duration-500 ease-out ${(isInfoOpen || isArchiveOpen) ? 'opacity-100' : 'opacity-0'}`}
-                            aria-hidden="true"
-                        />
                     </div>
                 </SmoothScroll>
             </div>
