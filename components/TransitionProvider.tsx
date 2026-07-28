@@ -2,12 +2,9 @@
 
 import { createContext, useContext, useState, useRef, ReactNode, useEffect, useCallback, useMemo, Suspense } from "react";
 import gsap from "gsap";
-import { animate } from 'animejs';
-import { scrambleText } from 'animejs/text';
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import Header from "@/components/Header";
-import PageCurtain from "@/components/PageCurtain";
 
 const SmoothScroll = dynamic(() => import("./SmoothScroll"), { ssr: false });
 const CustomCursor = dynamic(() => import("./CustomCursor"), { ssr: false });
@@ -100,11 +97,9 @@ export default function TransitionProvider({
     const router = useRouter();
     const pathname = usePathname();
     const contentRef = useRef<HTMLDivElement>(null);
-    const curtainRef = useRef<HTMLDivElement>(null);
 
     const [headerProps, setHeaderProps] = useState<HeaderProps>({ variant: "default" });
     const [isMaskActive, setIsMaskActive] = useState(false);
-    const [currentLabel, setCurrentLabel] = useState("");
     const [isArchiveOpen, setIsArchiveOpen] = useState(false);
     const [isInfoOpen, setIsInfoOpen] = useState(false);
     const [isLightboxOpen, setIsLightboxOpen] = useState(false);
@@ -145,57 +140,34 @@ export default function TransitionProvider({
         return () => window.removeEventListener("scroll", handleScroll);
     }, [setMaskActive]);
 
-    const navigate = (href: string, label: string, _color?: string) => {
+    const navigate = (href: string, _label: string, _color?: string) => {
         if (pathname === href) return;
         setIsTransitioning(true);
         setPendingHref(href);
-        setCurrentLabel(label);
 
-        const tl = gsap.timeline({
+        gsap.to(contentRef.current, {
+            opacity: 0,
+            duration: 0.2,
+            ease: "power2.inOut",
             onComplete: () => {
-                window.scrollTo(0, 0);
                 router.push(href);
             }
         });
-
-        tl.to(contentRef.current, {
-            autoAlpha: 0,
-            duration: 0.25,
-            ease: "power2.out",
-        });
     };
 
-    // Update the ref so the context value doesn't need to depend on the function directly if it closes over changing state,
-    // although in this case navigate itself doesn't depend on much.
     useEffect(() => {
         navigateRef.current = navigate;
     });
 
-    // Helper to get a label from the pathname for browser navigation
-    const getLabelFromPath = (path: string) => {
-        if (path === "/") return "Home";
-        if (path === "/archive") return "Archive";
-        if (path === "/about") return "Bio";
-        if (path === "/resume") return "Resume";
-        if (path === "/playground") return "Playground";
-        if (path.startsWith("/work/")) {
-            const slug = path.split("/").pop();
-            return slug ? slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, " ") : "Project";
-        }
-        return "Navigating";
-    };
-
     const prevPathnameRef = useRef(pathname);
 
-    // 2. Route Change Listener
+    // 2. Route Change Listener - Snappy Fade In
     useEffect(() => {
-        // Only run transition logic when the pathname actually changes
         if (prevPathnameRef.current === pathname) {
             return;
         }
         prevPathnameRef.current = pathname;
 
-        // Reset state on path change
         queueMicrotask(() => {
             setPendingHref(null);
             setMaskActive(false);
@@ -210,45 +182,21 @@ export default function TransitionProvider({
             });
         });
 
-        // B. Handle Browser Back/Forward
-        if (!isTransitioning) {
-            const label = getLabelFromPath(pathname);
-            setCurrentLabel(label);
-            
-            const browserTl = gsap.timeline({
+        // Fade back in quickly on the new page
+        gsap.fromTo(contentRef.current, 
+            { opacity: 0 },
+            {
+                opacity: 1,
+                duration: 0.2,
+                ease: "power2.out",
                 onComplete: () => {
                     setIsTransitioning(false);
                 }
-            });
-
-            gsap.set(contentRef.current, { autoAlpha: 0 });
-            
-            browserTl.to(contentRef.current, {
-                autoAlpha: 1,
-                duration: 0.3,
-                ease: "power2.out",
-            }, "+=0.05");
-
-            return;
-        }
-
-        // C. Handle Manual Navigation
-        const tl = gsap.timeline({
-            delay: 0.05,
-            onComplete: () => {
-                setIsTransitioning(false);
             }
-        });
+        );
+    }, [pathname, setMaskActive]);
 
-        tl.to(contentRef.current, {
-            autoAlpha: 1,
-            duration: 0.3,
-            ease: "power2.out",
-        });
-
-    }, [pathname, isTransitioning, setMaskActive]);
-
-    const canAnimate = initialLoadDone && !isTransitioning;
+    const canAnimate = initialLoadDone;
 
     const contextValue = useMemo(() => ({
         navigate: (...args: Parameters<typeof navigate>) => navigateRef.current(...args),
@@ -273,7 +221,6 @@ export default function TransitionProvider({
             <Suspense fallback={null}>
                 <SearchParamsTracker setInfoOpen={setIsInfoOpen} setArchiveOpen={setIsArchiveOpen} />
             </Suspense>
-            <PageCurtain ref={curtainRef} label={currentLabel} />
             
             <div className="w-full min-h-screen bg-background text-foreground overflow-hidden relative">
                 <SmoothScroll>

@@ -50,18 +50,18 @@ export default function FeatureTabs({ tabs, autoPlayDuration = 5 }: FeatureTabsP
               onClick={() => handleTabClick(idx)}
               className={`relative px-3.5 py-1.5 rounded-md text-xs sm:text-sm font-sans transition-all duration-150 shrink-0 outline-none select-none overflow-hidden ${
                 isActive
-                  ? "text-foreground font-medium"
+                  ? "text-foreground font-medium bg-foreground/10 dark:bg-white/10"
                   : "text-foreground opacity-35 hover:opacity-60"
               }`}
             >
-              {/* Entire Tab Button Filling Slowly from Left to Right */}
+              {/* Higher-intensity Progress Overlay Bar that fills slowly over top of the static active base fill */}
               {isActive && (
                 <motion.div
                   key={`fill-${active}-${key}`}
                   initial={{ width: "0%" }}
                   animate={{ width: "100%" }}
                   transition={{ duration: autoPlayDuration, ease: "linear" }}
-                  className="absolute inset-0 bg-foreground/15 dark:bg-white/20 rounded-md pointer-events-none -z-10"
+                  className="absolute inset-0 bg-foreground/20 dark:bg-white/25 rounded-md pointer-events-none -z-10"
                 />
               )}
 

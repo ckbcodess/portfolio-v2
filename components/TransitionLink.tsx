@@ -3,7 +3,7 @@
 import Link, { LinkProps } from "next/link";
 import { ReactNode } from "react";
 import { useTransition } from "./TransitionProvider";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 interface TransitionLinkProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, keyof LinkProps>, LinkProps {
     children: ReactNode;
@@ -12,9 +12,17 @@ interface TransitionLinkProps extends Omit<React.AnchorHTMLAttributes<HTMLAnchor
     color?: string;
 }
 
-export default function TransitionLink({ children, href, label, color, onClick, ...props }: TransitionLinkProps) {
+export default function TransitionLink({ children, href, label, color, onClick, onMouseEnter, ...props }: TransitionLinkProps) {
     const { navigate } = useTransition();
     const pathname = usePathname();
+    const router = useRouter();
+
+    const handleMouseEnter = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+        if (onMouseEnter) onMouseEnter(e);
+        if (href && href.startsWith("/")) {
+            router.prefetch(href);
+        }
+    };
 
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
         // If it's a new tab click or a middle click, let the browser handle it
@@ -38,7 +46,7 @@ export default function TransitionLink({ children, href, label, color, onClick, 
     };
 
     return (
-        <Link href={href} onClick={handleClick} {...props}>
+        <Link href={href} onClick={handleClick} onMouseEnter={handleMouseEnter} {...props}>
             {children}
         </Link>
     );
