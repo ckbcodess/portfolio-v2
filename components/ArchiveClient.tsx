@@ -40,23 +40,14 @@ export default function ArchiveClient({ rows }: ArchiveClientProps) {
         variants={containerVariants}
         initial="hidden"
         animate={canAnimate ? "show" : "hidden"}
-        className="w-full max-w-[1200px] px-[var(--page-px)] flex flex-col gap-12 sm:gap-16 md:gap-20 origin-top-left"
+        className="w-full flex flex-col gap-12 sm:gap-16 md:gap-20 origin-top-left"
       >
-        {/* Hero Section: Aligned 1:1 with Homepage container */}
-        <section className="flex flex-col md:flex-row items-start justify-between gap-10 md:gap-12 w-full relative">
+        {/* Hero Section: Aligned with Homepage container position */}
+        <section className="w-full max-w-[1200px] px-[var(--page-px)] mx-auto flex flex-col md:flex-row items-start justify-between gap-10 md:gap-12 relative">
           <div className="flex flex-col gap-3 sm:gap-4 items-start w-full md:w-[460px] shrink-0 text-left">
-            {/* Profile Avatar & Title matching Homepage header 1:1 */}
-            <MaskReveal delay={0.1} className="rounded-full">
-              <div className="inline-flex items-center gap-3 group rounded-full select-none">
-                <Image
-                  className="w-8 h-8 rounded-full object-cover"
-                  src="/avatar.webp"
-                  alt="Ransford Gyasi"
-                  width={128}
-                  height={128}
-                  quality={95}
-                  priority
-                />
+            {/* Title label "Archive" matching Homepage positioning */}
+            <MaskReveal delay={0.1}>
+              <div className="h-8 flex items-center">
                 <div className="relative overflow-hidden h-6 flex items-center">
                   <h1 className="text-foreground text-sm font-medium tracking-tight whitespace-nowrap">
                     Archive
@@ -74,8 +65,8 @@ export default function ArchiveClient({ rows }: ArchiveClientProps) {
           </div>
         </section>
 
-        {/* Masonry / Grid Gallery */}
-        <section id="archive-grid" className="w-full pt-2">
+        {/* Full-Width Masonry / Grid Gallery */}
+        <section id="archive-grid" className="w-full px-4 sm:px-6 md:px-10 lg:px-12 pt-2">
           <div className="grid grid-cols-1 min-[500px]:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-5 w-full">
             {rows.map((row, idx) => {
               if (!row.image) return null;
