@@ -2373,6 +2373,9 @@ export default function Interactive3DBlob() {
                 </>
               )}
             </div>
+          )}
+        </div>
+
         {/* Ground Floor Reflection Section */}
         <div className="border-b border-white/5 pb-2">
           <button
