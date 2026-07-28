@@ -43,7 +43,6 @@ const panelVariants = {
 
 export default function ArchiveSheet({ rows, isOpen, onClose }: ArchiveSheetProps) {
   const { navigate } = useTransition();
-  const [isArtOnly, setIsArtOnly] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   // Lock main page body scroll while sheet is open
@@ -71,8 +70,6 @@ export default function ArchiveSheet({ rows, isOpen, onClose }: ArchiveSheetProp
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
-
-  const filteredRows = isArtOnly ? rows.filter((r) => r.isArt) : rows;
 
   return (
     <>
@@ -130,7 +127,7 @@ export default function ArchiveSheet({ rows, isOpen, onClose }: ArchiveSheetProp
             </h1>
           </div>
 
-          {/* Right Header Controls: Art Switch Toggle & Grid/List View Toggle */}
+          {/* Right Header Controls: Grid/List View Toggle & Close Button */}
           <div className="flex items-center gap-5 sm:gap-6 self-start sm:self-auto">
             {/* View Mode Toggle */}
             <div className="flex items-center bg-white/5 p-1 rounded-lg border border-white/10 text-white/60">
@@ -154,26 +151,6 @@ export default function ArchiveSheet({ rows, isOpen, onClose }: ArchiveSheetProp
               </button>
             </div>
 
-            {/* Art Toggle Switch matching design reference */}
-            <div className="flex items-center gap-2.5">
-              <span className="text-xs sm:text-sm font-medium text-white/80">Art</span>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={isArtOnly}
-                onClick={() => setIsArtOnly((prev) => !prev)}
-                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  isArtOnly ? "bg-white" : "bg-white/20"
-                }`}
-              >
-                <span
-                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-black shadow-lg ring-0 transition duration-200 ease-in-out ${
-                    isArtOnly ? "translate-x-5 bg-black" : "translate-x-0 bg-white"
-                  }`}
-                />
-              </button>
-            </div>
-
             {/* Close Button */}
             <button
               onClick={onClose}
@@ -189,7 +166,7 @@ export default function ArchiveSheet({ rows, isOpen, onClose }: ArchiveSheetProp
         <div className="flex-1 overflow-y-auto px-6 sm:px-10 md:px-14 py-8 custom-scrollbar">
           {viewMode === "grid" ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 pb-16">
-              {filteredRows.map((row, idx) => {
+              {rows.map((row, idx) => {
                 const palette = CARD_PALETTES[idx % CARD_PALETTES.length];
                 const isCaseStudy = Boolean(row.caseStudyHref);
                 const isFeatured = idx === 0 || row.aspectRatio === "featured";
@@ -283,11 +260,6 @@ export default function ArchiveSheet({ rows, isOpen, onClose }: ArchiveSheetProp
                           <span className="text-[11px] font-mono tracking-wider px-2.5 py-1 rounded-full bg-black/40 text-white/90 backdrop-blur-md border border-white/10 uppercase">
                             {row.year}
                           </span>
-                          {row.isArt && (
-                            <span className="text-[10px] font-mono tracking-wider px-2 py-0.5 rounded-full bg-white/90 text-black font-semibold uppercase">
-                              Art
-                            </span>
-                          )}
                         </div>
 
                         {/* Bottom Card Title & Metadata */}
@@ -324,7 +296,7 @@ export default function ArchiveSheet({ rows, isOpen, onClose }: ArchiveSheetProp
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredRows.map((row, idx) => {
+                  {rows.map((row, idx) => {
                     const isCaseStudy = Boolean(row.caseStudyHref);
                     return (
                       <tr

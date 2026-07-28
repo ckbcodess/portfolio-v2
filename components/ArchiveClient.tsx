@@ -15,12 +15,7 @@ interface ArchiveClientProps {
 export default function ArchiveClient({ rows }: ArchiveClientProps) {
   const pageRef = useRef<HTMLDivElement>(null);
   const { canAnimate } = useTransition();
-  const [isArtOnly, setIsArtOnly] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-
-  const filteredRows = isArtOnly
-    ? rows.filter((r) => r.isArt)
-    : rows;
 
   const containerVariants: Variants = {
     hidden: { opacity: 1, scale: 1 },
@@ -66,32 +61,12 @@ export default function ArchiveClient({ rows }: ArchiveClientProps) {
               </h2>
             </MaskReveal>
           </div>
-
-          {/* Right Header Switch Control (Art Filter Switch) */}
-          <div className="flex items-center gap-3 self-start md:self-end pt-1">
-            <span className="text-xs sm:text-sm font-medium text-foreground/80">Art</span>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={isArtOnly}
-              onClick={() => setIsArtOnly((prev) => !prev)}
-              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                isArtOnly ? "bg-foreground" : "bg-foreground/20"
-              }`}
-            >
-              <span
-                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-background shadow-lg ring-0 transition duration-200 ease-in-out ${
-                  isArtOnly ? "translate-x-5" : "translate-x-0"
-                }`}
-              />
-            </button>
-          </div>
         </section>
 
         {/* Full-Width Edge-to-Edge Masonry Gallery Grid (Borderless Cards) */}
         <section id="archive-grid" className="w-full px-4 sm:px-6 md:px-10 lg:px-12 pt-2">
           <div className="grid grid-cols-1 min-[500px]:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-5 w-full">
-            {filteredRows.map((row, idx) => {
+            {rows.map((row, idx) => {
               if (!row.image) return null;
               const imgSrc = row.image;
               const aspectClass = "aspect-[16/12]";
@@ -142,7 +117,7 @@ export default function ArchiveClient({ rows }: ArchiveClientProps) {
 
       {/* Gallery Lightbox Modal */}
       <ArchiveGalleryLightbox
-        items={filteredRows}
+        items={rows}
         currentIndex={lightboxIndex}
         onClose={() => setLightboxIndex(null)}
         onSelectIndex={(idx) => setLightboxIndex(idx)}
