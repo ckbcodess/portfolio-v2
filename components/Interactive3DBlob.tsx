@@ -328,6 +328,109 @@ const glowFragmentShader = `
   }
 `;
 
+// --- Low Memory Inverted Ground Reflection Shaders ---
+const reflectionVertexShader = `
+  uniform float twistX;
+  uniform float twistY;
+
+  varying vec3 vNormal;
+  varying vec3 vWorldPosition;
+  varying vec3 vLocalPosition;
+
+  mat4 rotationMatrixX(float angle) {
+    float s = sin(angle);
+    float c = cos(angle);
+    return mat4(
+      1.0, 0.0, 0.0, 0.0,
+      0.0, c,   -s,  0.0,
+      0.0, s,   c,   0.0,
+      0.0, 0.0, 0.0, 1.0
+    );
+  }
+
+  mat4 rotationMatrixY(float angle) {
+    float s = sin(angle);
+    float c = cos(angle);
+    return mat4(
+      c,   0.0, s,   0.0,
+      0.0, 1.0, 0.0, 0.0,
+      -s,  0.0, c,   0.0,
+      0.0, 0.0, 0.0, 1.0
+    );
+  }
+
+  void main() {
+    vec4 twistedPos = vec4(position, 1.0);
+    
+    if (twistY != 0.0) {
+      float angleY = position.y * twistY;
+      twistedPos = rotationMatrixY(angleY) * twistedPos;
+    }
+    if (twistX != 0.0) {
+      float angleX = position.x * twistX;
+      twistedPos = rotationMatrixX(angleX) * twistedPos;
+    }
+
+    vLocalPosition = twistedPos.xyz;
+
+    // Flip Y position, squash vertically and sit beneath the orb
+    vec4 reflectedPos = twistedPos;
+    reflectedPos.y = -reflectedPos.y * 0.4 - 2.15;
+    reflectedPos.xz *= 1.15; // Soft wider floor spread
+
+    vec4 twistedNormal = vec4(normal, 0.0);
+    twistedNormal.y = -twistedNormal.y;
+    if (twistY != 0.0) {
+      twistedNormal = rotationMatrixY(position.y * twistY) * twistedNormal;
+    }
+    if (twistX != 0.0) {
+      twistedNormal = rotationMatrixX(position.x * twistX) * twistedNormal;
+    }
+    vNormal = normalize(normalMatrix * twistedNormal.xyz);
+
+    vec4 worldPosition = modelMatrix * reflectedPos;
+    vWorldPosition = worldPosition.xyz;
+    gl_Position = projectionMatrix * viewMatrix * worldPosition;
+  }
+`;
+
+const reflectionFragmentShader = `
+  uniform vec3 baseColor;
+  uniform vec3 baseColor2;
+  uniform vec3 rimColor;
+  uniform float rimStrength;
+  uniform float rimPower;
+
+  uniform float heat;
+  uniform vec3 moltenColor;
+  uniform vec3 moltenCoreColor;
+
+  varying vec3 vNormal;
+  varying vec3 vWorldPosition;
+  varying vec3 vLocalPosition;
+
+  void main() {
+    vec3 viewDirection = normalize(cameraPosition - vWorldPosition);
+    float facing = max(dot(viewDirection, normalize(vNormal)), 0.0);
+    float fresnel = 1.0 - facing;
+
+    float gradT = clamp(vLocalPosition.y * 0.5 + 0.5, 0.0, 1.0);
+    vec3 baseColorGrad = mix(baseColor, baseColor2, gradT);
+
+    vec3 base = mix(baseColorGrad, moltenColor, heat);
+    vec3 rim = mix(rimColor, moltenCoreColor, heat);
+    
+    float rimAmount = pow(fresnel, rimPower) * (rimStrength + heat * 3.0);
+    vec3 color = base + rim * rimAmount;
+
+    // Vertical linear alpha fade gradient towards ground bottom
+    float fade = smoothstep(-2.85, -1.6, vWorldPosition.y);
+    float alpha = fade * 0.26; // subtle, realistic mirror reflection opacity
+
+    gl_FragColor = vec4(color, alpha);
+  }
+`;
+
 // Curated palette of vibrant molten color pairs — cycled randomly on every hold release
 // Curated palette of sophisticated molten color pairs — cycled randomly on every hold release
 const MOLTEN_PALETTES: Array<[string, string]> = [
@@ -1163,6 +1266,30 @@ export default function Interactive3DBlob() {
     const glowMesh = new THREE.Mesh(geometry, glowMaterial);
     scene.add(glowMesh);
 
+    // Ground Reflection Mesh (shares exact same geometry = 0 extra VRAM allocated!)
+    const reflectionMaterial = new THREE.ShaderMaterial({
+      vertexShader: reflectionVertexShader,
+      fragmentShader: reflectionFragmentShader,
+      uniforms: {
+        baseColor: { value: activeColorVal },
+        baseColor2: { value: activeColor2Val },
+        rimColor: { value: activeRimColorVal },
+        rimStrength: { value: rimStrengthRef.current },
+        rimPower: { value: rimPowerRef.current },
+        heat: { value: 0.0 },
+        moltenColor: { value: new THREE.Color(moltenColorRef.current) },
+        moltenCoreColor: { value: new THREE.Color(moltenCoreColorRef.current) },
+        twistX: { value: twistXRef.current },
+        twistY: { value: twistYRef.current }
+      },
+      transparent: true,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending
+    });
+
+    const reflectionMesh = new THREE.Mesh(geometry, reflectionMaterial);
+    scene.add(reflectionMesh);
+
     const noise = createNoise3D();
     const vecPos = new THREE.Vector3();
     const vecNormal = new THREE.Vector3();
@@ -1210,6 +1337,14 @@ export default function Interactive3DBlob() {
       glowMaterial.uniforms.uGlowPower.value = glowPowerRef.current;
       glowMaterial.uniforms.twistX.value = twistXRef.current;
       glowMaterial.uniforms.twistY.value = twistYRef.current;
+
+      reflectionMaterial.uniforms.rimStrength.value = rimStrengthRef.current;
+      reflectionMaterial.uniforms.rimPower.value = rimPowerRef.current;
+      reflectionMaterial.uniforms.moltenColor.value.set(moltenColorRef.current);
+      reflectionMaterial.uniforms.moltenCoreColor.value.set(moltenCoreColorRef.current);
+      reflectionMaterial.uniforms.twistX.value = twistXRef.current;
+      reflectionMaterial.uniforms.twistY.value = twistYRef.current;
+      reflectionMaterial.uniforms.heat.value = smoothHeat;
 
       glowMesh.visible = bloomEnabledRef.current;
 
@@ -2358,6 +2493,8 @@ export default function Interactive3DBlob() {
             left: "-30%"
           }}
         />
+        {/* Ambient floor reflection shadow (zero-memory hardware-accelerated CSS) */}
+        <div className="absolute left-1/2 -translate-x-1/2 bottom-[-16%] w-[72%] h-[15%] rounded-[50%] bg-foreground/15 blur-xl pointer-events-none opacity-40 dark:opacity-25" />
       </div>
 
       {/* Invitation/Hold status text line beneath the blob */}
