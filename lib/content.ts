@@ -117,54 +117,41 @@ export const getResume = cache(async (): Promise<ResumeContent | null> => {
 
 /** Rows/cards for the Archive sheet: case studies first, then supplemental entries (newest first). */
 export const getArchiveRows = cache(async (): Promise<ArchiveRow[]> => {
-  const [caseStudies, archiveEntries] = await Promise.all([
-    getCaseStudies(),
-    reader.collections.archive.all(),
-  ]);
+  const archiveEntries = await reader.collections.archive.all();
 
   const CARD_ASPECTS: ArchiveRow["aspectRatio"][] = [
-    "featured", "portrait", "landscape",
+    "landscape", "portrait", "landscape",
     "landscape", "landscape", "landscape",
     "landscape", "square", "portrait",
     "landscape", "portrait", "landscape"
   ];
 
-  const caseStudyRows: ArchiveRow[] = caseStudies.map((study, idx) => ({
-    title: study.title,
-    role: study.meta.find((m) => m.label === "Role")?.value ?? "Product Designer",
-    year: study.meta.find((m) => m.label === "Year")?.value ?? "",
-    caseStudyHref: `/work/${study.slug}`,
-    color: study.gradientColors?.[0] ?? "#333",
-    image: study.heroSrc || undefined,
-    gradient: study.gradientColors?.[0] || undefined,
-    isArt: false,
-    aspectRatio: CARD_ASPECTS[idx % CARD_ASPECTS.length],
-  }));
-
   const supplementalRows: ArchiveRow[] = archiveEntries
     .slice()
-    .sort((a, b) => b.entry.year.localeCompare(a.entry.year))
+    .sort((a, b) => (b.entry.year || "").localeCompare(a.entry.year || ""))
     .map(({ entry }, idx) => {
-      const isArtItem = (entry.tech?.toLowerCase().includes("art") || 
-                         entry.role.toLowerCase().includes("art") || 
-                         entry.title.toLowerCase().includes("art") ||
-                         entry.role.toLowerCase().includes("experiment") ||
-                         entry.role.toLowerCase().includes("shader") ||
-                         entry.role.toLowerCase().includes("3d") ||
-                         idx % 3 === 1);
+      const isArtItem = Boolean(
+        entry.tech?.toLowerCase().includes("art") || 
+        entry.role?.toLowerCase().includes("art") || 
+        entry.title.toLowerCase().includes("art") ||
+        entry.role?.toLowerCase().includes("experiment") ||
+        entry.role?.toLowerCase().includes("shader") ||
+        entry.role?.toLowerCase().includes("3d") ||
+        idx % 3 === 1
+      );
       return {
         title: entry.title,
-        role: entry.role,
-        year: entry.year,
+        role: entry.role || "",
+        year: entry.year || "",
         tech: entry.tech || undefined,
         externalLink: entry.link || undefined,
         image: entry.image ?? undefined,
         isArt: isArtItem,
-        aspectRatio: CARD_ASPECTS[(caseStudyRows.length + idx) % CARD_ASPECTS.length],
+        aspectRatio: CARD_ASPECTS[idx % CARD_ASPECTS.length],
       };
     });
 
-  return [...caseStudyRows, ...supplementalRows];
+  return supplementalRows;
 });
 
 export const DEFAULT_TABS: TabItem[] = [

@@ -12,48 +12,15 @@ interface ArchiveClientProps {
   rows: ArchiveRow[];
 }
 
-// Borderless solid dark black SVG placeholder image data URI
-const BLACK_PLACEHOLDER =
-  "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='800' height='600'><rect width='100%' height='100%' fill='%23121214'/></svg>";
-
 export default function ArchiveClient({ rows }: ArchiveClientProps) {
   const pageRef = useRef<HTMLDivElement>(null);
   const { canAnimate } = useTransition();
   const [isArtOnly, setIsArtOnly] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
-  // Ensure 12 items populated with black image placeholders with varied masonry aspect ratios
-  const displayRows = Array.from({ length: 12 }, (_, i) => {
-    const existing = rows[i];
-    const aspects = [
-      "landscape",
-      "portrait",
-      "landscape",
-      "square",
-      "portrait",
-      "landscape",
-      "landscape",
-      "portrait",
-      "landscape",
-      "square",
-      "portrait",
-      "landscape",
-    ] as const;
-
-    return {
-      title: existing?.title || `Project ${i + 1}`,
-      role: existing?.role || "Design & Engineering",
-      year: existing?.year || "2026",
-      tech: existing?.tech,
-      image: existing?.image || BLACK_PLACEHOLDER,
-      isArt: existing?.isArt || i % 3 === 1,
-      aspectRatio: aspects[i % aspects.length],
-    };
-  });
-
   const filteredRows = isArtOnly
-    ? displayRows.filter((r) => r.isArt)
-    : displayRows;
+    ? rows.filter((r) => r.isArt)
+    : rows;
 
   const containerVariants: Variants = {
     hidden: { opacity: 1, scale: 1 },
@@ -123,16 +90,12 @@ export default function ArchiveClient({ rows }: ArchiveClientProps) {
 
         {/* Full-Width Edge-to-Edge Masonry Gallery Grid (Borderless Cards) */}
         <section id="archive-grid" className="w-full px-4 sm:px-6 md:px-10 lg:px-12 pt-2">
-          <div className="columns-1 min-[500px]:columns-2 md:columns-4 gap-3 sm:gap-4 md:gap-5 w-full">
+          <div className="grid grid-cols-1 min-[500px]:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-5 w-full">
             {filteredRows.map((row, idx) => {
-              const isCard1 = idx === 0;
-              const imgSrc = row.image || BLACK_PLACEHOLDER;
-              const aspectClass =
-                row.aspectRatio === "portrait"
-                  ? "aspect-[3/4.2]"
-                  : row.aspectRatio === "square"
-                  ? "aspect-square"
-                  : "aspect-[16/10]";
+              if (!row.image) return null;
+              const imgSrc = row.image;
+              const aspectClass = "aspect-[16/12]";
+              const itemNumber = String(idx + 1).padStart(2, "0");
 
               return (
                 <motion.div
@@ -141,50 +104,35 @@ export default function ArchiveClient({ rows }: ArchiveClientProps) {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.35, delay: idx * 0.03 }}
                   onClick={() => setLightboxIndex(idx)}
-                  className="group relative overflow-hidden cursor-pointer w-full break-inside-avoid mb-3 sm:mb-4 md:mb-5 rounded-[4px]"
+                  className="group relative overflow-hidden cursor-pointer w-full rounded-[4px]"
                 >
-                  {isCard1 ? (
-                    /* Card 1: Outer container frame wrapping inner borderless placeholder image */
-                    <div className="w-full bg-transparent rounded-[4px] aspect-[16/11] flex items-center justify-center relative">
-                      <div className="relative w-full aspect-[16/10] rounded-[4px] overflow-hidden bg-transparent flex items-center justify-center">
-                        <Image
-                          src={imgSrc}
-                          alt={row.title}
-                          fill
-                          className="object-cover opacity-90"
-                          sizes="(max-width: 768px) 100vw, 25vw"
-                        />
-                        {/* Dark Overlay on Hover */}
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                      </div>
-                    </div>
-                  ) : (
-                    /* Regular Borderless Masonry Visual Cards */
-                    <div
-                      className={`relative w-full overflow-hidden rounded-[4px] bg-transparent ${aspectClass}`}
-                    >
-                      {imgSrc.endsWith(".webm") || imgSrc.endsWith(".mp4") ? (
-                        <video
-                          src={imgSrc}
-                          autoPlay
-                          loop
-                          muted
-                          playsInline
-                          className="w-full h-full object-cover opacity-90"
-                        />
-                      ) : (
-                        <Image
-                          src={imgSrc}
-                          alt={row.title}
-                          fill
-                          className="object-cover opacity-90"
-                          sizes="(max-width: 768px) 100vw, 25vw"
-                        />
-                      )}
-                      {/* Dark Overlay on Hover */}
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                    </div>
-                  )}
+                  <div
+                    className={`relative w-full overflow-hidden rounded-[6px] bg-transparent group-hover:bg-white/[0.08] dark:group-hover:bg-white/[0.08] transition-colors duration-300 ${aspectClass}`}
+                  >
+                    {/* Item Number Badge */}
+                    <span className="absolute top-2.5 left-3 z-20 font-mono text-[11px] font-medium tracking-wider text-white/40 group-hover:text-white/80 transition-colors pointer-events-none select-none">
+                      {itemNumber}
+                    </span>
+
+                    {imgSrc.endsWith(".webm") || imgSrc.endsWith(".mp4") ? (
+                      <video
+                        src={imgSrc}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="relative z-10 w-full h-full object-contain object-center p-6 sm:p-8"
+                      />
+                    ) : (
+                      <Image
+                        src={imgSrc}
+                        alt={row.title}
+                        fill
+                        className="relative z-10 object-contain object-center p-6 sm:p-8"
+                        sizes="(max-width: 768px) 100vw, 25vw"
+                      />
+                    )}
+                  </div>
                 </motion.div>
               );
             })}

@@ -316,14 +316,12 @@ export default config({
           name: { label: "Project name", validation: { isRequired: true } },
         }),
         role: fields.text({
-          label: "Role",
+          label: "Role (optional)",
           description: "e.g. UI Engineering, Frontend Dev",
-          validation: { isRequired: true },
         }),
         year: fields.text({
-          label: "Year",
+          label: "Year (optional)",
           description: "e.g. 2026",
-          validation: { isRequired: true },
         }),
         tech: fields.text({
           label: "Tech / medium",

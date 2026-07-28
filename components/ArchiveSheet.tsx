@@ -222,7 +222,7 @@ export default function ArchiveSheet({ rows, isOpen, onClose }: ArchiveSheetProp
                       <div className="flex flex-col gap-4 h-full min-h-[260px] justify-between">
                         <div className="relative w-full aspect-[16/10] rounded-xl overflow-hidden bg-gradient-to-br from-red-500 via-orange-500 to-pink-600 flex items-center justify-center shadow-inner group-hover:scale-[1.02] transition-transform duration-300">
                           {row.image ? (
-                            <Image src={row.image} alt={row.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
+                            <Image src={row.image} alt={row.title} fill className="object-contain object-center" sizes="(max-width: 768px) 100vw, 33vw" />
                           ) : (
                             <span className="text-white font-mono font-bold tracking-wider text-sm bg-black/40 px-3 py-1.5 rounded-md backdrop-blur-md">
                               {row.title}
@@ -270,7 +270,7 @@ export default function ArchiveSheet({ rows, isOpen, onClose }: ArchiveSheetProp
                             src={row.image}
                             alt={row.title}
                             fill
-                            className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+                            className="object-contain object-center opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
                             sizes="(max-width: 768px) 100vw, 33vw"
                           />
                         )}
@@ -345,7 +345,7 @@ export default function ArchiveSheet({ rows, isOpen, onClose }: ArchiveSheetProp
                           <div className="flex items-center gap-3">
                             {row.image && (
                               <div className="relative w-8 h-8 rounded-md overflow-hidden bg-white/10 shrink-0">
-                                <Image src={row.image} alt={row.title} fill className="object-cover" sizes="32px" />
+                                <Image src={row.image} alt={row.title} fill className="object-contain" sizes="32px" />
                               </div>
                             )}
                             <div className="flex flex-col">
