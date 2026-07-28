@@ -1344,7 +1344,6 @@ export default function Interactive3DBlob() {
       reflectionMaterial.uniforms.moltenCoreColor.value.set(moltenCoreColorRef.current);
       reflectionMaterial.uniforms.twistX.value = twistXRef.current;
       reflectionMaterial.uniforms.twistY.value = twistYRef.current;
-      reflectionMaterial.uniforms.heat.value = smoothHeat;
 
       glowMesh.visible = bloomEnabledRef.current;
 
@@ -1373,6 +1372,7 @@ export default function Interactive3DBlob() {
       
       const smoothHeat = heatRef.current * heatRef.current * (3.0 - 2.0 * heatRef.current);
       material.uniforms.heat.value = smoothHeat;
+      reflectionMaterial.uniforms.heat.value = smoothHeat;
 
       const currentNoiseStrengthScale = 1.0 + (pressNoiseMultiplierRef.current - 1.0) * smoothHeat;
       const currentNoiseScaleScale = 1.0 + 0.6 * smoothHeat;
