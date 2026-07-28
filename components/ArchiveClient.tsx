@@ -42,23 +42,23 @@ export default function ArchiveClient({ rows }: ArchiveClientProps) {
         animate={canAnimate ? "show" : "hidden"}
         className="w-full flex flex-col gap-12 sm:gap-16 md:gap-20 origin-top-left"
       >
-        {/* Hero Section: Aligned with Homepage container position */}
-        <section className="w-full max-w-[1200px] px-[var(--page-px)] mx-auto flex flex-col md:flex-row items-start justify-between gap-10 md:gap-12 relative">
-          <div className="flex flex-col gap-3 sm:gap-4 items-start w-full md:w-[460px] shrink-0 text-left">
-            {/* Title label "Archive" matching Homepage positioning */}
+        {/* Hero Section: Centered in the middle of the page */}
+        <section className="w-full max-w-[1200px] px-[var(--page-px)] mx-auto flex flex-col items-center justify-center text-center relative">
+          <div className="flex flex-col gap-2 sm:gap-3 items-center text-center">
+            {/* Title label "Archive" */}
             <MaskReveal delay={0.1}>
-              <div className="h-8 flex items-center">
-                <div className="relative overflow-hidden h-6 flex items-center">
-                  <h1 className="text-foreground text-sm font-medium tracking-tight whitespace-nowrap">
+              <div className="h-8 flex items-center justify-center">
+                <div className="relative overflow-hidden h-6 flex items-center justify-center">
+                  <h1 className="text-foreground text-sm font-medium tracking-tight whitespace-nowrap text-center">
                     Archive
                   </h1>
                 </div>
               </div>
             </MaskReveal>
 
-            {/* "Some of my work." with exact Homepage TabSection typography */}
+            {/* "Some of my work." */}
             <MaskReveal delay={0.2}>
-              <h2 className="text-xl sm:text-2xl text-foreground font-normal font-heading leading-[1.4] tracking-tight text-left m-0">
+              <h2 className="text-xl sm:text-2xl text-foreground font-normal font-heading leading-[1.4] tracking-tight text-center m-0">
                 Some of my work.
               </h2>
             </MaskReveal>
