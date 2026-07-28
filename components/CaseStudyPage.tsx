@@ -11,6 +11,7 @@ import { MaskReveal } from "@/components/MaskReveal";
 import LockedCaseStudy from "@/components/LockedCaseStudy";
 import TransitionLink from "@/components/TransitionLink";
 import FeatureTabs from "@/components/FeatureTabs";
+import ScrollToTop from "@/components/ScrollToTop";
 
 
 
@@ -36,17 +37,16 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          const isScrolled = window.scrollY > 120;
-          
-          // Sync header scroll state - only update if changed to prevent app-wide re-renders
-          setHeaderProps(prev => {
-            if (prev.scrolled === isScrolled) return prev;
-            return { ...prev, scrolled: isScrolled };
-          });
-
           if (introRef.current) {
             const rect = introRef.current.getBoundingClientRect();
             const shouldShowSidebar = rect.bottom < 200;
+
+            // Synchronize Back button and section links to appear together
+            setHeaderProps(prev => {
+              if (prev.scrolled === shouldShowSidebar) return prev;
+              return { ...prev, scrolled: shouldShowSidebar };
+            });
+
             setShowSidebar(prev => {
               if (prev === shouldShowSidebar) return prev;
               return shouldShowSidebar;
@@ -116,6 +116,7 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
         visible={showSidebar}
         links={sidebarLinks} 
       />
+      <ScrollToTop visible={showSidebar} />
 
       <div className="pt-[128px] md:pt-[220px] pb-20 px-[var(--page-px)] w-full overflow-x-hidden relative z-10">
         {/* Prominent Hero Section */}

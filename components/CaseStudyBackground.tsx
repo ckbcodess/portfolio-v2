@@ -10,9 +10,9 @@ interface CaseStudyBackgroundProps {
 export default function CaseStudyBackground({ colors }: CaseStudyBackgroundProps) {
   const { scrollY } = useScroll();
   
-  // Smooth 60fps hardware-accelerated scroll fade without state toggling
-  const opacity = useTransform(scrollY, [0, 750], [1, 0]);
-  const y = useTransform(scrollY, [0, 750], [0, -100]);
+  // Extend scroll fade threshold so hero gradient stays rich and visible longer as user scrolls
+  const opacity = useTransform(scrollY, [0, 1400], [1, 0]);
+  const y = useTransform(scrollY, [0, 1400], [0, -120]);
 
   // Default to refined deep ambient tones if no custom colors provided
   const [c1, c2, c3] = colors || ["#360000", "#9C0000", "#FF1759"];

@@ -149,8 +149,8 @@ export default function ArchiveGalleryLightbox({
           </div>
         )}
 
-        {/* Top Right Close Button (Always visible & elevated on touch) */}
-        <div className="absolute top-4 right-4 sm:top-8 sm:right-8 z-50 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300 pointer-events-auto">
+        {/* Top Right Close Button (Touch/mobile only - hidden on desktop where custom cursor is active) */}
+        <div className="absolute top-4 right-4 sm:top-8 sm:right-8 z-50 opacity-100 sm:hidden pointer-events-auto">
           <button
             type="button"
             onClick={(e) => {
@@ -161,7 +161,7 @@ export default function ArchiveGalleryLightbox({
               e.stopPropagation();
               onClose();
             }}
-            className="text-white/90 hover:text-white transition-colors p-3.5 sm:p-3 cursor-pointer rounded-full bg-black/70 hover:bg-white/20 border border-white/20 backdrop-blur-md active:scale-95 flex items-center justify-center shadow-2xl min-w-[44px] min-h-[44px]"
+            className="text-white/90 hover:text-white transition-colors p-3.5 cursor-pointer rounded-full bg-black/70 border border-white/20 backdrop-blur-md active:scale-95 flex items-center justify-center shadow-2xl min-w-[44px] min-h-[44px]"
             data-cursor="close"
             aria-label="Close Lightbox"
           >
@@ -171,7 +171,7 @@ export default function ArchiveGalleryLightbox({
 
         {/* Center Media Focus Container */}
         <div className="relative w-full h-full max-w-[1400px] flex items-center justify-center min-h-0 pointer-events-none z-10">
-          {/* Left Navigation Arrow (Always visible on mobile touch, fades in on hover for desktop) */}
+          {/* Left Navigation Arrow (Touch/mobile only) */}
           {!isFirst && (
             <button
               type="button"
@@ -179,11 +179,10 @@ export default function ArchiveGalleryLightbox({
                 e.stopPropagation();
                 handlePrev();
               }}
-              className="fixed left-3 sm:left-8 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3 rounded-full bg-black/60 hover:bg-white/20 border border-white/20 backdrop-blur-md text-white/80 hover:text-white opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-300 cursor-pointer pointer-events-auto flex items-center justify-center active:scale-95"
-              data-cursor="lightbox-left"
+              className="fixed left-3 top-1/2 -translate-y-1/2 z-30 p-2.5 rounded-full bg-black/60 border border-white/20 backdrop-blur-md text-white/80 opacity-100 sm:hidden cursor-pointer pointer-events-auto flex items-center justify-center active:scale-95"
               aria-label="Previous image"
             >
-              <ChevronLeft size={22} className="transition-transform hover:-translate-x-0.5" />
+              <ChevronLeft size={22} />
             </button>
           )}
 
@@ -243,9 +242,34 @@ export default function ArchiveGalleryLightbox({
                 </h2>
               </div>
             )}
+            {/* Interactive Left/Right Cursor Overlay Regions on Desktop */}
+            <div className="absolute inset-0 z-20 hidden sm:flex pointer-events-auto">
+              {!isFirst && (
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handlePrev();
+                  }}
+                  data-cursor="lightbox-left"
+                  className="w-1/2 h-full cursor-pointer"
+                  aria-label="Previous image"
+                />
+              )}
+              {!isLast && (
+                <div
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleNext();
+                  }}
+                  data-cursor="lightbox-right"
+                  className={`${isFirst ? "w-full" : "w-1/2"} h-full cursor-pointer`}
+                  aria-label="Next image"
+                />
+              )}
+            </div>
           </motion.div>
 
-          {/* Right Navigation Arrow (Always visible on mobile touch, fades in on hover for desktop) */}
+          {/* Right Navigation Arrow (Touch/mobile only) */}
           {!isLast && (
             <button
               type="button"
@@ -253,11 +277,10 @@ export default function ArchiveGalleryLightbox({
                 e.stopPropagation();
                 handleNext();
               }}
-              className="fixed right-3 sm:right-8 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3 rounded-full bg-black/60 hover:bg-white/20 border border-white/20 backdrop-blur-md text-white/80 hover:text-white opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-300 cursor-pointer pointer-events-auto flex items-center justify-center active:scale-95"
-              data-cursor="lightbox-right"
+              className="fixed right-3 top-1/2 -translate-y-1/2 z-30 p-2.5 rounded-full bg-black/60 border border-white/20 backdrop-blur-md text-white/80 opacity-100 sm:hidden cursor-pointer pointer-events-auto flex items-center justify-center active:scale-95"
               aria-label="Next image"
             >
-              <ChevronRight size={22} className="transition-transform hover:translate-x-0.5" />
+              <ChevronRight size={22} />
             </button>
           )}
         </div>

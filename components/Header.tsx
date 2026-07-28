@@ -91,24 +91,13 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
             const scrollY = window.scrollY;
             const progress = Math.min(1, Math.max(0, scrollY / 140));
 
-            // Directly update top blur overlay DOM opacity for zero React re-render overhead
-            if (topBlurRef.current) {
-              topBlurRef.current.style.opacity = isLightboxOpen
-                ? "0"
-                : isCaseStudy
-                ? pastHeroRef.current
-                  ? "1"
-                  : "0"
-                : String(progress);
-            }
-
             const newScrolled = scrollY > 50;
             if (newScrolled !== scrolledRef.current) {
               scrolledRef.current = newScrolled;
               setInternalScrolled(newScrolled);
             }
 
-            const newPastHero = scrollY > 480;
+            const newPastHero = scrollY > 650;
             if (newPastHero !== pastHeroRef.current) {
               pastHeroRef.current = newPastHero;
               setIsPastHero(newPastHero);
@@ -172,13 +161,6 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
 
   return (
     <>
-      {/* Top Scroll Fade Mask: Eases in smoothly on scroll with zero React re-render overhead */}
-      <div
-        ref={topBlurRef}
-        style={{ display: isLightboxOpen ? "none" : "block" }}
-        className="fixed top-0 inset-x-0 h-28 sm:h-36 z-[999] pointer-events-none transition-opacity duration-200 ease-out backdrop-blur-md bg-gradient-to-b from-[var(--background)]/80 via-[var(--background)]/40 to-transparent [mask-image:linear-gradient(to_bottom,black_0%,rgba(0,0,0,0.987)_8.1%,rgba(0,0,0,0.951)_15.5%,rgba(0,0,0,0.896)_22.5%,rgba(0,0,0,0.825)_29%,rgba(0,0,0,0.741)_35.3%,rgba(0,0,0,0.648)_41.4%,rgba(0,0,0,0.55)_47.5%,rgba(0,0,0,0.45)_53.7%,rgba(0,0,0,0.352)_60%,rgba(0,0,0,0.259)_66.5%,rgba(0,0,0,0.175)_73.3%,rgba(0,0,0,0.104)_80.4%,rgba(0,0,0,0.049)_87.9%,rgba(0,0,0,0.013)_95.8%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_0%,rgba(0,0,0,0.987)_8.1%,rgba(0,0,0,0.951)_15.5%,rgba(0,0,0,0.896)_22.5%,rgba(0,0,0,0.825)_29%,rgba(0,0,0,0.741)_35.3%,rgba(0,0,0,0.648)_41.4%,rgba(0,0,0,0.55)_47.5%,rgba(0,0,0,0.45)_53.7%,rgba(0,0,0,0.352)_60%,rgba(0,0,0,0.259)_66.5%,rgba(0,0,0,0.175)_73.3%,rgba(0,0,0,0.104)_80.4%,rgba(0,0,0,0.049)_87.9%,rgba(0,0,0,0.013)_95.8%,transparent_100%)] transform-gpu will-change-transform"
-      />
-
       <motion.header
         initial={hasInitialLoaded ? false : { opacity: 0, scale: 0.92, y: 0 }}
         animate={

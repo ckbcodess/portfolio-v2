@@ -532,9 +532,8 @@ body {
 }
 
 .case-study-mask {
-  --page-mask: linear-gradient(to bottom, transparent, black 120px);
-  mask-image: var(--page-mask) !important;
-  -webkit-mask-image: var(--page-mask) !important;
+  mask-image: none !important;
+  -webkit-mask-image: none !important;
 }
 
 /* --- 3D Flip Navigation --- */
