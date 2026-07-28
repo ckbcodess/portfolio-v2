@@ -34,7 +34,7 @@ export default function ArchiveClient({ rows }: ArchiveClientProps) {
   return (
     <div
       ref={pageRef}
-      className="bg-background min-h-screen pt-20 sm:pt-24 md:pt-32 pb-16 md:pb-24 w-full selection:bg-primary selection:text-primary-foreground flex flex-col items-center"
+      className="bg-background min-h-screen pt-32 sm:pt-40 md:pt-48 pb-16 md:pb-24 w-full selection:bg-primary selection:text-primary-foreground flex flex-col items-center"
     >
       <motion.main
         variants={containerVariants}
