@@ -3,6 +3,13 @@ export interface CaseStudyMetaItem {
   value: string;
 }
 
+export interface FeatureTabItem {
+  name: string;
+  description: string;
+  imageSrc?: string;
+  videoSrc?: string;
+}
+
 export interface CaseStudySection {
   id: string;
   label: string;
@@ -12,6 +19,7 @@ export interface CaseStudySection {
   labelClassName?: string;
   imageSrc?: string;
   videoSrc?: string;
+  featureTabs?: FeatureTabItem[];
 }
 
 export interface CaseStudyNextProject {

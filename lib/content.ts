@@ -41,6 +41,14 @@ function toCaseStudy(
       labelClassName: section.labelClassName,
       imageSrc: section.imageSrc ?? undefined,
       videoSrc: section.videoSrc ?? undefined,
+      featureTabs: section.featureTabs && section.featureTabs.length > 0
+        ? section.featureTabs.map((ft) => ({
+            name: ft.name,
+            description: ft.description,
+            imageSrc: ft.imageSrc ?? undefined,
+            videoSrc: ft.videoSrc ?? undefined,
+          }))
+        : undefined,
     })),
     nextProject:
       entry.nextProject && next

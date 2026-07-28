@@ -274,6 +274,26 @@ export default config({
               directory: "public/videos",
               publicPath: "/videos/",
             }),
+            featureTabs: fields.array(
+              fields.object({
+                name: fields.text({ label: "Tab name", validation: { isRequired: true } }),
+                description: fields.text({ label: "Description", multiline: true, validation: { isRequired: true } }),
+                imageSrc: fields.image({
+                  label: "Image (optional)",
+                  directory: "public/images/work",
+                  publicPath: "/images/work/",
+                }),
+                videoSrc: fields.file({
+                  label: "Video (optional)",
+                  directory: "public/videos",
+                  publicPath: "/videos/",
+                }),
+              }),
+              {
+                label: "Feature tabs (optional)",
+                itemLabel: (props) => props.fields.name.value || "(empty)",
+              }
+            ),
           }),
           {
             label: "Sections",

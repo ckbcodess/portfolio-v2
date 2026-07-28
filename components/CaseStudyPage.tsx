@@ -10,6 +10,7 @@ import { motion } from "motion/react";
 import { MaskReveal } from "@/components/MaskReveal";
 import LockedCaseStudy from "@/components/LockedCaseStudy";
 import TransitionLink from "@/components/TransitionLink";
+import FeatureTabs from "@/components/FeatureTabs";
 
 
 
@@ -239,6 +240,10 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
                     />
                   </div>
                 </div>
+              )}
+
+              {section.featureTabs && (
+                <FeatureTabs tabs={section.featureTabs} />
               )}
 
 

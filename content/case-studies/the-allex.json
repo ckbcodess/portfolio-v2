@@ -45,17 +45,16 @@
       "bullets": [
         "A mobile employee app that turns daily performance into clear, visual milestones.",
         "An admin dashboard that keeps business operations and team stats in one place.",
-        "A website builder with responsive, ready-to-use templates tailored for local businesses.",
-        "Adaptive action controls designed with zero-border pill layouts and fluid contrast across dark and light viewports."
+        "A website builder with responsive, ready-to-use templates tailored for local businesses."
       ],
       "labelClassName": "text-[#22c55e]"
     },
     {
       "id": "reflection",
       "label": "Reflection",
-      "heading": "Start with the parent concept & continuous motion architecture",
+      "heading": "Start with the parent concept",
       "body": [
-        "What I really learned from this is how important it is to define the parent concept early. Deciding to frame Allex as a 'brand house' instead of just a SaaS tool made all the downstream decisions so much easier because we had a clear structure to follow. When you set the right foundations, the individual product details just fall into place naturally. Additionally, our recent iterations on ambient gradients and motion performance proved that continuous, hardware-accelerated scroll transforms outperform stateful event-driven DOM toggles by eliminating re-render cycles."
+        "What I really learned from this is how important it is to define the parent concept early. Deciding to frame Allex as a 'brand house' instead of just a SaaS tool made all the downstream decisions so much easier because we had a clear structure to follow. When you set the right foundations, the individual product details just fall into place naturally."
       ],
       "labelClassName": "text-muted-foreground"
     }
