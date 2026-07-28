@@ -53,6 +53,9 @@
       "body": [
         "This project really showed me that in fintech, speed is nice but clarity is what actually builds trust. Making small tweaks to how we showed transaction states and grouping elements better did more for user confidence than just making the app load faster. In the end, good design is about making people feel secure when they're interacting with their money."
       ],
+      "bullets": [
+        "Adaptive UI controls and framerate-optimized ambient layers ensure responsive, high-contrast feedback on mobile viewports."
+      ],
       "labelClassName": "text-muted-foreground"
     }
   ],
