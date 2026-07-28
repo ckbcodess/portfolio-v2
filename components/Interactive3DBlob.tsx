@@ -328,113 +328,6 @@ const glowFragmentShader = `
   }
 `;
 
-// --- Low Memory Inverted Ground Reflection Shaders ---
-const reflectionVertexShader = `
-  uniform float twistX;
-  uniform float twistY;
-  uniform float uYOffset;
-  uniform float uScaleY;
-  uniform float uSpread;
-
-  varying vec3 vNormal;
-  varying vec3 vWorldPosition;
-  varying vec3 vLocalPosition;
-
-  mat4 rotationMatrixX(float angle) {
-    float s = sin(angle);
-    float c = cos(angle);
-    return mat4(
-      1.0, 0.0, 0.0, 0.0,
-      0.0, c,   -s,  0.0,
-      0.0, s,   c,   0.0,
-      0.0, 0.0, 0.0, 1.0
-    );
-  }
-
-  mat4 rotationMatrixY(float angle) {
-    float s = sin(angle);
-    float c = cos(angle);
-    return mat4(
-      c,   0.0, s,   0.0,
-      0.0, 1.0, 0.0, 0.0,
-      -s,  0.0, c,   0.0,
-      0.0, 0.0, 0.0, 1.0
-    );
-  }
-
-  void main() {
-    vec4 twistedPos = vec4(position, 1.0);
-    
-    if (twistY != 0.0) {
-      float angleY = position.y * twistY;
-      twistedPos = rotationMatrixY(angleY) * twistedPos;
-    }
-    if (twistX != 0.0) {
-      float angleX = position.x * twistX;
-      twistedPos = rotationMatrixX(angleX) * twistedPos;
-    }
-
-    vLocalPosition = twistedPos.xyz;
-
-    // Dynamic Y inversion, scale and offset
-    vec4 reflectedPos = twistedPos;
-    reflectedPos.y = -reflectedPos.y * uScaleY + uYOffset;
-    reflectedPos.xz *= uSpread;
-
-    vec4 twistedNormal = vec4(normal, 0.0);
-    twistedNormal.y = -twistedNormal.y;
-    if (twistY != 0.0) {
-      twistedNormal = rotationMatrixY(position.y * twistY) * twistedNormal;
-    }
-    if (twistX != 0.0) {
-      twistedNormal = rotationMatrixX(position.x * twistX) * twistedNormal;
-    }
-    vNormal = normalize(normalMatrix * twistedNormal.xyz);
-
-    vec4 worldPosition = modelMatrix * reflectedPos;
-    vWorldPosition = worldPosition.xyz;
-    gl_Position = projectionMatrix * viewMatrix * worldPosition;
-  }
-`;
-
-const reflectionFragmentShader = `
-  uniform vec3 baseColor;
-  uniform vec3 baseColor2;
-  uniform vec3 rimColor;
-  uniform float rimStrength;
-  uniform float rimPower;
-  uniform float uOpacity;
-
-  uniform float heat;
-  uniform vec3 moltenColor;
-  uniform vec3 moltenCoreColor;
-
-  varying vec3 vNormal;
-  varying vec3 vWorldPosition;
-  varying vec3 vLocalPosition;
-
-  void main() {
-    vec3 viewDirection = normalize(cameraPosition - vWorldPosition);
-    float facing = max(dot(viewDirection, normalize(vNormal)), 0.0);
-    float fresnel = 1.0 - facing;
-
-    float gradT = clamp(vLocalPosition.y * 0.5 + 0.5, 0.0, 1.0);
-    vec3 baseColorGrad = mix(baseColor, baseColor2, gradT);
-
-    vec3 base = mix(baseColorGrad, moltenColor, heat);
-    vec3 rim = mix(rimColor, moltenCoreColor, heat);
-    
-    float rimAmount = pow(fresnel, rimPower) * (rimStrength + heat * 3.0);
-    vec3 color = base + rim * rimAmount;
-
-    // Vertical linear alpha fade gradient towards ground bottom
-    float fade = smoothstep(-3.2, -1.5, vWorldPosition.y);
-    float alpha = fade * uOpacity;
-
-    gl_FragColor = vec4(color, alpha);
-  }
-`;
-
 // Curated palette of vibrant molten color pairs — cycled randomly on every hold release
 // Curated palette of sophisticated molten color pairs — cycled randomly on every hold release
 const MOLTEN_PALETTES: Array<[string, string]> = [
@@ -758,7 +651,6 @@ export default function Interactive3DBlob() {
   const [textureOpen, setTextureOpen] = useState(false);
   const [motionOpen, setMotionOpen] = useState(false);
   const [bloomOpen, setBloomOpen] = useState(false);
-  const [reflectionOpen, setReflectionOpen] = useState(false);
   const [holdOpen, setHoldOpen] = useState(false);
   const [presetManagerOpen, setPresetManagerOpen] = useState(true);
 
@@ -812,14 +704,6 @@ export default function Interactive3DBlob() {
   const [glowWidth, setGlowWidth] = useState(0.22);
   const [glowIntensity, setGlowIntensity] = useState(1.80);
   const [glowPower, setGlowPower] = useState(3.00);
-
-  // Ground Reflection state
-  const [reflectionEnabled, setReflectionEnabled] = useState(true);
-  const [reflectionOpacity, setReflectionOpacity] = useState(0.26);
-  const [reflectionYOffset, setReflectionYOffset] = useState(-2.15);
-  const [reflectionScaleY, setReflectionScaleY] = useState(0.40);
-  const [reflectionSpread, setReflectionSpread] = useState(1.15);
-  const [ambientShadowOpacity, setAmbientShadowOpacity] = useState(0.40);
 
   // Press Hold morphing state
   const [holdEnabled, setHoldEnabled] = useState(presets.Soft.holdEnabled);
@@ -907,18 +791,6 @@ export default function Interactive3DBlob() {
   const glowWidthRef = useRef(glowWidth);
   const glowIntensityRef = useRef(glowIntensity);
   const glowPowerRef = useRef(glowPower);
-
-  const reflectionEnabledRef = useRef(reflectionEnabled);
-  const reflectionOpacityRef = useRef(reflectionOpacity);
-  const reflectionYOffsetRef = useRef(reflectionYOffset);
-  const reflectionScaleYRef = useRef(reflectionScaleY);
-  const reflectionSpreadRef = useRef(reflectionSpread);
-
-  useEffect(() => { reflectionEnabledRef.current = reflectionEnabled; }, [reflectionEnabled]);
-  useEffect(() => { reflectionOpacityRef.current = reflectionOpacity; }, [reflectionOpacity]);
-  useEffect(() => { reflectionYOffsetRef.current = reflectionYOffset; }, [reflectionYOffset]);
-  useEffect(() => { reflectionScaleYRef.current = reflectionScaleY; }, [reflectionScaleY]);
-  useEffect(() => { reflectionSpreadRef.current = reflectionSpread; }, [reflectionSpread]);
 
   const holdEnabledRef = useRef(holdEnabled);
   const pressScaleRef = useRef(pressScale);
@@ -1291,34 +1163,6 @@ export default function Interactive3DBlob() {
     const glowMesh = new THREE.Mesh(geometry, glowMaterial);
     scene.add(glowMesh);
 
-    // Ground Reflection Mesh (shares exact same geometry = 0 extra VRAM allocated!)
-    const reflectionMaterial = new THREE.ShaderMaterial({
-      vertexShader: reflectionVertexShader,
-      fragmentShader: reflectionFragmentShader,
-      uniforms: {
-        baseColor: { value: activeColorVal },
-        baseColor2: { value: activeColor2Val },
-        rimColor: { value: activeRimColorVal },
-        rimStrength: { value: rimStrengthRef.current },
-        rimPower: { value: rimPowerRef.current },
-        heat: { value: 0.0 },
-        moltenColor: { value: new THREE.Color(moltenColorRef.current) },
-        moltenCoreColor: { value: new THREE.Color(moltenCoreColorRef.current) },
-        twistX: { value: twistXRef.current },
-        twistY: { value: twistYRef.current },
-        uYOffset: { value: reflectionYOffsetRef.current },
-        uScaleY: { value: reflectionScaleYRef.current },
-        uSpread: { value: reflectionSpreadRef.current },
-        uOpacity: { value: reflectionOpacityRef.current }
-      },
-      transparent: true,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending
-    });
-
-    const reflectionMesh = new THREE.Mesh(geometry, reflectionMaterial);
-    scene.add(reflectionMesh);
-
     const noise = createNoise3D();
     const vecPos = new THREE.Vector3();
     const vecNormal = new THREE.Vector3();
@@ -1367,18 +1211,6 @@ export default function Interactive3DBlob() {
       glowMaterial.uniforms.twistX.value = twistXRef.current;
       glowMaterial.uniforms.twistY.value = twistYRef.current;
 
-      reflectionMaterial.uniforms.rimStrength.value = rimStrengthRef.current;
-      reflectionMaterial.uniforms.rimPower.value = rimPowerRef.current;
-      reflectionMaterial.uniforms.moltenColor.value.set(moltenColorRef.current);
-      reflectionMaterial.uniforms.moltenCoreColor.value.set(moltenCoreColorRef.current);
-      reflectionMaterial.uniforms.twistX.value = twistXRef.current;
-      reflectionMaterial.uniforms.twistY.value = twistYRef.current;
-      reflectionMaterial.uniforms.uYOffset.value = reflectionYOffsetRef.current;
-      reflectionMaterial.uniforms.uScaleY.value = reflectionScaleYRef.current;
-      reflectionMaterial.uniforms.uSpread.value = reflectionSpreadRef.current;
-      reflectionMaterial.uniforms.uOpacity.value = reflectionOpacityRef.current;
-      reflectionMesh.visible = reflectionEnabledRef.current;
-
       glowMesh.visible = bloomEnabledRef.current;
 
       if (holdEnabledRef.current) {
@@ -1406,7 +1238,6 @@ export default function Interactive3DBlob() {
       
       const smoothHeat = heatRef.current * heatRef.current * (3.0 - 2.0 * heatRef.current);
       material.uniforms.heat.value = smoothHeat;
-      reflectionMaterial.uniforms.heat.value = smoothHeat;
 
       const currentNoiseStrengthScale = 1.0 + (pressNoiseMultiplierRef.current - 1.0) * smoothHeat;
       const currentNoiseScaleScale = 1.0 + 0.6 * smoothHeat;
@@ -2376,117 +2207,6 @@ export default function Interactive3DBlob() {
           )}
         </div>
 
-        {/* Ground Floor Reflection Section */}
-        <div className="border-b border-white/5 pb-2">
-          <button
-            onClick={() => setReflectionOpen(!reflectionOpen)}
-            className="flex w-full items-center justify-between py-2 text-neutral-400 hover:text-white font-semibold transition-colors cursor-pointer"
-          >
-            <div className="flex items-center gap-1.5">
-              <span>Ground Reflection</span>
-              {reflectionEnabled ? <Eye size={12} className="text-white/60" /> : <EyeOff size={12} className="text-white/35" />}
-            </div>
-            <ChevronDown size={14} className={`transform transition-transform ${reflectionOpen ? "rotate-180" : ""}`} />
-          </button>
-          {reflectionOpen && (
-            <div className="flex flex-col gap-3.5 pt-2 pb-4 animate-in fade-in slide-in-from-top-1 duration-150">
-              <div className="flex items-center justify-between py-1 bg-white/5 px-2.5 rounded-lg border border-white/5">
-                <span className="text-[10px] text-neutral-300">Enable ground reflection</span>
-                <input
-                  type="checkbox"
-                  checked={reflectionEnabled}
-                  onChange={(e) => setReflectionEnabled(e.target.checked)}
-                  className="accent-white cursor-pointer w-3.5 h-3.5"
-                />
-              </div>
-
-              {reflectionEnabled && (
-                <>
-                  <div className="flex flex-col gap-1">
-                    <div className="flex justify-between text-[10px] text-white/50">
-                      <span>Reflection Opacity</span>
-                      <span className="font-mono">{reflectionOpacity.toFixed(2)}</span>
-                    </div>
-                    <input
-                      type="range"
-                      min="0.00"
-                      max="1.00"
-                      step="0.01"
-                      value={reflectionOpacity}
-                      onChange={(e) => setReflectionOpacity(parseFloat(e.target.value))}
-                      className="w-full accent-white h-1 bg-white/10 rounded-lg cursor-pointer"
-                    />
-                  </div>
-
-                  <div className="flex flex-col gap-1">
-                    <div className="flex justify-between text-[10px] text-white/50">
-                      <span>Y Offset (Distance)</span>
-                      <span className="font-mono">{reflectionYOffset.toFixed(2)}</span>
-                    </div>
-                    <input
-                      type="range"
-                      min="-4.00"
-                      max="-1.00"
-                      step="0.05"
-                      value={reflectionYOffset}
-                      onChange={(e) => setReflectionYOffset(parseFloat(e.target.value))}
-                      className="w-full accent-white h-1 bg-white/10 rounded-lg cursor-pointer"
-                    />
-                  </div>
-
-                  <div className="flex flex-col gap-1">
-                    <div className="flex justify-between text-[10px] text-white/50">
-                      <span>Vertical Squash (Scale Y)</span>
-                      <span className="font-mono">{reflectionScaleY.toFixed(2)}</span>
-                    </div>
-                    <input
-                      type="range"
-                      min="0.10"
-                      max="1.00"
-                      step="0.01"
-                      value={reflectionScaleY}
-                      onChange={(e) => setReflectionScaleY(parseFloat(e.target.value))}
-                      className="w-full accent-white h-1 bg-white/10 rounded-lg cursor-pointer"
-                    />
-                  </div>
-
-                  <div className="flex flex-col gap-1">
-                    <div className="flex justify-between text-[10px] text-white/50">
-                      <span>Floor Spread (XZ)</span>
-                      <span className="font-mono">{reflectionSpread.toFixed(2)}</span>
-                    </div>
-                    <input
-                      type="range"
-                      min="0.80"
-                      max="2.50"
-                      step="0.05"
-                      value={reflectionSpread}
-                      onChange={(e) => setReflectionSpread(parseFloat(e.target.value))}
-                      className="w-full accent-white h-1 bg-white/10 rounded-lg cursor-pointer"
-                    />
-                  </div>
-
-                  <div className="flex flex-col gap-1">
-                    <div className="flex justify-between text-[10px] text-white/50">
-                      <span>Ambient Floor Shadow Opacity</span>
-                      <span className="font-mono">{ambientShadowOpacity.toFixed(2)}</span>
-                    </div>
-                    <input
-                      type="range"
-                      min="0.00"
-                      max="1.00"
-                      step="0.01"
-                      value={ambientShadowOpacity}
-                      onChange={(e) => setAmbientShadowOpacity(parseFloat(e.target.value))}
-                      className="w-full accent-white h-1 bg-white/10 rounded-lg cursor-pointer"
-                    />
-                  </div>
-                </>
-              )}
-            </div>
-          )}
-        </div>
-
         {/* Click and Hold Morph Section */}
         <div className="border-b border-white/5 pb-2">
           <button
@@ -2630,18 +2350,13 @@ export default function Interactive3DBlob() {
       >
         <canvas
           ref={canvasRef}
-          className="absolute block pointer-events-none overflow-visible"
+          className="absolute block pointer-events-none"
           style={{
-            width: "240%",
-            height: "280%",
-            top: "-40%",
-            left: "-70%"
+            width: "160%",
+            height: "160%",
+            top: "-30%",
+            left: "-30%"
           }}
-        />
-        {/* Ambient floor reflection shadow (zero-memory hardware-accelerated CSS) */}
-        <div
-          className="absolute left-1/2 -translate-x-1/2 bottom-[-22%] w-[85%] h-[18%] rounded-[50%] bg-foreground/15 blur-xl pointer-events-none transition-opacity duration-300"
-          style={{ opacity: ambientShadowOpacity }}
         />
       </div>
 

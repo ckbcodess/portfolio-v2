@@ -175,7 +175,7 @@ export default function HomeClient({
           {/* Floating Polygons */}
           <div className="relative w-[260px] sm:w-[280px] h-[230px] sm:h-[250px] max-w-full shrink-0 overflow-visible mx-auto md:mx-0 touch-pan-y" aria-hidden="true">
             {/* 3D Interactive Distorted Glass Blob */}
-            <div className="absolute inset-0 z-10 pointer-events-auto overflow-visible">
+            <div className="absolute inset-0 z-10 pointer-events-auto">
               <Interactive3DBlob />
             </div>
           </div>
