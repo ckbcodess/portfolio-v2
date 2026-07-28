@@ -138,6 +138,11 @@ export default function LoadingScreen() {
           setBarComplete(true);
         }
       },
+      onComplete() {
+        if (assetsReady) {
+          setBarComplete(true);
+        }
+      },
     });
   }, [realProgress, assetsReady, shouldAnimate]);
 

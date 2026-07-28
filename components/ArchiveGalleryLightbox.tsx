@@ -121,6 +121,7 @@ export default function ArchiveGalleryLightbox({
         exit={{ opacity: 0 }}
         transition={{ duration: 0.25, ease: "easeOut" }}
         className="group fixed inset-0 z-[100000] bg-black/60 backdrop-blur-2xl flex items-center justify-center p-4 sm:p-8 select-none cursor-pointer touch-manipulation overflow-hidden"
+        data-cursor="close"
         onClick={handleBackdropClick}
       >
         {/* Super blurry background version of selected image/thumbnail */}
@@ -161,6 +162,7 @@ export default function ArchiveGalleryLightbox({
               onClose();
             }}
             className="text-white/90 hover:text-white transition-colors p-3.5 sm:p-3 cursor-pointer rounded-full bg-black/70 hover:bg-white/20 border border-white/20 backdrop-blur-md active:scale-95 flex items-center justify-center shadow-2xl min-w-[44px] min-h-[44px]"
+            data-cursor="close"
             aria-label="Close Lightbox"
           >
             <X size={22} />
@@ -178,6 +180,7 @@ export default function ArchiveGalleryLightbox({
                 handlePrev();
               }}
               className="fixed left-3 sm:left-8 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3 rounded-full bg-black/60 hover:bg-white/20 border border-white/20 backdrop-blur-md text-white/80 hover:text-white opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-300 cursor-pointer pointer-events-auto flex items-center justify-center active:scale-95"
+              data-cursor="lightbox-left"
               aria-label="Previous image"
             >
               <ChevronLeft size={22} className="transition-transform hover:-translate-x-0.5" />
@@ -251,6 +254,7 @@ export default function ArchiveGalleryLightbox({
                 handleNext();
               }}
               className="fixed right-3 sm:right-8 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3 rounded-full bg-black/60 hover:bg-white/20 border border-white/20 backdrop-blur-md text-white/80 hover:text-white opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-300 cursor-pointer pointer-events-auto flex items-center justify-center active:scale-95"
+              data-cursor="lightbox-right"
               aria-label="Next image"
             >
               <ChevronRight size={22} className="transition-transform hover:translate-x-0.5" />

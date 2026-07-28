@@ -60,11 +60,11 @@ export default function HomeClient({
 
   const messages = [
     <React.Fragment key="msg-0">Ransford Gyasi</React.Fragment>,
-    <React.Fragment key="msg-1">Boop! <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f446.png" alt="👆" className="inline-block w-5 h-5 align-text-bottom ml-1 drop-shadow-sm" draggable={false} /></React.Fragment>,
-    <React.Fragment key="msg-2">That tickles! <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f602.png" alt="😂" className="inline-block w-5 h-5 align-text-bottom ml-1 drop-shadow-sm" draggable={false} /></React.Fragment>,
+    <React.Fragment key="msg-1">Boop! 👆</React.Fragment>,
+    <React.Fragment key="msg-2">That tickles! 😂</React.Fragment>,
     <React.Fragment key="msg-3">Okay, you can stop now...</React.Fragment>,
-    <React.Fragment key="msg-4">Seriously. <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f610.png" alt="😐" className="inline-block w-5 h-5 align-text-bottom ml-1 drop-shadow-sm" draggable={false} /></React.Fragment>,
-    <React.Fragment key="msg-5">Fine, I'm leaving. <img src="https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/1f4a8.png" alt="💨" className="inline-block w-[22px] h-[22px] align-text-bottom ml-1 drop-shadow-sm" draggable={false} /></React.Fragment>,
+    <React.Fragment key="msg-4">Seriously. 😐</React.Fragment>,
+    <React.Fragment key="msg-5">Fine, I'm leaving. 💨</React.Fragment>,
   ];
 
   const handleAvatarClick = () => {

@@ -77,16 +77,12 @@ export default function CustomCursor({ isTransitioning }: { isTransitioning?: bo
     const setCursorActiveState = (active: boolean) => {
         if (active) {
             document.documentElement.classList.add("custom-cursor-active");
-            if (!document.documentElement.classList.contains("watchdog-tick") && 
-                !document.documentElement.classList.contains("watchdog-tock")) {
-                document.documentElement.classList.add("watchdog-tick");
-            }
         } else {
-            document.documentElement.classList.remove("custom-cursor-active", "watchdog-tick", "watchdog-tock");
+            document.documentElement.classList.remove("custom-cursor-active");
         }
     };
 
-    // Watchdog Ticker & Stuck Detection Loop
+    // Watchdog Position Check & Error Recovery
     useEffect(() => {
         if (!enabled) {
             setCursorActiveState(false);
@@ -99,25 +95,9 @@ export default function CustomCursor({ isTransitioning }: { isTransitioning?: bo
             yToRef.current = gsap.quickTo(cursorRef.current, "y", { duration: 0.15, ease: "power2.out" });
         };
 
-        let isTick = true;
+        // Check for position desync every 500ms without touching DOM classList
         const interval = setInterval(() => {
             const now = Date.now();
-
-            // 1. Ticking CSS watchdog to prevent cursor vanishing if JS freezes
-            if (isTransitioningRef.current || !isVisibleRef.current) {
-                document.documentElement.classList.remove("watchdog-tick", "watchdog-tock");
-            } else {
-                if (isTick) {
-                    document.documentElement.classList.remove("watchdog-tock");
-                    document.documentElement.classList.add("watchdog-tick");
-                } else {
-                    document.documentElement.classList.remove("watchdog-tick");
-                    document.documentElement.classList.add("watchdog-tock");
-                }
-                isTick = !isTick;
-            }
-
-            // 2. JS position checking watchdog to reset GSAP if stuck/frozen
             if (!isTransitioningRef.current && isVisibleRef.current && now - lastMouseMoveTime.current < 800) {
                 if (cursorRef.current && lastMouseX.current !== null && lastMouseY.current !== null) {
                     const rect = cursorRef.current.getBoundingClientRect();
@@ -128,19 +108,15 @@ export default function CustomCursor({ isTransitioning }: { isTransitioning?: bo
                     const dy = lastMouseY.current - cursorCenterY;
                     const distance = Math.sqrt(dx * dx + dy * dy);
 
-                    // If distance > 150px while moving, reset GSAP quickTo and snap position
+                    // If distance > 150px while moving, snap position back
                     if (distance > 150) {
                         stuckCount.current += 1;
-                        if (stuckCount.current >= 3) { // Stuck for ~600ms
-                            console.warn("Custom cursor watchdog detected freeze/lag. Recovering...");
-                            
+                        if (stuckCount.current >= 2) {
                             const targetX = targetPosRef.current ? targetPosRef.current.x : lastMouseX.current;
                             const targetY = targetPosRef.current ? targetPosRef.current.y : lastMouseY.current;
                             
                             gsap.set(cursorRef.current, { x: targetX, y: targetY, autoAlpha: 1, overwrite: "auto" });
                             cursorRef.current.style.transform = `translate3d(${targetX}px, ${targetY}px, 0px) translate(-50%, -50%)`;
-                            cursorRef.current.style.opacity = "1";
-                            cursorRef.current.style.visibility = "visible";
                             
                             initTweens();
                             stuckCount.current = 0;
@@ -152,9 +128,9 @@ export default function CustomCursor({ isTransitioning }: { isTransitioning?: bo
             } else {
                 stuckCount.current = 0;
             }
-        }, 200);
+        }, 500);
 
-        // 3. Global unhandled error recovery failsafe
+        // Global unhandled error recovery failsafe
         const handleError = () => {
             setCursorActiveState(false);
         };

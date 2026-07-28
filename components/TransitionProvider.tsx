@@ -112,9 +112,9 @@ export default function TransitionProvider({
 
     // Check if we are currently mid-navigation
     const [isTransitioning, setIsTransitioning] = useState(false);
-    const [initialLoadDone, setInitialLoadDone] = useState(false);
+    const [initialLoadDone, setInitialLoadDone] = useState(() => typeof window !== "undefined" && Boolean((globalThis as any).appLoaded));
     const [pendingHref, setPendingHref] = useState<string | null>(null);
-    const navigateRef = useRef((href: string, label: string, color?: string) => {});
+    const navigateRef = useRef((_href: string, _label: string, _color?: string) => {});
 
     const setMaskActive = useCallback((active: boolean) => {
         setIsMaskActive(active);
@@ -122,9 +122,8 @@ export default function TransitionProvider({
 
     // 1. Initial Load Synchronization & Global Scroll Mask
     useEffect(() => {
-        // @ts-expect-error global flag
-        if (globalThis.appLoaded) {
-            setInitialLoadDone(true);
+        if ((globalThis as any).appLoaded) {
+            queueMicrotask(() => setInitialLoadDone(true));
             return;
         }
         const handler = () => setInitialLoadDone(true);
@@ -197,18 +196,18 @@ export default function TransitionProvider({
         prevPathnameRef.current = pathname;
 
         // Reset state on path change
-        setPendingHref(null);
-        setMaskActive(false);
-
-        // Update default header props for the new route
-        setHeaderProps((prev) => {
-            const isWork = pathname.startsWith("/work/");
-            return {
-                ...prev,
-                variant: "default",
-                isCaseStudy: isWork,
-                hidden: false
-            };
+        queueMicrotask(() => {
+            setPendingHref(null);
+            setMaskActive(false);
+            setHeaderProps((prev) => {
+                const isWork = pathname.startsWith("/work/");
+                return {
+                    ...prev,
+                    variant: "default",
+                    isCaseStudy: isWork,
+                    hidden: false
+                };
+            });
         });
 
         // B. Handle Browser Back/Forward

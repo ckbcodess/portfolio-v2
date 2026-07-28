@@ -55,17 +55,17 @@ export default function ResumeClient({ resume }: ResumeClientProps) {
         animate={canAnimate ? "show" : "hidden"}
         className="w-full max-w-[960px] px-[var(--page-px)] flex flex-col"
       >
-        {/* Download PDF Button */}
+        {/* Download Resume Button */}
         <motion.div variants={itemVariants} className="flex justify-end mb-8 md:mb-12">
           {resume.pdf && (
             <a
               href={resume.pdf}
               download={`${resume.name.replace(/\s+/g, "-")}-CV.pdf`}
               data-cursor="pointer"
-              className="inline-flex items-center gap-2 rounded-full border border-foreground/10 px-4 py-2 text-xs sm:text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-foreground/5 transition-all duration-300"
+              className="inline-flex items-center gap-3 rounded-full bg-[#161616] hover:bg-[#222222] text-white px-6 py-3.5 text-sm sm:text-base font-normal tracking-tight shadow-md border border-white/10 transition-all duration-200 active:scale-[0.98]"
             >
-              <Download size={13} strokeWidth={2} />
-              Download PDF
+              <Download size={19} strokeWidth={2} className="shrink-0" />
+              <span>Download Resume</span>
             </a>
           )}
         </motion.div>
