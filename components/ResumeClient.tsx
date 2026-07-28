@@ -62,9 +62,9 @@ export default function ResumeClient({ resume }: ResumeClientProps) {
               href={resume.pdf}
               download={`${resume.name.replace(/\s+/g, "-")}-CV.pdf`}
               data-cursor="pointer"
-              className="inline-flex items-center gap-3 rounded-full bg-[#161616] hover:bg-[#222222] text-white px-6 py-3.5 text-sm sm:text-base font-normal tracking-tight shadow-md border border-white/10 transition-all duration-200 active:scale-[0.98]"
+              className="inline-flex items-center gap-2 sm:gap-3 rounded-full bg-foreground/10 hover:bg-foreground/15 text-foreground dark:bg-[#161616] dark:hover:bg-[#222222] dark:text-white px-4 py-2 sm:px-6 sm:py-3 text-xs sm:text-sm md:text-base font-normal tracking-tight transition-all duration-200 active:scale-[0.98]"
             >
-              <Download size={19} strokeWidth={2} className="shrink-0" />
+              <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-[19px] md:h-[19px] shrink-0" strokeWidth={2} />
               <span>Download Resume</span>
             </a>
           )}
