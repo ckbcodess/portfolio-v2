@@ -84,10 +84,10 @@ export default function ArchiveClient({ rows }: ArchiveClientProps) {
                   className="group relative overflow-hidden cursor-pointer w-full rounded-[4px]"
                 >
                   <div
-                    className={`relative w-full overflow-hidden rounded-[6px] bg-transparent group-hover:bg-white/[0.08] dark:group-hover:bg-white/[0.08] transition-colors duration-300 ${aspectClass}`}
+                    className={`relative w-full overflow-hidden rounded-[6px] bg-transparent group-hover:bg-foreground/[0.06] dark:group-hover:bg-white/[0.08] transition-colors duration-300 ${aspectClass}`}
                   >
                     {/* Item Number Badge */}
-                    <span className="absolute top-2.5 left-3 z-20 font-mono text-[11px] font-medium tracking-wider text-white/40 group-hover:text-white/80 transition-colors pointer-events-none select-none">
+                    <span className="absolute top-2.5 left-3 z-20 font-mono text-[11px] font-medium tracking-wider text-foreground/40 group-hover:text-foreground/80 dark:text-white/40 dark:group-hover:text-white/80 transition-colors pointer-events-none select-none">
                       {itemNumber}
                     </span>
 
