@@ -43,14 +43,16 @@ export default function ArchiveClient({ rows }: ArchiveClientProps) {
         className="w-full flex flex-col gap-12 sm:gap-16 md:gap-20 origin-top-left"
       >
         {/* Hero Section: Aligned with Homepage container */}
-        <section className="w-full max-w-[1200px] px-[var(--page-px)] mx-auto flex flex-col md:flex-row items-start justify-between gap-8 md:gap-12 relative">
+        <section className="w-full max-w-[1200px] px-[var(--page-px)] mx-auto flex flex-col md:flex-row items-start justify-between gap-10 md:gap-12 relative">
           <div className="flex flex-col gap-3 sm:gap-4 items-start w-full md:w-[460px] shrink-0 text-left">
-            {/* Plain text label "Archive" in position of "Ransford JC" */}
+            {/* Plain text label "Archive" in position of "Ransford Gyasi" */}
             <MaskReveal delay={0.1}>
-              <div className="relative overflow-hidden h-6 flex items-center">
-                <h1 className="text-foreground text-sm font-medium tracking-tight whitespace-nowrap">
-                  Archive
-                </h1>
+              <div className="h-8 flex items-center">
+                <div className="relative overflow-hidden h-6 flex items-center">
+                  <h1 className="text-foreground text-sm font-medium tracking-tight whitespace-nowrap">
+                    Archive
+                  </h1>
+                </div>
               </div>
             </MaskReveal>
 
