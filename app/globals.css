@@ -673,3 +673,13 @@ header {
   white-space: nowrap;
   animation: marquee-text linear infinite;
 }
+
+/* --- Progress Bar Keyframes --- */
+@keyframes fillProgress {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}

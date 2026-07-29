@@ -55,7 +55,7 @@ const RefractiveNav = forwardRef<HTMLElement, {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const isDark = mounted && (resolvedTheme === "dark" || isCaseStudyHero);
+  const isDark = mounted && resolvedTheme === "dark";
 
   return (
     <nav
@@ -85,8 +85,7 @@ const RefractiveNav = forwardRef<HTMLElement, {
 
       {/* Local noise texture overlay for high-fidelity glass */}
       <div
-        className={`absolute inset-0 rounded-[14px] pointer-events-none mix-blend-overlay z-40 ${isCaseStudyHero ? "opacity-[0.08]" : "opacity-[0.04] dark:opacity-[0.08]"
-          }`}
+        className="absolute inset-0 rounded-[14px] pointer-events-none mix-blend-overlay z-40 opacity-[0.04] dark:opacity-[0.08]"
         style={{ backgroundImage: 'url(/noise.svg)' }}
       />
 

@@ -111,7 +111,7 @@ export default function CaseStudyPage({ caseStudy }: CaseStudyPageProps) {
       className="min-h-screen text-foreground selection:bg-primary selection:text-primary-foreground" 
       role="main"
     >
-      <CaseStudyBackground colors={caseStudy.gradientColors} />
+      <CaseStudyBackground colors={caseStudy.gradientColors} isNavChanged={showSidebar} />
       <CaseStudySidebar 
         visible={showSidebar}
         links={sidebarLinks} 

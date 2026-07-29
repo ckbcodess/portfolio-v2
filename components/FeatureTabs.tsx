@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import type { FeatureTabItem } from "@/lib/types";
@@ -12,66 +12,52 @@ interface FeatureTabsProps {
 
 export default function FeatureTabs({ tabs, autoPlayDuration = 5 }: FeatureTabsProps) {
   const [active, setActive] = useState(0);
-  const [key, setKey] = useState(0); // Used to force reset animation/timer on click
+  const [key, setKey] = useState(0); // Used to force reset animation/timer on tab switch
+  const [isPaused, setIsPaused] = useState(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   if (!tabs || tabs.length === 0) return null;
 
   const currentTab = tabs[active] || tabs[0];
 
-  // Auto-advance to the next tab when timer completes
-  useEffect(() => {
-    const timer = setTimeout(() => {
+  const handleAnimationEnd = () => {
+    if (!isPaused) {
       setActive((prev) => (prev + 1) % tabs.length);
       setKey((prev) => prev + 1);
-    }, autoPlayDuration * 1000);
-
-    return () => clearTimeout(timer);
-  }, [active, key, tabs.length, autoPlayDuration]);
+    }
+  };
 
   const handleTabClick = (idx: number) => {
     setActive(idx);
+    setIsPaused(false); // Resume playback on explicit tab click
     setKey((prev) => prev + 1); // Reset timer & animation progress on click
   };
 
+  const togglePause = () => {
+    setIsPaused((prev) => {
+      const next = !prev;
+      if (videoRef.current) {
+        if (next) {
+          videoRef.current.pause();
+        } else {
+          videoRef.current.play().catch(() => {});
+        }
+      }
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("cursor-change", { detail: next ? "play" : "pause" }));
+      }
+      return next;
+    });
+  };
+
+  // Format header title to ensure numbered prefix (e.g. "1. Refractive Nav") without duplication
+  const headerTitle = /^\d+\.\s*/.test(currentTab.name)
+    ? currentTab.name
+    : `${active + 1}. ${currentTab.name}`;
+
   return (
-    <div className="w-full flex flex-col gap-5 mt-8">
-      {/* Tab Selectors (Centered directly on top of the image) */}
-      <div 
-        role="tablist"
-        className="flex flex-row items-center justify-center gap-2 sm:gap-3 overflow-x-auto scrollbar-hide py-1 w-full"
-      >
-        {tabs.map((tab, idx) => {
-          const isActive = active === idx;
-          return (
-            <button
-              key={tab.name}
-              role="tab"
-              aria-selected={isActive}
-              onClick={() => handleTabClick(idx)}
-              className={`relative px-3.5 py-1.5 rounded-md text-xs sm:text-sm font-sans transition-all duration-150 shrink-0 outline-none select-none overflow-hidden ${
-                isActive
-                  ? "text-foreground font-medium bg-foreground/10 dark:bg-white/10"
-                  : "text-foreground opacity-35 hover:opacity-60"
-              }`}
-            >
-              {/* Higher-intensity Progress Overlay Bar that fills slowly over top of the static active base fill */}
-              {isActive && (
-                <motion.div
-                  key={`fill-${active}-${key}`}
-                  initial={{ width: "0%" }}
-                  animate={{ width: "100%" }}
-                  transition={{ duration: autoPlayDuration, ease: "linear" }}
-                  className="absolute inset-0 bg-foreground/20 dark:bg-white/25 rounded-md pointer-events-none -z-10"
-                />
-              )}
-
-              <span className="relative z-10">{tab.name}</span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Active Tab Media (Image / Video) */}
+    <div className="w-full flex flex-col mt-8">
+      {/* Active Tab Media (Image / Video) with Cursor Morphing (Pause / Play) */}
       <AnimatePresence mode="wait">
         <motion.div
           key={active}
@@ -82,24 +68,33 @@ export default function FeatureTabs({ tabs, autoPlayDuration = 5 }: FeatureTabsP
           className="w-full"
         >
           {currentTab.videoSrc ? (
-            <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-muted">
+            <div 
+              onClick={togglePause}
+              data-cursor={isPaused ? "play" : "pause"}
+              className="relative w-full aspect-video rounded-xl sm:rounded-2xl overflow-hidden bg-muted cursor-pointer select-none"
+            >
               <video
+                ref={videoRef}
                 src={currentTab.videoSrc}
-                controls
-                autoPlay
+                controls={false}
+                autoPlay={!isPaused}
                 muted
                 loop
                 playsInline
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover pointer-events-none"
               />
             </div>
           ) : currentTab.imageSrc ? (
-            <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-muted">
+            <div 
+              onClick={togglePause}
+              data-cursor={isPaused ? "play" : "pause"}
+              className="relative w-full aspect-video rounded-xl sm:rounded-2xl overflow-hidden bg-muted cursor-pointer select-none"
+            >
               <Image
                 src={currentTab.imageSrc}
                 alt={currentTab.name}
                 fill
-                className="object-cover"
+                className="object-cover pointer-events-none"
                 sizes="(max-width: 768px) 100vw, 768px"
               />
             </div>
@@ -107,7 +102,48 @@ export default function FeatureTabs({ tabs, autoPlayDuration = 5 }: FeatureTabsP
         </motion.div>
       </AnimatePresence>
 
-      {/* Feature Description Paragraph Only (Centered with balanced text wrapping) */}
+      {/* Progress Rectangles (Tabs replaced with bars filling up over time) */}
+      <div 
+        role="tablist"
+        aria-label="Feature progress tabs"
+        className="flex flex-row items-center gap-2 sm:gap-2.5 w-full mt-3 sm:mt-4"
+      >
+        {tabs.map((tab, idx) => {
+          const isActive = active === idx;
+          const isPassed = idx < active;
+          return (
+            <button
+              key={tab.name || idx}
+              role="tab"
+              aria-selected={isActive}
+              aria-label={tab.name ? `${idx + 1}. ${tab.name}` : `Tab ${idx + 1}`}
+              onClick={() => handleTabClick(idx)}
+              data-cursor="pointer"
+              className="relative flex-1 h-1 rounded-full bg-neutral-200 dark:bg-neutral-800 overflow-hidden outline-none cursor-pointer transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:ring-foreground/40"
+            >
+              {/* Progress bar fill layer */}
+              {isPassed ? (
+                <div className="h-full w-full bg-neutral-800 dark:bg-neutral-100 rounded-full" />
+              ) : isActive ? (
+                <div
+                  key={`fill-${active}-${key}`}
+                  onAnimationEnd={handleAnimationEnd}
+                  style={{
+                    animationName: "fillProgress",
+                    animationDuration: `${autoPlayDuration}s`,
+                    animationTimingFunction: "linear",
+                    animationFillMode: "forwards",
+                    animationPlayState: isPaused ? "paused" : "running",
+                  }}
+                  className="h-full bg-neutral-800 dark:bg-neutral-100 rounded-full"
+                />
+              ) : null}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Numbered Header & Description Text */}
       <AnimatePresence mode="wait">
         <motion.div
           key={active}
@@ -115,11 +151,16 @@ export default function FeatureTabs({ tabs, autoPlayDuration = 5 }: FeatureTabsP
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -4 }}
           transition={{ duration: 0.2, ease: "easeOut" }}
-          className="w-full max-w-[420px] mx-auto text-center"
+          className="w-full mt-6 sm:mt-7 text-left flex flex-col gap-1.5"
         >
-          <p className="text-sm text-muted-foreground leading-relaxed [text-wrap:balance]">
-            {currentTab.description}
-          </p>
+          <h4 className="text-base sm:text-lg font-semibold text-foreground tracking-tight">
+            {headerTitle}
+          </h4>
+          {currentTab.description && (
+            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+              {currentTab.description}
+            </p>
+          )}
         </motion.div>
       </AnimatePresence>
     </div>

@@ -191,7 +191,6 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
             className="w-full flex justify-center animate-fade-in"
           >
             <RefractiveNav
-              isCaseStudyHero={isCaseStudy}
               className="relative rounded-[14px] overflow-hidden w-full text-white"
             >
               <div className="px-3 py-2 sm:px-6 sm:py-3 flex items-center justify-between gap-2 sm:gap-6 md:gap-8 whitespace-nowrap w-full">

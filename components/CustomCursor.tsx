@@ -10,7 +10,7 @@ export default function CustomCursor({ isTransitioning }: { isTransitioning?: bo
     const pathname = usePathname();
     const { resolvedTheme } = useTheme();
     const cursorRef = useRef<HTMLDivElement>(null);
-    const [cursorType, setCursorType] = useState<"default" | "copy" | "copied" | "pointer" | "case-study" | "confidential" | "none" | "wrap" | "lightbox-left" | "lightbox-right" | "close" | "hold">("default");
+    const [cursorType, setCursorType] = useState<"default" | "copy" | "copied" | "pointer" | "case-study" | "confidential" | "none" | "wrap" | "lightbox-left" | "lightbox-right" | "close" | "hold" | "pause" | "play">("default");
     
     const [targetPos, setTargetPos] = useState<{ x: number; y: number } | null>(null);
     const resetTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -418,7 +418,7 @@ export default function CustomCursor({ isTransitioning }: { isTransitioning?: bo
                 duration: 0.4,
                 ease: "power3.out"
             });
-        } else if (["lightbox-left", "lightbox-right", "close"].includes(cursorType)) {
+        } else if (["lightbox-left", "lightbox-right", "close", "pause", "play"].includes(cursorType)) {
             gsap.to(cursorRef.current, {
                 mixBlendMode: "difference",
                 width: 48,
@@ -504,6 +504,17 @@ export default function CustomCursor({ isTransitioning }: { isTransitioning?: bo
             <div className={`absolute transition-opacity duration-300 ${cursorType === "close" ? "opacity-100" : "opacity-0 invisible"}`}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                    <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+            </div>
+            <div className={`absolute transition-opacity duration-300 ${cursorType === "pause" ? "opacity-100" : "opacity-0 invisible"}`}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="black" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                   <rect x="6" y="4" width="4" height="16" rx="1" />
+                   <rect x="14" y="4" width="4" height="16" rx="1" />
+                </svg>
+            </div>
+            <div className={`absolute transition-opacity duration-300 ${cursorType === "play" ? "opacity-100" : "opacity-0 invisible"}`}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="black" stroke="black" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="translate-x-0.5">
+                   <polygon points="6 3 20 12 6 21 6 3" />
                 </svg>
             </div>
         </div>
