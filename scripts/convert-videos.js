@@ -6,6 +6,7 @@ const ffmpegPath = require("ffmpeg-static");
 const videos = [
   "public/rebuild.mp4",
   "public/interactive-3d-orb-recording.mp4",
+  "public/export-1785371785329.mp4",
   "public/playground/slide-5.mp4",
   "public/playground/slide-7-elegant.mp4",
 ];
