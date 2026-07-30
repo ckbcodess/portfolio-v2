@@ -171,7 +171,7 @@ export default function ArchiveGalleryLightbox({
 
         {/* Center Media Focus Container */}
         <div className="relative w-full h-full max-w-[1400px] flex items-center justify-center min-h-0 pointer-events-none z-10">
-          {/* Left Navigation Arrow (Touch/mobile only) */}
+          {/* Left Navigation Arrow */}
           {!isFirst && (
             <button
               type="button"
@@ -179,14 +179,15 @@ export default function ArchiveGalleryLightbox({
                 e.stopPropagation();
                 handlePrev();
               }}
-              className="fixed left-3 top-1/2 -translate-y-1/2 z-30 p-2.5 rounded-full bg-black/60 border border-white/20 backdrop-blur-md text-white/80 opacity-100 sm:hidden cursor-pointer pointer-events-auto flex items-center justify-center active:scale-95"
+              className="fixed left-3 sm:left-6 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3.5 rounded-full bg-black/60 border border-white/20 backdrop-blur-md text-white/80 hover:text-white opacity-100 cursor-pointer pointer-events-auto flex items-center justify-center active:scale-95 transition-all shadow-2xl"
               aria-label="Previous image"
+              data-cursor="pointer"
             >
               <ChevronLeft size={22} />
             </button>
           )}
 
-          {/* Main Media Item in Fullest Quality (Tight image wrapper ref check) */}
+          {/* Main Media Item in Fullest Quality */}
           <motion.div
             key={activeItem.title + currentIndex}
             ref={imageWrapperRef}
@@ -194,28 +195,21 @@ export default function ArchiveGalleryLightbox({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="relative max-w-full max-h-[85vh] sm:max-h-[90vh] w-auto h-auto flex items-center justify-center overflow-hidden pointer-events-auto cursor-pointer rounded-lg shadow-2xl"
+            className="relative max-w-full max-h-[85vh] sm:max-h-[90vh] w-auto h-auto flex items-center justify-center overflow-hidden pointer-events-auto rounded-lg shadow-2xl"
           >
             {activeItem.image ? (
               activeItem.image.endsWith(".webm") || activeItem.image.endsWith(".mp4") ? (
-                <div className="relative group/video flex items-center justify-center cursor-pointer" onClick={togglePlayPause}>
+                <div className="relative group/video flex items-center justify-center pointer-events-auto">
                   <video
                     ref={videoRef}
                     src={activeItem.image}
                     autoPlay
+                    controls
                     loop
                     muted
                     playsInline
                     className="w-auto h-auto max-w-full max-h-[85vh] sm:max-h-[90vh] object-contain select-none rounded-lg"
                   />
-                  {/* Play Overlay Icon when paused */}
-                  {!isPlaying && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/30 backdrop-blur-[2px] transition-opacity duration-200">
-                      <div className="p-4 rounded-full bg-black/60 border border-white/20 text-white backdrop-blur-md shadow-2xl">
-                        <Play size={32} className="ml-1" />
-                      </div>
-                    </div>
-                  )}
                 </div>
               ) : (
                 <Image
@@ -223,7 +217,7 @@ export default function ArchiveGalleryLightbox({
                   alt={activeItem.title || "Archive item"}
                   width={1600}
                   height={1200}
-                  className="w-auto h-auto max-w-full max-h-[85vh] sm:max-h-[90vh] object-contain select-none"
+                  className="w-auto h-auto max-w-full max-h-[85vh] sm:max-h-[90vh] object-contain select-none cursor-pointer"
                   sizes="100vw"
                   quality={100}
                   priority
@@ -242,34 +236,36 @@ export default function ArchiveGalleryLightbox({
                 </h2>
               </div>
             )}
-            {/* Interactive Left/Right Cursor Overlay Regions on Desktop */}
-            <div className="absolute inset-0 z-20 hidden sm:flex pointer-events-auto">
-              {!isFirst && (
-                <div
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handlePrev();
-                  }}
-                  data-cursor="lightbox-left"
-                  className="w-1/2 h-full cursor-pointer"
-                  aria-label="Previous image"
-                />
-              )}
-              {!isLast && (
-                <div
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleNext();
-                  }}
-                  data-cursor="lightbox-right"
-                  className={`${isFirst ? "w-full" : "w-1/2"} h-full cursor-pointer`}
-                  aria-label="Next image"
-                />
-              )}
-            </div>
+            {/* Interactive Left/Right Cursor Overlay Regions on Desktop (Images only so video controls remain clickable) */}
+            {!(activeItem.image?.endsWith(".webm") || activeItem.image?.endsWith(".mp4")) && (
+              <div className="absolute inset-0 z-20 hidden sm:flex pointer-events-auto">
+                {!isFirst && (
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handlePrev();
+                    }}
+                    data-cursor="lightbox-left"
+                    className="w-1/2 h-full cursor-pointer"
+                    aria-label="Previous image"
+                  />
+                )}
+                {!isLast && (
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleNext();
+                    }}
+                    data-cursor="lightbox-right"
+                    className={`${isFirst ? "w-full" : "w-1/2"} h-full cursor-pointer`}
+                    aria-label="Next image"
+                  />
+                )}
+              </div>
+            )}
           </motion.div>
 
-          {/* Right Navigation Arrow (Touch/mobile only) */}
+          {/* Right Navigation Arrow */}
           {!isLast && (
             <button
               type="button"
@@ -277,8 +273,9 @@ export default function ArchiveGalleryLightbox({
                 e.stopPropagation();
                 handleNext();
               }}
-              className="fixed right-3 top-1/2 -translate-y-1/2 z-30 p-2.5 rounded-full bg-black/60 border border-white/20 backdrop-blur-md text-white/80 opacity-100 sm:hidden cursor-pointer pointer-events-auto flex items-center justify-center active:scale-95"
+              className="fixed right-3 sm:right-6 top-1/2 -translate-y-1/2 z-30 p-2.5 sm:p-3.5 rounded-full bg-black/60 border border-white/20 backdrop-blur-md text-white/80 hover:text-white opacity-100 cursor-pointer pointer-events-auto flex items-center justify-center active:scale-95 transition-all shadow-2xl"
               aria-label="Next image"
+              data-cursor="pointer"
             >
               <ChevronRight size={22} />
             </button>
