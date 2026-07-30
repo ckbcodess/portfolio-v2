@@ -15,10 +15,11 @@ interface CaseStudyBackgroundProps {
 export default function CaseStudyBackground({ colors, isNavChanged = false }: CaseStudyBackgroundProps) {
   const { scrollY } = useScroll();
   
-  // As user scrolls towards the nav change point, build up saturation & brightness to 100% peak
-  const scrollIntensity = useTransform(scrollY, [0, 250], [0.75, 1]);
-  const scrollScale = useTransform(scrollY, [0, 250], [1, 1.05]);
-  const y = useTransform(scrollY, [0, 400], [0, -30]);
+  // Continuous, silky scroll-driven opacity fade out as user scrolls down past the hero
+  const scrollOpacity = useTransform(scrollY, [120, 750], [1, 0]);
+  const scrollIntensity = useTransform(scrollY, [0, 350], [0.75, 1]);
+  const scrollScale = useTransform(scrollY, [0, 350], [1, 1.04]);
+  const y = useTransform(scrollY, [0, 500], [0, -40]);
 
   // Extract top, middle, bottom colors
   let c1 = "#030617";
@@ -38,50 +39,57 @@ export default function CaseStudyBackground({ colors, isNavChanged = false }: Ca
   return (
     <div 
       aria-hidden="true"
-      className="absolute inset-x-0 top-0 h-[850px] sm:h-[1000px] overflow-hidden pointer-events-none z-0 select-none"
+      className="absolute inset-x-0 top-0 h-[900px] sm:h-[1100px] overflow-hidden pointer-events-none z-0 select-none"
+      style={{
+        maskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 30%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0.18) 88%, rgba(0,0,0,0) 100%)",
+        WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 30%, rgba(0,0,0,0.85) 50%, rgba(0,0,0,0.5) 70%, rgba(0,0,0,0.18) 88%, rgba(0,0,0,0) 100%)",
+      }}
     >
       <motion.div 
         animate={{
           opacity: isNavChanged ? 0 : 1,
         }}
-        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-        style={{ scale: scrollScale, y }}
-        className="w-full h-full relative transform-gpu origin-top"
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="w-full h-full relative origin-top"
       >
-        {/* Fallback & Primary OKLCH nearest hue vertical gradient: Very dark top -> rich mid -> vibrant bottom */}
-        <div 
-          className="absolute inset-0"
-          style={{
-            background: `linear-gradient(180deg in oklch shorter hue, ${c1} 0%, ${c1} 18%, ${c2} 48%, ${c3} 82%, transparent 100%)`,
-          }}
-        />
+        <motion.div
+          style={{ scale: scrollScale, y, opacity: scrollOpacity }}
+          className="w-full h-full relative transform-gpu origin-top"
+        >
+          {/* Primary gradient with multi-stop color-mix for seamless bottom dissipation */}
+          <div 
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(180deg, ${c1} 0%, ${c1} 18%, ${c2} 42%, ${c3} 68%, color-mix(in srgb, ${c3} 55%, transparent) 84%, transparent 100%)`,
+            }}
+          />
 
-        {/* Center ambient glow spot for peak vibrant saturation right before nav changes */}
-        <motion.div 
-          className="absolute top-[35%] left-1/2 -translate-x-1/2 w-[140%] h-[65%] rounded-[50%] blur-3xl mix-blend-screen pointer-events-none"
-          style={{
-            opacity: scrollIntensity,
-            background: `radial-gradient(ellipse at center, ${c3} 0%, ${c2} 45%, transparent 75%)`,
-          }}
-        />
+          {/* Center ambient glow spot */}
+          <motion.div 
+            className="absolute top-[28%] left-1/2 -translate-x-1/2 w-[140%] h-[60%] rounded-[50%] blur-3xl pointer-events-none opacity-50 dark:opacity-75"
+            style={{
+              opacity: scrollIntensity,
+              background: `radial-gradient(ellipse at center, ${c3} 0%, ${c2} 45%, transparent 75%)`,
+            }}
+          />
 
-        {/* Side edge vibrancy flares for deep atmospheric lighting */}
-        <motion.div 
-          className="absolute bottom-[12%] -left-[20%] w-[65%] h-[55%] rounded-full blur-3xl mix-blend-screen pointer-events-none"
-          style={{
-            opacity: scrollIntensity,
-            background: `radial-gradient(circle at center, ${c3} 0%, transparent 70%)`,
-          }}
-        />
-        <motion.div 
-          className="absolute bottom-[12%] -right-[20%] w-[65%] h-[55%] rounded-full blur-3xl mix-blend-screen pointer-events-none"
-          style={{
-            opacity: scrollIntensity,
-            background: `radial-gradient(circle at center, ${c3} 0%, transparent 70%)`,
-          }}
-        />
+          {/* Side edge vibrancy flares */}
+          <motion.div 
+            className="absolute bottom-[15%] -left-[20%] w-[65%] h-[55%] rounded-full blur-3xl pointer-events-none opacity-40 dark:opacity-70"
+            style={{
+              opacity: scrollIntensity,
+              background: `radial-gradient(circle at center, ${c3} 0%, transparent 70%)`,
+            }}
+          />
+          <motion.div 
+            className="absolute bottom-[15%] -right-[20%] w-[65%] h-[55%] rounded-full blur-3xl pointer-events-none opacity-40 dark:opacity-70"
+            style={{
+              opacity: scrollIntensity,
+              background: `radial-gradient(circle at center, ${c3} 0%, transparent 70%)`,
+            }}
+          />
+        </motion.div>
       </motion.div>
     </div>
   );
 }
-
