@@ -149,8 +149,8 @@ export default function ArchiveGalleryLightbox({
           </div>
         )}
 
-        {/* Top Right Close Button (Touch/mobile only - hidden on desktop where custom cursor is active) */}
-        <div className="absolute top-4 right-4 sm:top-8 sm:right-8 z-50 opacity-100 sm:hidden pointer-events-auto">
+        {/* Top Right Close Button - Visible and responsive across all viewports & touch devices */}
+        <div className="fixed top-4 right-4 sm:top-6 sm:right-6 z-[100005] pointer-events-auto">
           <button
             type="button"
             onClick={(e) => {
@@ -158,10 +158,11 @@ export default function ArchiveGalleryLightbox({
               onClose();
             }}
             onTouchEnd={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               onClose();
             }}
-            className="text-white/90 hover:text-white transition-colors p-3.5 cursor-pointer rounded-full bg-black/70 border border-white/20 backdrop-blur-md active:scale-95 flex items-center justify-center shadow-2xl min-w-[44px] min-h-[44px]"
+            className="w-11 h-11 sm:w-12 sm:h-12 text-white/90 hover:text-white transition-all cursor-pointer rounded-full bg-black/70 border border-white/20 backdrop-blur-md active:scale-95 flex items-center justify-center shadow-2xl touch-manipulation"
             data-cursor="close"
             aria-label="Close Lightbox"
           >

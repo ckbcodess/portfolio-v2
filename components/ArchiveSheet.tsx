@@ -133,7 +133,7 @@ export default function ArchiveSheet({ rows, isOpen, onClose }: ArchiveSheetProp
             <div className="flex items-center bg-white/5 p-1 rounded-lg border border-white/10 text-white/60">
               <button
                 onClick={() => setViewMode("grid")}
-                className={`p-1.5 rounded-md transition-all ${
+                className={`p-1.5 rounded-md transition-colors ${
                   viewMode === "grid" ? "bg-white/15 text-white" : "hover:text-white/80"
                 }`}
                 title="Grid View"
@@ -142,7 +142,7 @@ export default function ArchiveSheet({ rows, isOpen, onClose }: ArchiveSheetProp
               </button>
               <button
                 onClick={() => setViewMode("list")}
-                className={`p-1.5 rounded-md transition-all ${
+                className={`p-1.5 rounded-md transition-colors ${
                   viewMode === "list" ? "bg-white/15 text-white" : "hover:text-white/80"
                 }`}
                 title="List View"
@@ -154,7 +154,7 @@ export default function ArchiveSheet({ rows, isOpen, onClose }: ArchiveSheetProp
             {/* Close Button */}
             <button
               onClick={onClose}
-              className="w-9 h-9 rounded-full flex items-center justify-center bg-white/5 hover:bg-white/15 text-white/70 hover:text-white transition-all cursor-pointer border border-white/10"
+              className="w-9 h-9 rounded-full flex items-center justify-center bg-white/5 hover:bg-white/15 text-white/70 hover:text-white transition-colors cursor-pointer border border-white/10"
               aria-label="Close Archive"
             >
               <X size={16} />
@@ -187,10 +187,10 @@ export default function ArchiveSheet({ rows, isOpen, onClose }: ArchiveSheetProp
                         ? () => window.open(row.externalLink, "_blank", "noopener,noreferrer")
                         : undefined
                     }
-                    className={`group relative rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl ${
+                    className={`group relative overflow-hidden cursor-pointer transition-transform transition-shadow duration-300 transform hover:-translate-y-1 hover:shadow-2xl ${
                       isFeatured
-                        ? "sm:col-span-2 md:col-span-1 bg-[#1a1a1e] border border-white/10 p-5 sm:p-6 flex flex-col justify-between"
-                        : "border border-white/5"
+                        ? "rounded-3xl sm:col-span-2 md:col-span-1 bg-[#1a1a1e] border border-white/10 p-5 sm:p-6 flex flex-col justify-between"
+                        : "rounded-2xl border border-white/5"
                     }`}
                   >
                     {/* Visual Card Content */}

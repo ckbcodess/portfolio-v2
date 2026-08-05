@@ -185,7 +185,7 @@ export default function HomeClient({
         <section id="case-studies" className="flex flex-col gap-6 sm:gap-8 items-start w-full pt-8 sm:pt-12 relative">
           <div className="flex items-center gap-3 overflow-visible">
             <MaskReveal delay={0.25}>
-              <h2 className="text-foreground text-base font-medium tracking-tight">Case studies</h2>
+              <h2 className="text-foreground text-base font-medium tracking-tight [text-wrap:balance]">Case studies</h2>
             </MaskReveal>
             <motion.div
               initial={{ opacity: 0, y: 12 }}
@@ -223,7 +223,7 @@ export default function HomeClient({
         {/* Connect Section */}
         <section id="connect" className="flex flex-col gap-6 sm:gap-8 items-start w-full pt-8 sm:pt-12 relative">
           <MaskReveal delay={0.55}>
-            <h2 className="text-foreground text-base font-medium tracking-tight">Connect</h2>
+            <h2 className="text-foreground text-base font-medium tracking-tight [text-wrap:balance]">Connect</h2>
           </MaskReveal>
           <AnimatedDivider delay={0.62} />
 
@@ -244,7 +244,7 @@ export default function HomeClient({
                     rel={link.external ? "noopener noreferrer" : undefined}
                     onMouseEnter={() => setHoveredLink(link.id)}
                     onMouseLeave={() => setHoveredLink(null)}
-                    className={`text-foreground hover:text-foreground text-sm sm:text-base font-medium transition-all duration-300 leading-none tracking-[-0.32px] block w-full ${
+                    className={`text-foreground hover:text-foreground text-sm sm:text-base font-medium transition-opacity duration-300 leading-none tracking-[-0.32px] block w-full ${
                       isLinkDimmed ? "opacity-30" : "opacity-100"
                     }`}
                   >
@@ -268,7 +268,7 @@ export default function HomeClient({
                       rel={link.external ? "noopener noreferrer" : undefined}
                       onMouseEnter={() => setHoveredLink(link.id)}
                       onMouseLeave={() => setHoveredLink(null)}
-                      className={`text-foreground hover:text-foreground text-sm sm:text-base font-medium transition-all duration-300 leading-none tracking-[-0.32px] block w-full ${
+                      className={`text-foreground hover:text-foreground text-sm sm:text-base font-medium transition-opacity duration-300 leading-none tracking-[-0.32px] block w-full ${
                         isLinkDimmed ? "opacity-30" : "opacity-100"
                       }`}
                     >
@@ -279,7 +279,7 @@ export default function HomeClient({
 
                 {/* Bracket & label annotation for X and Instagram */}
                 <div
-                  className="hidden sm:flex absolute left-[110px] sm:left-[130px] md:left-[140px] top-0 bottom-0 items-center pointer-events-none transition-all duration-300"
+                  className="hidden sm:flex absolute left-36 md:left-40 top-0 bottom-0 items-center pointer-events-none transition-opacity duration-300"
                   style={{
                     opacity: hoveredLink !== null && hoveredLink !== "x" && hoveredLink !== "instagram" ? 0.3 : 1,
                   }}
@@ -350,14 +350,14 @@ const ProjectItem = React.memo(function ProjectItem({
   const content = (
     <div
       data-cursor={isLocked ? "confidential" : "case-study"}
-      className={`group flex flex-col gap-4 transition-all duration-500 ease-out w-full h-full text-left ${
+      className={`group flex flex-col gap-4 transition-opacity duration-500 ease-out w-full h-full text-left ${
         isDimmed 
           ? "opacity-30" 
           : "opacity-100"
       }`}
     >
       {/* Image Container */}
-      <div className="relative w-full aspect-[386/221] rounded-[4px] overflow-hidden bg-white/5">
+      <div className="relative w-full aspect-[386/221] rounded-[4px] overflow-hidden bg-white/5 ring-1 ring-black/10 dark:ring-white/10">
         <Image
           src={heroSrc}
           alt={title}
@@ -377,7 +377,7 @@ const ProjectItem = React.memo(function ProjectItem({
         <h3 className="font-heading text-lg sm:text-[20px] font-normal tracking-[-0.6px] leading-[1.4] flex items-center gap-2 text-foreground transition-colors">
           {title}
         </h3>
-        <p className="text-foreground opacity-35 group-hover:opacity-60 text-sm sm:text-[16px] font-medium leading-[1.4] max-w-none w-full transition-all duration-300">
+        <p className="text-foreground opacity-35 group-hover:opacity-60 text-sm sm:text-[16px] font-medium leading-[1.4] max-w-[65ch] w-full transition-opacity duration-300">
           {description}
         </p>
       </div>

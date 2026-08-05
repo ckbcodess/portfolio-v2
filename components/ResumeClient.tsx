@@ -62,7 +62,7 @@ export default function ResumeClient({ resume }: ResumeClientProps) {
               href={resume.pdf}
               download={`${resume.name.replace(/\s+/g, "-")}-CV.pdf`}
               data-cursor="pointer"
-              className="inline-flex items-center gap-2 sm:gap-3 rounded-full bg-foreground/10 hover:bg-foreground/15 text-foreground dark:bg-[#161616] dark:hover:bg-[#222222] dark:text-white px-4 py-2 sm:px-6 sm:py-3 text-xs sm:text-sm md:text-base font-normal tracking-tight transition-all duration-200 active:scale-[0.98]"
+              className="inline-flex items-center gap-2 sm:gap-3 rounded-full bg-foreground/10 hover:bg-foreground/15 text-foreground dark:bg-[#161616] dark:hover:bg-[#222222] dark:text-white px-4 py-2 sm:px-6 sm:py-3 text-xs sm:text-sm md:text-base font-normal tracking-tight transition-all duration-200 active:scale-[0.96]"
             >
               <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4 md:w-[19px] md:h-[19px] shrink-0" strokeWidth={2} />
               <span>Download Resume</span>
@@ -82,7 +82,7 @@ export default function ResumeClient({ resume }: ResumeClientProps) {
               width={160}
               height={160}
               quality={95}
-              className="w-11 h-11 rounded-full mt-0.5 object-cover"
+              className="w-11 h-11 rounded-full mt-0.5 object-cover ring-1 ring-black/10 dark:ring-white/10"
               priority
             />
             <div className="flex flex-col gap-0.5">

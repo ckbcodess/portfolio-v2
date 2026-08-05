@@ -4,6 +4,7 @@ import { useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import Image from "next/image";
 import { X } from "lucide-react";
+import { useTransition } from "./TransitionProvider";
 
 interface LightboxProps {
   src: string | null;
@@ -16,20 +17,19 @@ interface LightboxProps {
 
 /**
  * Lightweight, buttery-smooth lightbox using Framer Motion layout animations.
- *
- * Usage:
- *   1. Wrap your thumbnail in a `<motion.div layoutId={uniqueId}>` 
- *   2. On click set the active image src + layoutId
- *   3. Render `<Lightbox src={...} layoutId={...} onClose={...} />`
- *
- * The component handles:
- *   - Smooth morph transition via shared `layoutId`
- *   - Blurred backdrop overlay with fade
- *   - Escape key + click-to-dismiss
- *   - Scroll lock while open
- *   - Keyboard accessibility
  */
 export default function Lightbox({ src, alt = "", layoutId, onClose, onNext, onPrev }: LightboxProps) {
+  const { setLightboxOpen } = useTransition();
+
+  useEffect(() => {
+    if (src) {
+      setLightboxOpen(true);
+      return () => setLightboxOpen(false);
+    } else {
+      setLightboxOpen(false);
+    }
+  }, [src, setLightboxOpen]);
+
   // Escape to close
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -45,10 +45,6 @@ export default function Lightbox({ src, alt = "", layoutId, onClose, onNext, onP
     document.addEventListener("keydown", handleKeyDown);
     document.documentElement.setAttribute("data-lightbox-open", "true");
     
-    // Focus management
-    const focusableElements = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-    const activeElement = document.activeElement as HTMLElement;
-    
     // Lock scroll
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -57,9 +53,15 @@ export default function Lightbox({ src, alt = "", layoutId, onClose, onNext, onP
       document.removeEventListener("keydown", handleKeyDown);
       document.documentElement.removeAttribute("data-lightbox-open");
       document.body.style.overflow = prev;
-      if (activeElement) activeElement.focus();
     };
   }, [src, handleKeyDown]);
+
+  const handleClose = (e?: React.SyntheticEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
+    onClose();
+  };
 
   return (
     <AnimatePresence>
@@ -73,32 +75,37 @@ export default function Lightbox({ src, alt = "", layoutId, onClose, onNext, onP
             exit={{ opacity: 0 }}
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             className="fixed inset-0 z-[1000000] bg-black/90 backdrop-blur-2xl"
-            onClick={onClose}
+            onClick={handleClose}
             aria-hidden="true"
           />
+
+          {/* Dedicated Fixed Close Button - High contrast, accessible, touch-ready */}
+          <div className="fixed top-4 right-4 sm:top-6 sm:right-6 z-[1000005] pointer-events-auto">
+            <button
+              type="button"
+              onClick={handleClose}
+              onTouchEnd={(e) => {
+                e.preventDefault();
+                handleClose(e);
+              }}
+              data-cursor="close"
+              className="w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center bg-black/70 hover:bg-black/90 text-white/90 hover:text-white border border-white/20 backdrop-blur-md transition-all active:scale-95 shadow-2xl cursor-pointer touch-manipulation"
+              aria-label="Close lightbox"
+            >
+              <X size={22} strokeWidth={2} />
+            </button>
+          </div>
 
           {/* Image container */}
           <motion.div
             key="lightbox-content"
             className="fixed inset-0 z-[1000001] flex items-center justify-center p-6 md:p-12 lg:p-20"
-            onClick={onClose}
+            onClick={handleClose}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
-
-
-            {/* Close Button - Topmost */}
-            <button
-              onClick={(e) => { e.stopPropagation(); onClose(); }}
-              data-cursor="pointer"
-              className="absolute top-6 right-6 p-4 text-foreground/40 hover:text-foreground transition-all hover:scale-110 active:scale-95 z-[1000004] pointer-events-auto"
-              aria-label="Close lightbox"
-            >
-              <X size={24} strokeWidth={2} />
-            </button>
-
             <motion.div
               layoutId={layoutId}
               className="relative max-w-[90vw] max-h-[85vh] w-full h-auto overflow-hidden rounded-lg shadow-2xl z-[1000002]"
@@ -150,7 +157,6 @@ export default function Lightbox({ src, alt = "", layoutId, onClose, onNext, onP
                 />
               )}
             </motion.div>
-
           </motion.div>
         </>
       )}

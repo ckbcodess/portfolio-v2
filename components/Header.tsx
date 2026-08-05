@@ -211,7 +211,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
                             setInfoOpen(true);
                           }
                         }}
-                        className={`text-xs sm:text-sm font-normal tracking-tight transition-all duration-300 ${
+                        className={`text-xs sm:text-sm font-normal tracking-tight transition-opacity duration-300 ${
                           isActive ? "opacity-100 font-medium text-white" : "opacity-70 text-white hover:opacity-100"
                         }`}
                       >
@@ -230,7 +230,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
                   <button
                     onClick={toggleSound}
                     data-cursor="pointer"
-                    className="transition-all duration-300 p-1 -m-1 flex items-center justify-center cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-white/20 rounded-sm text-white/70 hover:text-white"
+                    className="transition-colors duration-300 p-1 -m-1 flex items-center justify-center cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-white/20 rounded-sm text-white/70 hover:text-white"
                     aria-label={isSoundEnabled ? "Disable sound" : "Enable sound"}
                   >
                     {isSoundEnabled ? <Volume2 size={13} strokeWidth={2} /> : <VolumeX size={13} strokeWidth={2} />}
@@ -268,7 +268,7 @@ export default function Header({ backLink = "/", scrolled: scrolledProp }: Heade
                   data-cursor="pointer"
                   className="flex items-center gap-1.5 sm:gap-2 transition-colors group p-4 -m-4"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transform group-hover:-translate-x-1 transition-transform -ml-0.5">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="transform group-hover:-translate-x-1 transition-transform -ms-0.5">
                     <path d="m15 18-6-6 6-6" />
                   </svg>
                   <span className="text-xs sm:text-sm font-normal">Back</span>

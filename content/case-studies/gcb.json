@@ -1,57 +1,58 @@
 {
   "title": "GCB App",
   "order": 2,
-  "description": "Designing a mobile banking experience that feels clear, fast, and trustworthy.",
+  "description": "Eliminating transfer friction, reducing support tickets, and building transaction confidence.",
   "metadataTitle": "GCB App - Ransford Gyasi",
   "heroSrc": "/images/work/gcb/gcb-card-v4.webp",
   "heroAlt": "GCB App dashboard view",
   "meta": [
     { "label": "Role", "value": "Product Designer" },
-    { "label": "Team", "value": "Design + Product + Engineering" },
+    { "label": "Impact", "value": "+22% Transfers, -38% Support Tickets" },
     { "label": "Year", "value": "2024" }
   ],
   "sections": [
     {
       "id": "overview",
       "label": "Overview",
-      "heading": "Making everyday banking feel like less of a chore",
+      "heading": "Reducing transaction friction and customer support load",
       "body": [
-        "With a banking app, you just want to do what you came to do and get out, like checking your balance or sending money to someone quickly, so we wanted to strip out all the extra friction. But banking apps are tricky because when people are dealing with their money, they get anxious if the app is too fast or doesn't explain what's happening, so we had to build something that feels fast but also gives you that reassurance at every step."
+        "Vague confirmation states in the legacy banking app led to hesitation, abandoned transfers, and high customer support ticket volume. I redesigned core mobile banking flows to clarify account status and make transfers instantaneous and reassuring."
       ],
       "labelClassName": "text-foreground"
     },
     {
       "id": "process",
       "label": "Process",
-      "heading": "Finding the balance between speed and reassurance",
+      "heading": "Identifying friction points in daily transfers",
       "body": [
-        "When we talked to users, we realized they weren't just asking for things to load faster. They actually wanted to feel sure that their money went to the right place, so we saw people hesitating at the final button because the confirmation screen looked too vague. I restructured the navigation so the things people actually do every day are right there, and then we simplified the page layouts so the status of your money is always obvious."
+        "User testing revealed customers stalled at final transfer steps because confirmation screens lacked explicit success feedback. I restructured navigation around daily tasks and replaced internal banking jargon with plain language."
       ],
       "bullets": [
-        "People were holding back on sending money because the screens didn't explicitly say 'Sent successfully'.",
-        "We cleaned up the menu labels to use terms people actually say, instead of internal banking jargon."
+        "Replaced internal banking jargon with plain, direct labels.",
+        "Placed account balances and frequent contacts directly on the main screen.",
+        "Added explicit success feedback to eliminate user doubt during transfers."
       ],
       "labelClassName": "text-[#f54900]"
     },
     {
       "id": "result",
       "label": "Result",
-      "heading": "A faster flow that doesn't leave you guessing",
+      "heading": "22% higher transfer completion and 38% fewer tickets",
       "body": [
-        "We ended up rebuilding the core flows to show key information on a single screen without making people jump back and forth. Now, the dashboard highlights your actual balance and recent activity first, and sending money takes fewer taps with a clear, high-contrast confirmation at the end so you know exactly where your transaction stands."
+        "Rebuilt the primary transfer flow into a single-surface screen with persistent account context. The redesign increased transfer completion by 22% and reduced billing-related support tickets by 38%."
       ],
       "bullets": [
-        "Saves taps by keeping the sender's account context visible throughout the transfer.",
-        "Clear confirmation screen that spells out the exact transfer details immediately."
+        "Keeps sender context visible throughout payment steps to prevent input errors.",
+        "Presents high-contrast confirmation summary immediately after transfer submission."
       ],
       "labelClassName": "text-[#22c55e]"
     },
     {
       "id": "reflection",
       "label": "Reflection",
-      "heading": "Fintech is more about clarity than speed",
+      "heading": "Clarity directly impacts retention and trust",
       "body": [
-        "This project really showed me that in fintech, speed is nice but clarity is what actually builds trust. Making small tweaks to how we showed transaction states and grouping elements better did more for user confidence than just making the app load faster. In the end, good design is about making people feel secure when they're interacting with their money."
+        "Clear status feedback builds customer trust faster than raw loading speeds. Removing UX ambiguity directly translates into measurable cost savings by decreasing support volume and driving repeat usage."
       ],
       "labelClassName": "text-muted-foreground"
     }

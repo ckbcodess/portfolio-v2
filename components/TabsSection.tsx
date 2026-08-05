@@ -193,7 +193,7 @@ export default function TabsSection({ canAnimate = true, tabs }: TabsSectionProp
   };
 
   const [containerHeight, setContainerHeight] = useState<number | "auto">("auto");
-  const contentRef = useRef<HTMLHeadingElement>(null);
+  const contentRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
     const el = contentRef.current;
@@ -217,7 +217,7 @@ export default function TabsSection({ canAnimate = true, tabs }: TabsSectionProp
         className="w-full relative grid [grid-template-areas:'stack'] overflow-hidden"
       >
         <AnimatePresence mode="popLayout">
-          <motion.h1
+          <motion.p
             key={active}
             ref={contentRef}
             id="tabs-content"
@@ -271,7 +271,7 @@ export default function TabsSection({ canAnimate = true, tabs }: TabsSectionProp
                 );
               })
             )}
-          </motion.h1>
+          </motion.p>
         </AnimatePresence>
       </motion.div>
 

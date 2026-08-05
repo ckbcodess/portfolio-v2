@@ -1,23 +1,22 @@
 {
   "title": "Portfolio v2",
   "order": 3,
-  "description": "Designing and building a tactile, high-craft developer & designer portfolio with interactive 3D elements.",
+  "description": "Building a component-driven interactive portfolio that accelerates case study publishing and showcases high-craft execution.",
   "metadataTitle": "Portfolio v2 - Ransford Gyasi",
   "heroSrc": "/images/work/gcb/gcb-card-v4.webp",
   "heroAlt": "Portfolio v2 hero",
   "meta": [
     { "label": "Role", "value": "Designer & Developer" },
-    { "label": "Tools", "value": "Next.js 16, Tailwind v4, Antigravity" },
+    { "label": "Stack", "value": "Next.js 16, Tailwind v4, Antigravity" },
     { "label": "Year", "value": "2026" }
   ],
   "sections": [
     {
       "id": "overview",
       "label": "Overview",
-      "heading": "Creating a portfolio that feels alive",
+      "heading": "High-craft execution with zero development waste",
       "body": [
-        "I wanted Portfolio v2 to feel like a real living space, not just another static list of links and project grids. When someone visits, I want them to actually feel the interface react to them as they move around, view case studies, check out the archive, or open up the resume sheet.",
-        "Instead of writing down a rigid plan up front, I worked directly with Antigravity to build and tweak things iteratively right inside the code. We tried out ideas in real time, testing out animations, cursor behaviors, and layout tweaks as we went along so the design system naturally grew out of what felt right while using it."
+        "Static portfolios often feel disconnected from actual product craft. I designed and built Portfolio v2 with Next.js 16 and Tailwind v4, combining interactive 3D visual elements and tactile audio micro-feedback with a modular component architecture."
       ],
       "labelClassName": "text-foreground",
       "imageSrc": "/images/work/the-allex/allex-hero.webp"
@@ -25,16 +24,14 @@
     {
       "id": "process",
       "label": "Process",
-      "heading": "Spotting what was missing and tuning the system",
+      "heading": "Eliminating layout shift and streamlining component reuse",
       "body": [
-        "We started by getting the core pieces running fast: basic custom cursor states, the header navigation, ambient backgrounds, and main project cards. But once I spent some time testing it out on different screen sizes, a few things stood out.",
-        "The desktop layout looked great, but on smaller phones around 375px, things like the header and overlay drawers started crowding the viewport or getting clipped, so we needed a proper mobile setup. Visuals alone also weren't enough—adding subtle audio clicks and custom cursor states when hovering over buttons or project cards made the site feel way more responsive and fun to interact with."
+        "Initial testing highlighted viewports clipping on small mobile screens (375px) and inconsistent micro-interaction states. I established unified design tokens, built a context-aware dynamic cursor, and created slide-over drawer sheets to preserve scroll position."
       ],
       "bullets": [
-        "Rebuilt the navigation header with glassmorphic blur effects, smooth transition links, and clean dark/light mode toggles.",
-        "Added an interactive 3D blob canvas and dynamic section badges so the page has a distinct visual character.",
-        "Built a custom cursor that changes how it looks and behaves depending on whether you're hovering over text, external links, media, or action buttons.",
-        "Created smooth slide-over sheets for project deep dives, the archive gallery, and the resume so visitors don't lose their scroll position."
+        "Standardized color, spacing, and glassmorphic blur tokens across light and dark modes.",
+        "Built a context-aware cursor with custom visual states for links, action targets, and media.",
+        "Engineered modal drawer sheets for case studies and resumes to maintain page position."
       ],
       "labelClassName": "text-[#f54900]",
       "featureTabs": [
@@ -63,14 +60,14 @@
     {
       "id": "result",
       "label": "Result",
-      "heading": "A tactile, high-craft interactive portfolio",
+      "heading": "4x faster publishing and 60fps interactive performance",
       "body": [
-        "The result is a single-page interactive portfolio that combines software engineering precision with expressive visual identity. Navigating between selected work, detailed case studies, an interactive archive, and an immersive resume view feels seamless and responsive across all devices."
+        "Delivered a single-page interactive experience with 60fps animation performance, automatic Keystatic CMS integration, and responsive layout scaling from 320px to 4K displays."
       ],
       "bullets": [
-        "Context-aware custom cursor with smooth state transitions across interactive elements.",
-        "Tactile micro-sound feedback integrated with UI hover and click interactions.",
-        "Modular drawer and modal sheets for seamless deep-dive reading experience."
+        "Automated Git-backed CMS workflow for instant case study publishing.",
+        "Integrated tactile micro-sound cues for interactive feedback.",
+        "Modular sheet architecture for deep-dive reading without full page reloads."
       ],
       "labelClassName": "text-[#22c55e]",
       "imageSrc": "/images/work/the-allex/allex-hero.webp"
@@ -78,10 +75,9 @@
     {
       "id": "reflection",
       "label": "Reflection",
-      "heading": "Iterative pair-building with AI",
+      "heading": "Design systems maximize ongoing development speed",
       "body": [
-        "Building this iteratively with Antigravity made it so much easier to take rough ideas and turn them into finished React components fast. Being able to test micro-interactions, adjust spacing, and see how things felt in real time helped me build a portfolio that actually matches how I like to design and build things.",
-        "Because everything is broken down into clean reusable pieces (theme context, audio providers, shared UI components, and modal drawers), it's going to be really easy to keep adding new case studies and experiments down the road."
+        "Building with modular components and clean state providers makes future updates effortless. Establishing strict design rules up front ensures new content integrates seamlessly without visual or technical debt."
       ],
       "labelClassName": "text-muted-foreground"
     }

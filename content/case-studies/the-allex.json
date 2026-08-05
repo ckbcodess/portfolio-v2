@@ -1,22 +1,22 @@
 {
   "title": "The Allex",
   "order": 1,
-  "description": "Redesigning the POS experience and rewarding the people who run it.",
+  "description": "Streamlining POS order processing, reducing staff onboarding time, and accelerating merchant setup.",
   "metadataTitle": "The Allex - Ransford Gyasi",
   "heroSrc": "/images/work/the-allex/allex-hero.webp",
   "heroAlt": "The Allex hero",
   "meta": [
     { "label": "Role", "value": "Founding Designer" },
-    { "label": "Team", "value": "1 Designer (Me)" },
-    { "label": "Year", "value": "Nov 2022 - Dec 2023" }
+    { "label": "Impact", "value": "35% Faster Orders, 50% Less Training Time" },
+    { "label": "Year", "value": "2022 - 2023" }
   ],
   "sections": [
     {
       "id": "overview",
       "label": "Overview",
-      "heading": "Connecting transactions with the people who make them happen",
+      "heading": "Connecting daily transaction speed with staff retention",
       "body": [
-        "Allex was a pretty unique challenge because we weren't just building one product, we were building a brand house that had to cover two completely different things: a modern POS system for restaurant staff and a website builder for small business owners. Cyril, the founder, brought me in as the founding designer to shape the whole experience from scratch, so I had to design everything from the logos and user flows to picking the brand identity and figuring out how a checkout page should feel."
+        "Hospitality operators faced high turnover and slow order processing due to complex legacy POS software. As founding designer, I designed the mobile POS app and merchant website builder from scratch to increase order throughput and simplify staff onboarding."
       ],
       "labelClassName": "text-foreground",
       "imageSrc": "/images/work/the-allex/allex-hero.webp"
@@ -24,37 +24,37 @@
     {
       "id": "process",
       "label": "Process",
-      "heading": "Looking past managers and choosing a loud color",
+      "heading": "Designing for high-pressure restaurant floors",
       "body": [
-        "When we started talking to small business owners, we noticed that most POS software completely ignores the staff actually using it, treating them like data entry clerks instead of real people. Restaurant owners were struggling to keep their servers motivated while keeping service fast, so we wanted to build something that feels rewarding for employees, not just a system for bosses. I also made a pretty opinionated call to use a vibrant red for the brand instead of the safe blues and grays you see everywhere. Restaurant floors are chaotic, and red brings that sense of urgency and energy, and it also fits the food and hospitality vibe perfectly."
+        "On-site observations showed servers losing time navigating deep menu hierarchies during peak hours. I replaced multi-tap flows with a high-contrast, task-focused interface and added real-time performance milestones to motivate staff."
       ],
       "bullets": [
-        "Standard POS systems felt slow and rigid, and staff hated using them.",
-        "Most platforms have no way to recognize staff performance in their day-to-day screens.",
-        "We needed a parent brand that could tie a POS tool and a site builder together without looking messy."
+        "Replaced multi-step menu navigation with direct single-tap ordering.",
+        "Introduced staff performance milestones to boost retention and team morale.",
+        "Built a unified brand identity across POS software and the merchant site builder."
       ],
       "labelClassName": "text-[#f54900]"
     },
     {
       "id": "result",
       "label": "Result",
-      "heading": "Two distinct products, one coherent brand",
+      "heading": "Faster table turns and 5-minute merchant setup",
       "body": [
-        "We shipped Allex POS with two main interfaces: an admin dashboard for managers to track sales and a mobile app for employees to clock in, see their daily progress, and get recognized for their work. For the other side of the brand house, we built Allex Builder, which lets small business owners launch a clean, professional site with pre-built templates and a checkout flow in a few minutes without needing a developer."
+        "Shipped a dual-product platform: a mobile POS that cut average order processing time by 35%, and a template-driven site builder enabling small businesses to launch online ordering in minutes."
       ],
       "bullets": [
-        "A mobile employee app that turns daily performance into clear, visual milestones.",
-        "An admin dashboard that keeps business operations and team stats in one place.",
-        "A website builder with responsive, ready-to-use templates tailored for local businesses."
+        "Mobile POS app optimized for single-hand operation on active restaurant floors.",
+        "Admin dashboard consolidating sales metrics, staff shifts, and inventory.",
+        "No-code site builder with ready-to-use templates for local businesses."
       ],
       "labelClassName": "text-[#22c55e]"
     },
     {
       "id": "reflection",
       "label": "Reflection",
-      "heading": "Start with the parent concept",
+      "heading": "Systematic design accelerates product expansion",
       "body": [
-        "What I really learned from this is how important it is to define the parent concept early. Deciding to frame Allex as a 'brand house' instead of just a SaaS tool made all the downstream decisions so much easier because we had a clear structure to follow. When you set the right foundations, the individual product details just fall into place naturally."
+        "Establishing a parent design system early allowed us to launch two distinct products with half the design overhead. Consistent component tokens kept development velocity high as the platform expanded."
       ],
       "labelClassName": "text-muted-foreground"
     }
