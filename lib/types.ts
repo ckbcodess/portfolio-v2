@@ -40,6 +40,7 @@ export interface CaseStudyContent {
   nextProject?: CaseStudyNextProject;
   gradientColors?: [string, string, string]; // [top, middle, bottom]
   isLocked?: boolean;
+  isInProgress?: boolean;
   password?: string;
 }
 
@@ -50,6 +51,7 @@ export interface CaseStudyCard {
   description: string;
   heroSrc: string;
   isLocked: boolean;
+  isInProgress?: boolean;
   color: string;
 }
 

@@ -31,9 +31,15 @@ export async function generateMetadata({ params }: WorkCaseStudyPageProps): Prom
 
 export default async function WorkCaseStudyPage({ params }: WorkCaseStudyPageProps) {
   const { slug } = await params;
+  const isLiveBuild = process.env.NODE_ENV === "production";
+
+  if (isLiveBuild && slug === "portfolio-v2") {
+    notFound();
+  }
+
   const caseStudy = await getCaseStudy(slug);
 
-  if (!caseStudy) {
+  if (!caseStudy || (isLiveBuild && caseStudy.isInProgress)) {
     notFound();
   }
 

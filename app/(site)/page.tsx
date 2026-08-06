@@ -16,6 +16,7 @@ export default async function Home() {
         description: study.description,
         heroSrc: study.heroSrc,
         isLocked: Boolean(study.isLocked),
+        isInProgress: Boolean(study.isInProgress),
         color: study.gradientColors?.[0] ?? "#333",
       }))}
     />

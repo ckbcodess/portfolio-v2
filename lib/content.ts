@@ -64,6 +64,7 @@ function toCaseStudy(
       entry.gradientColors.bottom,
     ],
     isLocked: entry.isLocked,
+    isInProgress: (entry as any).isInProgress ?? false,
     password: entry.password || undefined,
   };
 }

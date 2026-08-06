@@ -201,22 +201,28 @@ export default function HomeClient({
           <AnimatedDivider delay={0.38} />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 w-full pt-2">
-            {caseStudies.map((study, idx) => (
-              <MaskReveal key={study.slug} delay={0.4 + idx * 0.05} className="h-full">
-                <ProjectItem
-                  title={study.title}
-                  slug={study.slug}
-                  description={study.description}
-                  heroSrc={study.heroSrc}
-                  isLocked={study.isLocked}
-                  color={study.color}
-                  isDimmed={hoveredId !== null && hoveredId !== study.slug}
-                  isHovered={hoveredId === study.slug}
-                  onMouseEnter={() => setHoveredId(study.slug)}
-                  onMouseLeave={() => setHoveredId(null)}
-                />
-              </MaskReveal>
-            ))}
+            {caseStudies.map((study, idx) => {
+              const isLiveBuild = process.env.NODE_ENV === "production";
+              const isInProgress = Boolean(study.isInProgress) || (isLiveBuild && study.slug === "portfolio-v2");
+
+              return (
+                <MaskReveal key={study.slug} delay={0.4 + idx * 0.05} className="h-full">
+                  <ProjectItem
+                    title={study.title}
+                    slug={study.slug}
+                    description={study.description}
+                    heroSrc={study.heroSrc}
+                    isLocked={study.isLocked}
+                    isInProgress={isInProgress}
+                    color={study.color}
+                    isDimmed={hoveredId !== null && hoveredId !== study.slug}
+                    isHovered={hoveredId === study.slug}
+                    onMouseEnter={() => setHoveredId(study.slug)}
+                    onMouseLeave={() => setHoveredId(null)}
+                  />
+                </MaskReveal>
+              );
+            })}
           </div>
         </section>
 
@@ -332,6 +338,7 @@ const ProjectItem = React.memo(function ProjectItem({
   heroSrc,
   color = "#ff4d4d",
   isLocked = false,
+  isInProgress = false,
   isDimmed = false,
   onMouseEnter,
   onMouseLeave,
@@ -342,6 +349,7 @@ const ProjectItem = React.memo(function ProjectItem({
   heroSrc: string;
   color?: string;
   isLocked?: boolean;
+  isInProgress?: boolean;
   isDimmed?: boolean;
   isHovered?: boolean;
   onMouseEnter?: () => void;
@@ -349,7 +357,7 @@ const ProjectItem = React.memo(function ProjectItem({
 }) {
   const content = (
     <div
-      data-cursor={isLocked ? "confidential" : "case-study"}
+      data-cursor={isInProgress ? "in-progress" : isLocked ? "confidential" : "case-study"}
       className={`group flex flex-col gap-4 transition-opacity duration-500 ease-out w-full h-full text-left ${
         isDimmed 
           ? "opacity-30" 
@@ -365,11 +373,16 @@ const ProjectItem = React.memo(function ProjectItem({
           className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
           sizes="(max-w-md) 100vw, 400px"
         />
-        {isLocked && (
+        {isInProgress ? (
+          <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-md border border-white/10 rounded-full px-2.5 py-1 text-[11px] font-medium tracking-wide text-white/90 flex items-center gap-1.5 select-none">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+            <span>In Progress</span>
+          </div>
+        ) : isLocked ? (
           <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-md border border-white/10 rounded-full p-2 text-white flex items-center justify-center">
             <Lock size={12} />
           </div>
-        )}
+        ) : null}
       </div>
       
       {/* Title & Description */}
@@ -384,7 +397,17 @@ const ProjectItem = React.memo(function ProjectItem({
     </div>
   );
 
-  if (!slug) return content;
+  if (!slug || isInProgress) {
+    return (
+      <div
+        className="block w-full focus:outline-none rounded-[4px] h-full cursor-default"
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+      >
+        {content}
+      </div>
+    );
+  }
 
   return (
     <TransitionLink

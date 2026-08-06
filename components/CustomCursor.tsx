@@ -10,7 +10,7 @@ export default function CustomCursor({ isTransitioning }: { isTransitioning?: bo
     const pathname = usePathname();
     const { resolvedTheme } = useTheme();
     const cursorRef = useRef<HTMLDivElement>(null);
-    const [cursorType, setCursorType] = useState<"default" | "copy" | "copied" | "pointer" | "case-study" | "confidential" | "none" | "wrap" | "lightbox-left" | "lightbox-right" | "close" | "hold" | "pause" | "play">("default");
+    const [cursorType, setCursorType] = useState<"default" | "copy" | "copied" | "pointer" | "case-study" | "confidential" | "in-progress" | "none" | "wrap" | "lightbox-left" | "lightbox-right" | "close" | "hold" | "pause" | "play">("default");
     
     const [targetPos, setTargetPos] = useState<{ x: number; y: number } | null>(null);
     const resetTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -394,11 +394,15 @@ export default function CustomCursor({ isTransitioning }: { isTransitioning?: bo
                 yoyo: true,
                 repeat: 1
             });
-        } else if (cursorType === "case-study" || cursorType === "confidential") {
+        } else if (cursorType === "case-study" || cursorType === "confidential" || cursorType === "in-progress") {
             const isLight = resolvedTheme === "light";
+            let width = 160;
+            if (cursorType === "confidential") width = 120;
+            if (cursorType === "in-progress") width = 135;
+
             gsap.to(cursorRef.current, {
                 mixBlendMode: "normal",
-                width: cursorType === "case-study" ? 160 : 120,
+                width,
                 height: 40,
                 borderRadius: "20px",
                 backgroundColor: isLight ? "#000000" : "#ffffff",
@@ -482,6 +486,9 @@ export default function CustomCursor({ isTransitioning }: { isTransitioning?: bo
             </span>
             <span className={`absolute transition-opacity duration-300 text-sm ${cursorType === "confidential" ? "opacity-100" : "opacity-0 invisible"}`}>
                 Confidential
+            </span>
+            <span className={`absolute transition-opacity duration-300 text-sm ${cursorType === "in-progress" ? "opacity-100" : "opacity-0 invisible"}`}>
+                In Progress
             </span>
             <div className={`transition-opacity duration-300 ${cursorType === "pointer" ? "opacity-100" : "opacity-0 invisible"}`}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-white mix-blend-difference">
