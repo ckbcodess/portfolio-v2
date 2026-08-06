@@ -1,10 +1,10 @@
 {
-  "title": "Portfolio v2",
+  "title": "My Portfolio",
   "order": 3,
   "description": "Building a component-driven interactive portfolio that accelerates case study publishing and showcases high-craft execution.",
-  "metadataTitle": "Portfolio v2 - Ransford Gyasi",
-  "heroSrc": "/images/work/gcb/gcb-card-v4.webp",
-  "heroAlt": "Portfolio v2 hero",
+  "metadataTitle": "My Portfolio - Ransford Gyasi",
+  "heroSrc": "/images/work/portfolio/my-portfolio-cover.png",
+  "heroAlt": "My Portfolio hero",
   "meta": [
     { "label": "Role", "value": "Designer & Developer" },
     { "label": "Stack", "value": "Next.js 16, Tailwind v4, Antigravity" },
@@ -16,10 +16,10 @@
       "label": "Overview",
       "heading": "High-craft execution with zero development waste",
       "body": [
-        "Static portfolios often feel disconnected from actual product craft. I designed and built Portfolio v2 with Next.js 16 and Tailwind v4, combining interactive 3D visual elements and tactile audio micro-feedback with a modular component architecture."
+        "Static portfolios often feel disconnected from actual product craft. I designed and built My Portfolio with Next.js 16 and Tailwind v4, combining interactive 3D visual elements and tactile audio micro-feedback with a modular component architecture."
       ],
       "labelClassName": "text-foreground",
-      "imageSrc": "/images/work/the-allex/allex-hero.webp"
+      "imageSrc": "/images/work/portfolio/my-portfolio-cover.png"
     },
     {
       "id": "process",
@@ -38,22 +38,22 @@
         {
           "name": "Custom Cursor",
           "description": "Context-aware dynamic cursor with smooth state changes over links, confidential items, and action targets.",
-          "imageSrc": "/images/work/gcb/gcb-card-v4.webp"
+          "imageSrc": "/images/work/portfolio/my-portfolio-cover.png"
         },
         {
           "name": "3D Canvas Blob",
           "description": "Interactive, distorted glass-like 3D mesh rendered at 60fps with real-time mouse lighting and drag dynamics.",
-          "imageSrc": "/images/work/the-allex/allex-hero.webp"
+          "imageSrc": "/images/work/portfolio/my-portfolio-cover.png"
         },
         {
           "name": "Refractive Nav",
           "description": "Header navigation with subtle backdrop blur, light/dark ambient mode controls, and transition link effects.",
-          "imageSrc": "/images/work/gcb/gcb-card-v4.webp"
+          "imageSrc": "/images/work/portfolio/my-portfolio-cover.png"
         },
         {
           "name": "Modal Drawers",
           "description": "Slide-over sheets for project deep dives, archive filters, and resume view without breaking page scroll context.",
-          "imageSrc": "/images/work/the-allex/allex-hero.webp"
+          "imageSrc": "/images/work/portfolio/my-portfolio-cover.png"
         }
       ]
     },
@@ -70,7 +70,7 @@
         "Modular sheet architecture for deep-dive reading without full page reloads."
       ],
       "labelClassName": "text-[#22c55e]",
-      "imageSrc": "/images/work/the-allex/allex-hero.webp"
+      "imageSrc": "/images/work/portfolio/my-portfolio-cover.png"
     },
     {
       "id": "reflection",

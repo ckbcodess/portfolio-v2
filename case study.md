@@ -1,4 +1,4 @@
-# Case Study: Portfolio v2
+# Case Study: My Portfolio
 
 Building my personal portfolio using Next.js 16, Tailwind v4, and Antigravity as an AI pair designer. The goal was to create something that feels responsive, tactile, and alive, combining interactive 3D elements, custom cursor interactions, ambient background shaders, and dynamic audio feedback into a clean single-page layout.
 
@@ -6,7 +6,7 @@ Building my personal portfolio using Next.js 16, Tailwind v4, and Antigravity as
 
 ## Overview
 
-I wanted Portfolio v2 to feel like a real living space, not just another static list of links and project grids. When someone visits, I want them to actually feel the interface react to them as they move around, view case studies, check out the archive, or open up the resume sheet.
+I wanted My Portfolio to feel like a real living space, not just another static list of links and project grids. When someone visits, I want them to actually feel the interface react to them as they move around, view case studies, check out the archive, or open up the resume sheet.
 
 Instead of writing down a rigid plan up front, I worked directly with Antigravity to build and tweak things iteratively right inside the code. We tried out ideas in real time, testing out animations, cursor behaviors, and layout tweaks as we went along so the design system naturally grew out of what felt right while using it.
 
